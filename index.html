@@ -4,7 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>푸른나라학교 - 신앙 RPG</title>
+    <!-- Web App Manifest for 'Add to Home Screen' -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <meta name="apple-mobile-web-app-title" content="푸른나라학교">
+    
     <style>
+        /* General styling for the entire page */
         * {
             margin: 0;
             padding: 0;
@@ -18,6 +25,7 @@
             color: #333;
         }
 
+        /* Main application container */
         .app-container {
             max-width: 414px;
             margin: 0 auto;
@@ -26,8 +34,11 @@
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
         }
 
+        /* Header section with user profile */
         .header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
@@ -47,6 +58,27 @@
             justify-content: center;
             font-size: 40px;
             border: 3px solid rgba(255,255,255,0.3);
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .character-avatar:hover {
+            transform: scale(1.05);
+        }
+
+        .user-name {
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 5px 10px;
+            border-radius: 15px;
+            background: rgba(255,255,255,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .user-name:hover {
+            background: rgba(255,255,255,0.3);
         }
 
         .user-stats {
@@ -65,10 +97,12 @@
             font-size: 18px;
         }
 
+        /* Bottom navigation bar */
         .navigation {
             display: flex;
             background: #f8f9fa;
             border-top: 1px solid #dee2e6;
+            flex-shrink: 0;
         }
 
         .nav-item {
@@ -80,6 +114,7 @@
             cursor: pointer;
             transition: all 0.3s ease;
             font-size: 12px;
+            color: #495057;
         }
 
         .nav-item.active {
@@ -95,87 +130,26 @@
             background: #3d8bfe;
         }
 
+        /* Main content area */
         .content {
             padding: 20px;
-            min-height: 400px;
+            flex-grow: 1;
+            overflow-y: auto;
         }
 
-        .stage-card {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 15px;
-            cursor: pointer;
-            transition: transform 0.3s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stage-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stage-card::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -50%;
-            width: 100%;
-            height: 100%;
-            background: rgba(255,255,255,0.1);
-            transform: rotate(45deg);
-            transition: all 0.3s ease;
-        }
-
-        .stage-card:hover::before {
-            right: -30%;
-        }
-
-        .stage-number {
-            background: rgba(255,255,255,0.2);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .stage-title {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .stage-subtitle {
-            font-size: 14px;
-            opacity: 0.9;
-        }
-
-        .progress-bar {
-            background: rgba(255,255,255,0.3);
-            height: 8px;
-            border-radius: 4px;
-            margin-top: 10px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            background: #ffd700;
-            height: 100%;
-            border-radius: 4px;
-            transition: width 0.3s ease;
-        }
-
+        /* Styling for mission cards on the home tab */
         .mission-card {
             background: #f8f9fa;
             border: 1px solid #dee2e6;
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 10px;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .mission-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
 
         .mission-header {
@@ -217,111 +191,439 @@
 
         .mission-button:hover {
             background: #3d8bfe;
+            transform: scale(1.05);
         }
 
-        .mission-button.completed {
+        .mission-button:disabled {
             background: #28a745;
+            cursor: not-allowed;
+            transform: none;
         }
 
-        .guild-member {
-            display: flex;
-            align-items: center;
-            padding: 10px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            margin-bottom: 10px;
-        }
-
-        .member-avatar {
-            width: 40px;
-            height: 40px;
-            background: #4facfe;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            margin-right: 15px;
-        }
-
-        .member-info {
-            flex: 1;
-        }
-
-        .member-name {
-            font-weight: bold;
-            margin-bottom: 3px;
-        }
-
-        .member-status {
-            font-size: 12px;
-            color: #666;
-        }
-
+        /* Utility class to hide elements */
         .hidden {
             display: none;
         }
 
-        .achievement-badge {
-            display: inline-block;
-            background: #ffd700;
-            color: #333;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 12px;
-            font-weight: bold;
-            margin: 5px;
-        }
-
-        .streak-counter {
-            text-align: center;
-            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-        }
-
-        .streak-number {
-            font-size: 36px;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-
-
+        /* Floating notification style */
         .floating-notification {
             position: fixed;
             top: 20px;
-            right: 20px;
+            left: 50%;
+            transform: translateX(-50%);
             background: #28a745;
             color: white;
-            padding: 15px;
-            border-radius: 10px;
+            padding: 15px 20px;
+            border-radius: 25px;
             font-weight: bold;
-            animation: slideInRight 0.3s ease;
+            animation: slideInDown 0.3s ease;
             z-index: 999;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        @keyframes slideInRight {
+        @keyframes slideInDown {
             from {
                 opacity: 0;
-                transform: translateX(100px);
+                transform: translateX(-50%) translateY(-50px);
             }
             to {
                 opacity: 1;
-                transform: translateX(0);
+                transform: translateX(-50%) translateY(0);
             }
         }
+
+        /* 10-10-10 prayer card styling */
+        .prayer-time-card {
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .prayer-time-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #8b4513;
+            margin-bottom: 15px;
+        }
+
+        .prayer-time-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+        }
+
+        .prayer-time-slot {
+            background: rgba(255,255,255,0.7);
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .prayer-time-slot:hover {
+            border-color: #8b4513;
+            transform: scale(1.05);
+        }
+
+        .prayer-time-slot.completed {
+            background: #d4edda;
+            border-color: #28a745;
+        }
+
+        /* Scripture display card */
+        .scripture-card {
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            border: 1px solid #2196f3;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 15px 0;
+            text-align: center;
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .scripture-text {
+            font-size: 16px;
+            line-height: 1.6;
+            color: #1565c0;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        .scripture-reference {
+            font-weight: bold;
+            color: #0d47a1;
+            font-size: 14px;
+        }
+
+        /* Chat interface styling */
+        .chat-container {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 15px;
+            margin-top: 15px;
+            height: 350px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .message {
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .message.user {
+            align-items: flex-end;
+        }
+
+        .message.other {
+            align-items: flex-start;
+        }
+
+        .message-bubble {
+            padding: 10px 15px;
+            border-radius: 18px;
+            max-width: 80%;
+            word-wrap: break-word;
+            display: inline-block;
+        }
+        
+        .message.user .message-bubble {
+            background: #4facfe;
+            color: white;
+        }
+
+        .message.other .message-bubble {
+            background: #f1f3f4;
+            color: #333;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 5px;
+            font-size: 12px;
+            padding: 0 5px;
+        }
+
+        .message-avatar {
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+            margin-right: 8px;
+        }
+        
+        .message.user .message-avatar { background: #3d8bfe; }
+        .message.other .message-avatar { background: #6c757d; }
+
+        .message-sender {
+            font-weight: bold;
+        }
+
+        .message-time {
+            margin-left: 8px;
+            opacity: 0.7;
+            font-size: 10px;
+        }
+
+        .chat-input-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #dee2e6;
+            border-radius: 20px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .chat-input:focus {
+            border-color: #4facfe;
+            outline: none;
+        }
+
+        .chat-send-btn {
+            background: #4facfe;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .chat-send-btn:hover {
+            background: #3d8bfe;
+        }
+
+        /* Modal styling */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            max-width: 320px;
+            width: 90%;
+            text-align: center;
+            animation: modalSlideIn 0.3s ease;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: scale(0.8);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        .modal-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #4facfe;
+        }
+
+        .modal-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .modal-input:focus {
+            border-color: #4facfe;
+            outline: none;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+
+        .modal-button.primary {
+            background: #4facfe;
+            color: white;
+        }
+
+        .modal-button.primary:hover {
+            background: #3d8bfe;
+        }
+
+        .modal-button.secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .modal-button.secondary:hover {
+            background: #5a6268;
+        }
+
+        /* Stage lesson content styling */
+        .lesson-container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            animation: slideInUp 0.4s ease;
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .lesson-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .lesson-icon {
+            font-size: 30px;
+            margin-right: 15px;
+        }
+
+        .lesson-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #4facfe;
+        }
+
+        .lesson-content {
+            line-height: 1.7;
+            color: #333;
+            font-size: 15px;
+        }
+
+        .lesson-content h4 {
+            color: #4facfe;
+            margin: 20px 0 10px 0;
+            font-size: 16px;
+        }
+
+        .lesson-content ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .lesson-content li {
+            margin-bottom: 8px;
+        }
+
+        .lesson-content p {
+            margin-bottom: 12px;
+        }
+
+        .lesson-content strong {
+            color: #2c5aa0;
+        }
+        
+        /* Stage selection cards */
+        .stage-card {
+            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .stage-card:hover {
+            transform: scale(1.03);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+        
+        /* Avatar selection modal */
+        .avatar-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .avatar-option {
+            font-size: 30px;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 50%;
+            transition: background 0.2s ease;
+        }
+        .avatar-option:hover {
+            background: #e9ecef;
+        }
+
     </style>
 </head>
 <body>
     <div class="app-container">
-        <!-- 헤더 -->
+        <!-- Header -->
         <div class="header">
-            <div class="character-avatar">🌟</div>
-            <h2 id="userName">푸른이</h2>
+            <div class="character-avatar" id="headerAvatar" onclick="showAvatarModal()">🌟</div>
+            <div class="user-name" onclick="showNameModal()">
+                <span id="userName">푸른이</span>
+                <span>✏️</span>
+            </div>
             <div class="user-stats">
                 <div class="stat">
                     <div class="stat-value" id="userLevel">5</div>
@@ -338,258 +640,770 @@
             </div>
         </div>
 
-        <!-- 네비게이션 -->
+        <!-- Content Area -->
+        <div class="content">
+            <!-- Home Tab -->
+            <div id="home-tab" class="tab-content">
+                <h3 style="margin-bottom: 15px;">📋 오늘의 미션</h3>
+                
+                <div class="prayer-time-card">
+                    <div class="prayer-time-title">⏰ 10-10-10 기도법</div>
+                    <div class="prayer-time-grid">
+                        <div class="prayer-time-slot" onclick="completePrayerTime('morning', this)">
+                            <div>🌅 아침</div>
+                            <div style="font-size: 12px;">10분</div>
+                        </div>
+                        <div class="prayer-time-slot" onclick="completePrayerTime('noon', this)">
+                            <div>☀️ 점심</div>
+                            <div style="font-size: 12px;">10분</div>
+                        </div>
+                        <div class="prayer-time-slot" onclick="completePrayerTime('evening', this)">
+                            <div>🌙 저녁</div>
+                            <div style="font-size: 12px;">10분</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mission-card">
+                    <div class="mission-header">
+                        <div class="mission-title">📖 성경 말씀 읽기</div>
+                        <div class="mission-reward">+70 EXP</div>
+                    </div>
+                    <div class="mission-description">푸른바람의 냉장고에서 오늘의 영양분을 섭취하세요</div>
+                    <button class="mission-button" onclick="showScripture()">말씀 보기</button>
+                    <div id="scripture-container"></div>
+                </div>
+
+                <div class="mission-card">
+                    <div class="mission-header">
+                        <div class="mission-title">🎯 예배 참여하기</div>
+                        <div class="mission-reward">+100 EXP</div>
+                    </div>
+                    <div class="mission-description">하나님을 만나는 공식 채널에서 양방향 소통하세요</div>
+                    <button class="mission-button" onclick="completeMission(this, '예배 참여 완료! 용특새 메시지를 받았습니다! 🙏', 100)">참여 완료</button>
+                </div>
+
+                <div class="mission-card">
+                    <div class="mission-header">
+                        <div class="mission-title">� 길드원과 대화하기</div>
+                        <div class="mission-reward">+30 EXP</div>
+                    </div>
+                    <div class="mission-description">병아리 공동체에서 길드 버프를 받아보세요</div>
+                    <button class="mission-button" onclick="openChat()">채팅 참여</button>
+                    <div id="chat-container"></div>
+                </div>
+            </div>
+
+            <!-- Stages Tab -->
+            <div id="stages-tab" class="tab-content hidden">
+                 <div id="stage-list">
+                    <h3 style="margin-bottom: 20px;">🎯 학습 스테이지</h3>
+                    <p style="text-align: center; color: #666; margin-bottom: 20px;">
+                        교재 내용 기반 학습 단계입니다
+                    </p>
+                    
+                    <div class="stage-card" onclick="enterStage(1)">
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">1. 패치 시스템</div>
+                        <div style="font-size: 14px; opacity: 0.9;">거부할 수 없는 특권</div>
+                        <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">예배하기 • 성경읽기 • 기도하기</div>
+                    </div>
+
+                    <div class="stage-card" onclick="enterStage(2)">
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">2. 길드 시스템</div>
+                        <div style="font-size: 14px; opacity: 0.9;">우리, 같이 해볼까요</div>
+                        <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">세례받기 • 공동체 속하기 • 성령 따르기</div>
+                    </div>
+
+                    <div class="stage-card" onclick="enterStage(3)">
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">3. 실전 시스템</div>
+                        <div style="font-size: 14px; opacity: 0.9;">인생은 장난이 아니니까</div>
+                        <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">이론에서 현실로 • 매일 그분과 • 일생을 함께</div>
+                    </div>
+                </div>
+                
+                <div id="stage-detail" class="hidden">
+                    <div id="stage-content"></div>
+                    <button style="background: #6c757d; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-top: 20px; width: 100%;" onclick="backToStages()">← 스테이지 목록으로</button>
+                </div>
+            </div>
+
+            <!-- Guild Tab -->
+            <div id="guild-tab" class="tab-content hidden">
+                <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 20px; border-radius: 15px; margin-bottom: 20px; text-align: center; position: relative;">
+                    <h3>👥 푸른바람단</h3>
+                    <strong>길드 레벨: <span id="guildLevel">12</span></strong><br>
+                    <small>다음 레벨까지 <span id="guildExp">350</span>/500 EXP</small>
+                </div>
+
+                <h4 style="margin-bottom: 15px;">🟢 현재 접속 중인 길드원</h4>
+                <div style="background: #f8f9fa; border-radius: 15px; padding: 15px; margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; padding: 10px; margin-bottom: 8px; background: white; border-radius: 10px;">
+                        <div id="guildUserAvatar" style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid #4facfe; background: #4facfe; color: white;">🌟</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; margin-bottom: 2px;"><span id="guildUserName">푸른이</span> (나)</div>
+                            <div style="font-size: 12px; color: #666;">레벨 <span id="guildUserLevel">5</span> • <span id="guildUserStreak">7</span>일 연속 접속</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; color: #666; padding: 20px;">
+                        <p>다른 길드원들이 접속하면 여기에 표시됩니다</p>
+                        <p>친구들을 초대해보세요! 🎉</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button style="width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 10px; font-weight: bold;" onclick="showGuildChat()">
+                        💬 길드 채팅 참여하기
+                    </button>
+                    <div id="guild-chat-container" style="margin-top: 15px;"></div>
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div id="profile-tab" class="tab-content hidden">
+                <div style="background: #f8f9fa; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 50px; cursor: pointer; border: 3px solid #4facfe; background: white;" id="profileAvatar" onclick="showAvatarModal()">🌟</div>
+                        <div>
+                            <h4 id="profileUserName" style="margin-bottom: 5px; color: #333;">푸른이</h4>
+                            <p style="color: #666; font-size: 14px;">레벨 <span id="profileLevel">5</span> <span id="profileJob">새신자</span></p>
+                            <p style="color: #666; font-size: 14px;">신앙 여정 <span id="profileStreak">7</span>일차</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px;">🏆 업적 및 뱃지</h4>
+                    <div style="background: white; padding: 15px; border-radius: 10px;">
+                        <div style="margin-bottom: 10px;">
+                            <span style="display: inline-block; background: #ffd700; color: #333; padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin: 2px;">첫 기도</span>
+                            <span style="display: inline-block; background: #ffd700; color: #333; padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin: 2px;">성경 독자</span>
+                            <span style="display: inline-block; background: #ffd700; color: #333; padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin: 2px;">7일 연속</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid #e9ecef;">
+                            <span>완료한 미션</span>
+                            <strong id="completedMissionsCount">15</strong>개
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px;">⚙️ 관리자 설정</h4>
+                    <div style="background: white; padding: 15px; border-radius: 10px;">
+                        <button style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;" onclick="showResetModal()">
+                            🔄 레벨/경험치 초기화
+                        </button>
+                        <div style="font-size: 12px; color: #666; margin-top: 8px; text-align: center;">
+                            관리자만 사용할 수 있습니다
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
         <div class="navigation">
-            <button class="nav-item active" onclick="showTab('home')">
+            <button class="nav-item active" onclick="showTab('home', this)">
                 🏠<br>홈
             </button>
-            <button class="nav-item" onclick="showTab('stages')">
+            <button class="nav-item" onclick="showTab('stages', this)">
                 🎮<br>스테이지
             </button>
-            <button class="nav-item" onclick="showTab('guild')">
+            <button class="nav-item" onclick="showTab('guild', this)">
                 👥<br>길드
             </button>
-            <button class="nav-item" onclick="showTab('profile')">
+            <button class="nav-item" onclick="showTab('profile', this)">
                 👤<br>프로필
             </button>
         </div>
+    </div>
 
-        <!-- 콘텐츠 영역 -->
-        <div class="content">
-            <!-- 홈 탭 -->
-            <div id="home-tab" class="tab-content">
-                <div class="streak-counter">
-                    <div class="streak-number">7</div>
-                    <div>일 연속 접속!</div>
-                </div>
-
-                <h3 style="margin-bottom: 15px;">📋 오늘의 미션</h3>
-                
-                <div class="mission-card">
-                    <div class="mission-header">
-                        <div class="mission-title">아침 기도하기</div>
-                        <div class="mission-reward">+50 EXP</div>
-                    </div>
-                    <div class="mission-description">하루를 시작하며 10분간 기도해보세요</div>
-                    <button class="mission-button" onclick="completeMission(this, '아침 기도 완료!')">완료하기</button>
-                </div>
-
-                <div class="mission-card">
-                    <div class="mission-header">
-                        <div class="mission-title">성경 말씀 읽기</div>
-                        <div class="mission-reward">+70 EXP</div>
-                    </div>
-                    <div class="mission-description">오늘의 말씀: 요한복음 15:1-5</div>
-                    <button class="mission-button" onclick="completeMission(this, '말씀 묵상 완료!')">읽기 시작</button>
-                </div>
-
-                <div class="mission-card">
-                    <div class="mission-header">
-                        <div class="mission-title">길드원과 대화하기</div>
-                        <div class="mission-reward">+30 EXP</div>
-                    </div>
-                    <div class="mission-description">길드 채팅방에서 서로 격려해주세요</div>
-                    <button class="mission-button" onclick="completeMission(this, '길드 활동 완료!')">참여하기</button>
-                </div>
-            </div>
-
-            <div id="stages-tab" class="tab-content hidden">
-                <h3 style="margin-bottom: 20px;">🎯 학습 스테이지</h3>
-                
-                <div class="stage-card" onclick="enterStage(1)">
-                    <div class="stage-number">1</div>
-                    <div class="stage-title">패치 시스템</div>
-                    <div class="stage-subtitle">거부할 수 없는 특권</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 85%"></div>
-                    </div>
-                </div>
-
-                <div class="stage-card" onclick="enterStage(2)">
-                    <div class="stage-number">2</div>
-                    <div class="stage-title">길드 시스템</div>
-                    <div class="stage-subtitle">우리, 같이 해볼까요</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 45%"></div>
-                    </div>
-                </div>
-
-                <div class="stage-card" onclick="enterStage(3)">
-                    <div class="stage-number">3</div>
-                    <div class="stage-title">실전 시스템</div>
-                    <div class="stage-subtitle">인생은 장난이 아니니까</div>
-                    <div class="progress-bar">
-                        <div class="progress-fill" style="width: 10%"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 길드 탭 -->
-            <div id="guild-tab" class="tab-content hidden">
-                <h3 style="margin-bottom: 20px;">👥 나의 길드: 푸른바람단</h3>
-                
-                <div style="background: #e3f2fd; padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center;">
-                    <strong>길드 레벨: 12</strong><br>
-                    <small>다음 레벨까지 350/500 EXP</small>
-                </div>
-
-                <h4 style="margin-bottom: 15px;">📊 이번 주 활동</h4>
-                
-                <div class="guild-member">
-                    <div class="member-avatar">김</div>
-                    <div class="member-info">
-                        <div class="member-name">김민준 (길드장)</div>
-                        <div class="member-status">7일 연속 접속 중 🔥</div>
-                    </div>
-                </div>
-
-                <div class="guild-member">
-                    <div class="member-avatar">이</div>
-                    <div class="member-info">
-                        <div class="member-name">이서연</div>
-                        <div class="member-status">패치 2/3 완료</div>
-                    </div>
-                </div>
-
-                <div class="guild-member">
-                    <div class="member-avatar">박</div>
-                    <div class="member-info">
-                        <div class="member-name">박지훈</div>
-                        <div class="member-status">길드 미션 진행중</div>
-                    </div>
-                </div>
-
-                <div class="guild-member">
-                    <div class="member-avatar">🌟</div>
-                    <div class="member-info">
-                        <div class="member-name">나 (푸른이)</div>
-                        <div class="member-status">오늘 미션 1/3 완료</div>
-                    </div>
-                </div>
-
-                <div style="margin-top: 20px;">
-                    <button style="width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 10px; font-weight: bold;" onclick="showNotification('길드 채팅방에 참여했습니다!')">
-                        💬 길드 채팅 참여하기
-                    </button>
-                </div>
-            </div>
-
-            <!-- 프로필 탭 -->
-            <div id="profile-tab" class="tab-content hidden">
-                <h3 style="margin-bottom: 20px;">👤 나의 프로필</h3>
-                
-                <div style="text-align: center; margin-bottom: 20px;">
-                    <div class="character-avatar" style="width: 100px; height: 100px; margin: 0 auto 15px; background: #4facfe;">🌟</div>
-                    <h4>푸른이</h4>
-                    <p style="color: #666;">신앙 여정 7일차</p>
-                </div>
-
-                <h4 style="margin-bottom: 15px;">🏆 획득한 배지</h4>
-                <div style="margin-bottom: 20px;">
-                    <span class="achievement-badge">첫 기도</span>
-                    <span class="achievement-badge">성경 독자</span>
-                    <span class="achievement-badge">예배 참여자</span>
-                    <span class="achievement-badge">7일 연속</span>
-                </div>
-
-                <h4 style="margin-bottom: 15px;">📈 나의 통계</h4>
-                <div style="background: #f8f9fa; padding: 15px; border-radius: 10px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <span>총 기도 시간</span>
-                        <strong>3시간 20분</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <span>읽은 성경 장수</span>
-                        <strong>42장</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
-                        <span>참여한 예배</span>
-                        <strong>2회</strong>
-                    </div>
-                    <div style="display: flex; justify-content: space-between;">
-                        <span>완료한 미션</span>
-                        <strong>15개</strong>
-                    </div>
-                </div>
-
-                <div style="margin-top: 20px;">
-                    <button style="width: 100%; padding: 15px; background: #6c757d; color: white; border: none; border-radius: 10px; font-weight: bold;" onclick="showNotification('설정 기능은 곧 업데이트 예정입니다!')">
-                        ⚙️ 설정
-                    </button>
-                </div>
+    <!-- Modals -->
+    <div id="nameModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">닉네임 변경</div>
+            <input type="text" id="nameInput" class="modal-input" placeholder="새로운 닉네임을 입력하세요" maxlength="10">
+            <div class="modal-buttons">
+                <button class="modal-button secondary" onclick="closeNameModal()">취소</button>
+                <button class="modal-button primary" onclick="changeName()">변경</button>
             </div>
         </div>
     </div>
 
-        <!-- 모달 제거됨 - 더 이상 필요없음 -->
+    <div id="avatarModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">프로필 사진 변경</div>
+            <div class="avatar-grid">
+                <div class="avatar-option" onclick="selectAvatar('🌟')">🌟</div>
+                <div class="avatar-option" onclick="selectAvatar('😊')">😊</div>
+                <div class="avatar-option" onclick="selectAvatar('🙏')">🙏</div>
+                <div class="avatar-option" onclick="selectAvatar('✨')">✨</div>
+                <div class="avatar-option" onclick="selectAvatar('🕊️')">🕊️</div>
+                <div class="avatar-option" onclick="selectAvatar('📖')">📖</div>
+                <div class="avatar-option" onclick="selectAvatar('❤️')">❤️</div>
+                <div class="avatar-option" onclick="selectAvatar('🌅')">🌅</div>
+                <div class="avatar-option" onclick="selectAvatar('⭐')">⭐</div>
+                <div class="avatar-option" onclick="selectAvatar('🎵')">🎵</div>
+                <div class="avatar-option" onclick="selectAvatar('🌸')">🌸</div>
+                <div class="avatar-option" onclick="selectAvatar('🌈')">🌈</div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-button secondary" onclick="closeAvatarModal()">취소</button>
+            </div>
+        </div>
+    </div>
 
+    <div id="resetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">관리자 인증</div>
+            <input type="password" id="adminPassword" class="modal-input" placeholder="관리자 비밀번호를 입력하세요" maxlength="4">
+            <div class="modal-buttons">
+                <button class="modal-button secondary" onclick="closeResetModal()">취소</button>
+                <button class="modal-button primary" onclick="confirmReset()">확인</button>
+            </div>
+        </div>
+    </div>
+    
     <script>
-        // 전역 변수
+        // --- Global State Variables ---
         let userLevel = 5;
         let userExp = 750;
         let userStreak = 7;
-        let completedMissions = 0;
+        let completedMissions = 15;
+        let userName = '푸른이';
+        let userAvatar = '🌟';
+        let userJob = '새신자';
+        let guildLevel = 12;
+        let guildExp = 350;
+        let currentStage = null;
+        let chatMessages = [];
+        let prayerTimes = { morning: false, noon: false, evening: false };
 
-        // 탭 전환 함수
-        function showTab(tabName) {
-            // 모든 탭 숨기기
-            document.querySelectorAll('.tab-content').forEach(tab => {
-                tab.classList.add('hidden');
-            });
+        // --- Data Definitions ---
+
+        // Scripture data for daily missions
+        const scriptures = [
+            { text: "내 안에 머물러 있어라. 그리하면 나도 너희 안에 머물러 있겠다. 가지가 포도나무에 붙어 있지 아니하면 스스로 열매를 맺을 수 없는 것과 같이, 너희도 내 안에 머물러 있지 아니하면 열매를 맺을 수 없다.", reference: "요한복음 15:4" },
+            { text: "나는 참 포도나무요, 내 아버지는 농부이시다.", reference: "요한복음 15:1" },
+            { text: "너희가 나의 말에 머물러 있으면, 너희는 참으로 나의 제자들이다. 그리고 너희는 진리를 얻게 될 것이며, 진리가 너희를 자유롭게 할 것이다.", reference: "요한복음 8:31-32" },
+            { text: "그러므로 너희는 가서, 모든 민족을 제자로 삼아서, 아버지와 아들과 성령의 이름으로 세례를 주고, 내가 너희에게 명령한 모든 것을 그들에게 가르쳐 지키게 하여라.", reference: "마태복음 28:19-20" },
+            { text: "사람은 마음으로 믿어서 의에 이르고, 입으로 고백해서 구원에 이르게 됩니다.", reference: "로마서 10:10" }
+        ];
+
+        // Stage content based on the provided PDF
+        const stageContents = {
+            1: {
+                title: "1강: 패치 시스템 - 거부할 수 없는 특권",
+                lessons: [
+                    {
+                        icon: "🛡️",
+                        title: "예배하기 - 하나님을 만나는 공식 채널",
+                        content: `
+                            <h4>📌 예배는 양방향 소통</h4>
+                            <p>예수님은 우리에게 새로운 생명을 주실 뿐만 아니라, "더 넘치게" 누리며 살게 하기 위해 자기 목숨을 버리겠다고 말씀하셨습니다.</p>
+                            <h4>💡 예배의 의미</h4>
+                            <ul>
+                                <li>하나님이 우리 일상에 얼마나 관심이 많은지 알 수 있는 시간</li>
+                                <li>우리를 얼마나 소중히 여기는지 깨닫는 시간</li>
+                                <li>하나님의 계획에서 우리가 얼마나 중요한 사람인지 발견하는 시간</li>
+                            </ul>
+                            <h4>🎯 실천 방법 - 마음으로 드리는 예배</h4>
+                            <ul>
+                                <li>예배 중에 수첩이나 다이어리에 하나님께 드리는 마음을 기록하기</li>
+                                <li>"오늘은 하나님이 예배에서 어떤 이야기를 해주실까?" 기대하며 참여하기</li>
+                                <li>찬양과 기도로 하나님을 높이고, 설교를 통해 말씀을 듣고 깨달은 후 고백과 다짐으로 마음 표현하기</li>
+                            </ul>
+                            <h4>⚔️ 거짓 위협 vs 진짜 목소리</h4>
+                            <p><strong>거짓 위협:</strong> "너는 왜 그거밖에 안 되냐?", "너 따위는 여기서 실패하면 바로 끝이야"</p>
+                            <p><strong>진짜 목소리 (용특새):</strong></p>
+                            <ul>
+                                <li>그리스도 안에서 당신은 <strong>용납</strong>되었습니다</li>
+                                <li>그리스도 안에서 당신은 <strong>특별한</strong> 존재입니다</li>
+                                <li>그리스도 안에서 당신은 <strong>새로운</strong> 공동체에 속했습니다</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        icon: "⚡",
+                        title: "성경읽기 - 푸른바람의 냉장고",
+                        content: `
+                            <h4>🍯 나의 패치, 나의 특권</h4>
+                            <p>성경은 푸른바람의 나라 에너지원이 가득한 냉장고입니다. 아무리 냉장고에 먹을 것이 가득해도 꺼내 먹지 않으면 아무 소용이 없습니다.</p>
+                            <h4>💭 성경 읽기는 특권인가요, 의무인가요?</h4>
+                            <p>성경 읽기는 특권이자 의무이지만, 결국은 특권입니다! 덕질하는 스타와 이야기 나눌 수 있는 채팅방에 초대받은 것과 같습니다.</p>
+                            <h4>🔍 성경을 꺼내 먹는 꿀팁</h4>
+                            <p>성경 읽기 초보자라면 다음 주제를 눈여겨 보세요:</p>
+                            <ul>
+                                <li><strong>하나님은 어떤 분일까?</strong> (하나님의 성품과 말씀과 하신 일)</li>
+                                <li><strong>예수님은 어떤 분일까?</strong> (예수님의 가르침과 삶과 행동)</li>
+                                <li><strong>선배들은 어떻게 살았을까?</strong> (그들의 믿음과 기도, 실수와 회복과 교훈)</li>
+                                <li><strong>그러면 나는 어떻게 살아야 할까?</strong> (내 현실에 적용할 수 있는 성경 원리)</li>
+                            </ul>
+                            <h4>📚 상황별 성경 말씀 가이드</h4>
+                            <ul>
+                                <li><strong>욕이라도 실컷 하고 싶을 때:</strong> 시편 (분노의 시가 많습니다)</li>
+                                <li><strong>믿음의 모험이 망설여질 때:</strong> 역사서들 (역사상 가장 큰 모험은 하나님의 모험)</li>
+                                <li><strong>스스로 형편없다고 느껴질 때:</strong> 사사기, 요나서</li>
+                                <li><strong>사랑이 무언지 알고 싶을 때:</strong> 룻기, 아가서, 요한복음</li>
+                                <li><strong>더 나은 삶을 살고 싶을 때:</strong> 시편, 잠언, 전도서, 신약의 편지들</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        icon: "🔌",
+                        title: "기도하기 - 신에게 빨대 꽂기",
+                        content: `
+                            <h4>🌳 포도나무와 가지의 관계</h4>
+                            <p>예수님은 우리를 "가지"라고 부르시며, 자신에게 딱 붙어 있으라고 하십니다. 나뭇가지의 최고 특권은 농부(하나님)가 땀 흘려 일하고 나무(예수님)가 열심히 공급한 양분을 그냥 받아 누리는 것입니다.</p>
+                            <h4>🕐 10-10-10 기도법</h4>
+                            <p><strong>아침에 10분:</strong></p>
+                            <ul>
+                                <li>"주님, 오늘도 당신 안에 머물게요"</li>
+                                <li>하루를 시작하면서 예수님에게 말을 걸어보세요</li>
+                            </ul>
+                            <p><strong>점심에 10분:</strong></p>
+                            <ul>
+                                <li>10분이라도 그분 목소리에 귀를 기울여보세요</li>
+                                <li>너무 힘든 순간에는 "하나님, 도와주세요"라고 마음속으로 크게 비명을 질러도 괜찮습니다</li>
+                            </ul>
+                            <p><strong>저녁에 10분:</strong></p>
+                            <ul>
+                                <li>잠들기 전 마지막 10분을 나무에 붙어서 에너지를 충분히 채우는 시간으로 활용</li>
+                                <li>짧은 기도문으로 일기를 써도 좋고, 낮에 부른 찬양 가사를 적어도 좋습니다</li>
+                            </ul>
+                            <h4>🎯 기도의 핵심</h4>
+                            <p>기독교 신앙은 하나님의 열망이 우리를 살렸고, 하나님의 그 열심이 오늘도 우리를 살게 한다는 사실을 믿는 것입니다. 편하게 능동적으로 빨대를 꽂고 그분께 말을 거세요!</p>
+                        `
+                    }
+                ]
+            },
+            2: {
+                title: "2강: 길드 시스템 - 우리, 같이 해볼까요",
+                lessons: [
+                    {
+                        icon: "🎯",
+                        title: "세례받기 - 길드 가입하기",
+                        content: `
+                            <h4>🏰 길드 가입의 의미</h4>
+                            <p>하나님 나라 사람이 되는 것과 그 나라 방식대로 사는 것 사이에 '세례'가 있습니다. 기독교는 자신만의 전인격적 고백이 필요한 종교이며, 절대 남에게 묻어갈 수 없습니다.</p>
+                            <h4>💍 비밀 연애에서 공식 발표로</h4>
+                            <p>세례를 좀 더 설레는 버전으로 설명하면, 비밀 연애를 하는 연인이 사귄다고 공식적으로 밝히는 것과 같습니다. 이 사람이라고 확신하기 때문입니다.</p>
+                            <h4>💫 마음에서 입으로</h4>
+                            <p>"사람은 마음으로 믿어서 의에 이르고, 입으로 고백해서 구원에 이르게 됩니다" (로마서 10:10)</p>
+                            <ul>
+                                <li>세례식에는 짧더라도 공동체 앞에서 자기 신앙을 고백하고 기도하는 시간이 있습니다</li>
+                                <li>세례 간증문이나 기도문을 작성해 간직하는 것을 추천합니다</li>
+                            </ul>
+                            <h4>🆕 입에서 행동으로</h4>
+                            <p>세례 후의 삶이 중요합니다. 결혼식보다 그 후의 삶이 더 중요한 것과 같습니다. 하나님 나라 사람은 더 이상 자기중심성의 노예로 살지 않기 때문에 자유롭습니다.</p>
+                        `
+                    },
+                    {
+                        icon: "👥",
+                        title: "공동체 속하기 - 병아리 공동체",
+                        content: `
+                            <h4>🐣 병아리가 살아남는 법</h4>
+                            <p>학교 앞에서 산 병아리 중에서 유일하게 끝까지 자라서 튼튼한 닭이 된 병아리의 비밀은 '공동체'였습니다. 새로운 공동체를 만나서 무엇은 먹고 무엇은 먹지 말아야 하는지, 물은 어떻게 마시고 바람은 어떻게 쐬는지를 선배와 어른들에게 배우며 점점 더 건강해졌습니다.</p>
+                            <h4>🎮 길드 버프 받는 방법</h4>
+                            <p><strong>1. 듣고 배우는 버프</strong></p>
+                            <ul>
+                                <li>예배 때 드리는 찬양과 기도, 선포되는 설교를 귀 기울여 듣기</li>
+                                <li>친구·선배들과 소그룹으로 모여서 하나님이 설교를 통해 하신 말씀을 나누기</li>
+                            </ul>
+                            <p><strong>2. 보고 배우는 버프</strong></p>
+                            <ul>
+                                <li>공동체의 누군가가 듣고 배운 바를 실제로 살아내는 모습을 보면서 서로 배우기</li>
+                                <li>실패담도 매우 소중합니다 - 결단하고 실천했을 때 일어나는 일이기 때문입니다</li>
+                            </ul>
+                            <h4>🚫 적당한 거리의 함정</h4>
+                            <p>적당한 거리를 유지하는 공동체는 답이 아닙니다. 거리를 적당하게 유지하면 상처도 덜 받고 불편하지 않지만, 성장을 서로 격려하고 도모할 수는 없습니다. '길드 버프'가 생기지 않습니다.</p>
+                        `
+                    },
+                    {
+                        icon: "🕊️",
+                        title: "성령 따르기 - 우리 힘만으로는 어려워",
+                        content: `
+                            <h4>🤝 늘 함께하는 참 좋은 스승</h4>
+                            <p>우리 힘만으로는 어렵습니다. 억지로는 No, 인격적으로 Yes! 성령님은 우리와 인격적인 관계를 원하십니다.</p>
+                            <h4>📖➕🕊️ 성경과 성령의 콤보</h4>
+                            <p>성경과 성령님은 따로 떼어놓고 생각할 수 없습니다. 성경은 성령님이 감동하여 기록하게 하신 하나님의 말씀이고, 성령님은 그 말씀을 우리가 깨닫고 순종할 수 있도록 도우시는 분이십니다.</p>
+                            <h4>🎯 이제 실전으로</h4>
+                            <ul>
+                                <li>성령님께 의존하되 인격적으로 소통하세요</li>
+                                <li>일상에서 성령님의 인도하심을 구하세요</li>
+                                <li>성령님의 열매: 사랑, 기쁨, 평화, 오래 참음, 친절, 선함, 신실함, 온유, 절제</li>
+                            </ul>
+                        `
+                    }
+                ]
+            },
+            3: {
+                title: "3강: 실전 시스템 - 인생은 장난이 아니니까",
+                lessons: [
+                    {
+                        icon: "📖→🌍",
+                        title: "이론에서 현실로 - 성경은 그림의 떡이 아니다",
+                        content: `
+                            <h4>📚 무책임한 동화에서 책임감 쩌는 현실로</h4>
+                            <p>공주님과 왕자님이 만나서 오래오래 행복하게 살았다는 결말은 무책임하고 비현실적입니다. 그 후에 어떻게 살았는지를 말해주어야 진짜 이야기가 완성됩니다.</p>
+                            <h4>🎯 끝날 때까지 끝난 게 아니다</h4>
+                            <ul>
+                                <li>일상 상황에서 성경 원리 적용해보기</li>
+                                <li>하나님 나라 방식으로 문제 해결하기</li>
+                                <li>실패해도 괜찮습니다 - 계획을 수정해서 다시 도전하세요</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        icon: "⏰",
+                        title: "매일 그분과 - 루틴! 재밌고 꾸준하게",
+                        content: `
+                            <h4>📅 일대일 만남이라니</h4>
+                            <p>하나님과의 개인적인 만남 시간을 가지세요. 재밌고 꾸준하게 루틴을 만들어보세요. 이것이 바로 큐티(QT, Quiet Time)입니다.</p>
+                            <h4>📖 큐티, 시작해볼까요</h4>
+                            <p><strong>기본 큐티 순서:</strong></p>
+                            <ul>
+                                <li><strong>1단계:</strong> 성경 본문 읽기</li>
+                                <li><strong>2단계:</strong> 하나님이 누구신지, 무엇을 원하시는지 찾아보기</li>
+                                <li><strong>3단계:</strong> 내게 주시는 메시지는 무엇인지 생각해보기</li>
+                                <li><strong>4단계:</strong> 오늘 하루 어떻게 적용할지 결정하기</li>
+                                <li><strong>5단계:</strong> 기도로 마무리하기</li>
+                            </ul>
+                        `
+                    },
+                    {
+                        icon: "🤗",
+                        title: "일생을 함께 - 어, 살아서 움직이네",
+                        content: `
+                            <h4>✨ 찬란했던 그 순간</h4>
+                            <p>인생에는 하나님의 사랑과 은혜를 특별히 느끼는 찬란한 순간들이 있습니다. 이런 순간들을 놓치지 말고 기억해두세요. 힘든 시간이 올 때 큰 위로가 됩니다.</p>
+                            <h4>🌑 어둠 속에 갇혔을 때도</h4>
+                            <p>모든 인생에는 어둠의 시간도 있습니다. 이때야말로 지금까지 쌓아온 신앙의 근육이 필요한 때입니다. 하나님이 함께하신다는 것을 믿음으로 붙들어야 합니다.</p>
+                            <h4>🌈 거룩한 상상</h4>
+                            <ul>
+                                <li>하나님 나라의 완성된 모습을 상상해보세요</li>
+                                <li>모든 눈물이 씻겨지고, 모든 상처가 치유되는 그날을 기대하세요</li>
+                                <li>그 소망이 오늘의 어려움을 견디게 하는 힘이 됩니다</li>
+                            </ul>
+                        `
+                    }
+                ]
+            }
+        };
+
+        // --- Core App Functions ---
+
+        /**
+         * Switches between the main tabs (Home, Stages, Guild, Profile)
+         * @param {string} tabName - The name of the tab to show
+         * @param {HTMLElement} navElement - The clicked navigation button element
+         */
+        function showTab(tabName, navElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
             
-            // 모든 네비게이션 비활성화
-            document.querySelectorAll('.nav-item').forEach(nav => {
-                nav.classList.remove('active');
-            });
-            
-            // 선택된 탭 보이기
             document.getElementById(tabName + '-tab').classList.remove('hidden');
-            
-            // 선택된 네비게이션 활성화
-            event.target.classList.add('active');
+            navElement.classList.add('active');
+
+            if (tabName === 'guild') updateGuildUserInfo();
+            if (tabName === 'stages') backToStages(); // Always show stage list first
         }
 
-        // 스테이지 입장 - 단순화
+        /**
+         * Enters a specific learning stage, showing its detailed content
+         * @param {number} stageNumber - The number of the stage to display
+         */
         function enterStage(stageNumber) {
-            showNotification(`${stageNumber}강 스테이지 준비중입니다!`);
-        }
-
-        // 패치 상세 보기 - 단순화  
-        function openPatchDetail(name, icon, description) {
-            showNotification(`${icon} ${name}: ${description}`);
-        }
-
-        // 미션 완료
-        function completeMission(button, message) {
-            if (!message) message = '미션 완료!';
+            currentStage = stageNumber;
+            const stageData = stageContents[stageNumber];
             
+            if (!stageData) {
+                showNotification('스테이지 데이터를 찾을 수 없습니다.');
+                return;
+            }
+            
+            document.getElementById('stage-list').classList.add('hidden');
+            document.getElementById('stage-detail').classList.remove('hidden');
+            
+            const lessonsHtml = stageData.lessons.map(lesson => `
+                <div class="lesson-container">
+                    <div class="lesson-header">
+                        <div class="lesson-icon">${lesson.icon}</div>
+                        <div class="lesson-title">${lesson.title}</div>
+                    </div>
+                    <div class="lesson-content">${lesson.content}</div>
+                </div>
+            `).join('');
+            
+            const stageContentElement = document.getElementById('stage-content');
+            stageContentElement.innerHTML = `
+                <h3 style="margin-bottom: 20px; color: #4facfe;">${stageData.title}</h3>
+                ${lessonsHtml}
+            `;
+            
+            document.querySelector('.content').scrollTop = 0;
+        }
+
+        /**
+         * Returns from the stage detail view to the stage list view
+         */
+        function backToStages() {
+            document.getElementById('stage-detail').classList.add('hidden');
+            document.getElementById('stage-list').classList.remove('hidden');
+            currentStage = null;
+        }
+
+        /**
+         * Completes a daily prayer time slot (morning, noon, evening)
+         * @param {string} timeSlot - The prayer slot being completed
+         * @param {HTMLElement} element - The clicked prayer slot element
+         */
+        function completePrayerTime(timeSlot, element) {
+            if (prayerTimes[timeSlot]) {
+                showNotification('이미 완료한 기도 시간입니다!');
+                return;
+            }
+            
+            prayerTimes[timeSlot] = true;
+            element.classList.add('completed');
+            
+            let message = '';
+            let expGain = 30;
+            
+            switch(timeSlot) {
+                case 'morning': message = '🌅 아침 기도 완료! 하루를 주님과 함께 시작하세요!'; break;
+                case 'noon': message = '☀️ 점심 기도 완료! 하루 중반, 주님께 감사드려요!'; break;
+                case 'evening': message = '🌙 저녁 기도 완료! 하루를 주님께 맡겨드려요!'; break;
+            }
+            
+            addExperience(expGain, message);
+            
+            if (prayerTimes.morning && prayerTimes.noon && prayerTimes.evening) {
+                setTimeout(() => {
+                    addExperience(50, '🎉 10-10-10 기도법 완주! 보너스 경험치 +50!');
+                }, 1000);
+            }
+            
+            completedMissions++;
+            updateUI();
+            saveProgress();
+        }
+
+        /**
+         * Displays a random scripture verse and a button to complete the mission
+         */
+        function showScripture() {
+            const container = document.getElementById('scripture-container');
+            const randomScripture = scriptures[Math.floor(Math.random() * scriptures.length)];
+            
+            container.innerHTML = `
+                <div class="scripture-card">
+                    <div class="scripture-text">"${randomScripture.text}"</div>
+                    <div class="scripture-reference">- ${randomScripture.reference} -</div>
+                </div>
+                <button class="mission-button" onclick="completeMission(this, '말씀 묵상 완료! 영양분을 얻었습니다! 📖', 70)" style="margin-top: 10px;">묵상 완료</button>
+            `;
+        }
+        
+        /**
+         * Handles the completion of a generic mission
+         * @param {HTMLElement} button - The clicked mission button
+         * @param {string} message - The notification message to show
+         * @param {number} expGain - The amount of experience to award
+         */
+        function completeMission(button, message, expGain = 50) {
             button.textContent = '완료!';
             button.style.background = '#28a745';
             button.disabled = true;
             
-            // 경험치 증가
-            userExp += 50;
-            document.getElementById('userExp').textContent = userExp;
-            
-            // 레벨업 체크
-            if (userExp >= 1000) {
-                userLevel++;
-                userExp -= 1000;
-                document.getElementById('userLevel').textContent = userLevel;
-                document.getElementById('userExp').textContent = userExp;
-                showNotification('🎉 레벨업! 새로운 능력이 해금되었습니다!');
-            } else {
-                showNotification(message);
-            }
+            addExperience(expGain, message);
             
             completedMissions++;
+            updateUI();
             saveProgress();
         }
 
-        // 모달 관련 함수들 제거됨 - 더 간단한 알림 방식 사용
+        /**
+         * Adds experience points and checks for level up
+         * @param {number} amount - The amount of EXP to add
+         * @param {string} [notificationMessage] - An optional message for the notification
+         */
+        function addExperience(amount, notificationMessage) {
+            userExp += amount;
+            
+            if (notificationMessage) {
+                showNotification(notificationMessage);
+            }
 
-        // 알림 표시
+            // Check for level up
+            while (userExp >= 1000) {
+                userLevel++;
+                userExp -= 1000;
+                setTimeout(() => showNotification(`🎉 레벨업! Lv.${userLevel} 달성!`), 500);
+            }
+            updateUI();
+        }
+
+        // --- Chat Functions ---
+
+        function openChat() {
+            const container = document.getElementById('chat-container');
+            container.innerHTML = createChatInterface('chat');
+            updateChatMessages('chat');
+        }
+
+        function showGuildChat() {
+            const container = document.getElementById('guild-chat-container');
+            container.innerHTML = createChatInterface('guild');
+            updateChatMessages('guild');
+        }
+        
+        function createChatInterface(prefix) {
+            return `
+                <div class="chat-container">
+                    <div class="chat-messages" id="${prefix}Messages"></div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="${prefix}Input" placeholder="길드원들과 대화해보세요..." onkeypress="handleChatKeyPress(event, '${prefix}')">
+                        <button class="chat-send-btn" onclick="sendMessage('${prefix}')">전송</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function updateChatMessages(prefix) {
+            const messagesContainer = document.getElementById(`${prefix}Messages`);
+            if (!messagesContainer) return;
+            
+            if (chatMessages.length === 0) {
+                messagesContainer.innerHTML = `<div style="text-align: center; color: #666; padding: 20px;"><p>첫 번째 메시지를 보내보세요! 💬</p></div>`;
+                return;
+            }
+            
+            messagesContainer.innerHTML = chatMessages.map(msg => `
+                <div class="message ${msg.sender === userName ? 'user' : 'other'}">
+                    <div class="message-header">
+                        <div class="message-avatar">${msg.avatar || '👤'}</div>
+                        <div class="message-sender">${msg.sender}</div>
+                        <div class="message-time">${msg.time}</div>
+                    </div>
+                    <div class="message-bubble">${msg.message}</div>
+                </div>
+            `).join('');
+            
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function sendMessage(prefix) {
+            const input = document.getElementById(`${prefix}Input`);
+            const message = input.value.trim();
+            if (message) {
+                const now = new Date();
+                const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+                
+                chatMessages.push({
+                    sender: userName,
+                    avatar: userAvatar,
+                    message: message,
+                    time: timeString
+                });
+                input.value = '';
+                
+                // Update both chat views if they exist
+                if (document.getElementById('chatMessages')) updateChatMessages('chat');
+                if (document.getElementById('guildChatMessages')) updateChatMessages('guild');
+                
+                saveProgress();
+            }
+        }
+
+        function handleChatKeyPress(event, prefix) {
+            if (event.key === 'Enter') {
+                sendMessage(prefix);
+            }
+        }
+
+        // --- Modal Functions ---
+
+        function showNameModal() {
+            const modal = document.getElementById('nameModal');
+            document.getElementById('nameInput').value = userName;
+            modal.style.display = 'flex';
+            document.getElementById('nameInput').focus();
+        }
+        function closeNameModal() { document.getElementById('nameModal').style.display = 'none'; }
+        function changeName() {
+            const newName = document.getElementById('nameInput').value.trim();
+            if (newName && newName.length > 0 && newName.length <= 10) {
+                userName = newName;
+                updateUI();
+                closeNameModal();
+                showNotification('닉네임이 변경되었습니다! 🎉');
+                saveProgress();
+            } else {
+                showNotification('닉네임은 1~10자 사이로 입력해주세요!');
+            }
+        }
+
+        function showAvatarModal() { document.getElementById('avatarModal').style.display = 'flex'; }
+        function closeAvatarModal() { document.getElementById('avatarModal').style.display = 'none'; }
+        function selectAvatar(emoji) {
+            userAvatar = emoji;
+            updateUI();
+            closeAvatarModal();
+            showNotification('프로필 사진이 변경되었습니다! ✨');
+            saveProgress();
+        }
+
+        function showResetModal() { document.getElementById('resetModal').style.display = 'flex'; }
+        function closeResetModal() { document.getElementById('resetModal').style.display = 'none'; }
+        function confirmReset() {
+            if (document.getElementById('adminPassword').value === '0000') {
+                localStorage.removeItem('blueWindProgress');
+                location.reload(); // Reload to reset state to default
+            } else {
+                showNotification('비밀번호가 틀렸습니다! ❌');
+            }
+        }
+
+        // --- UI and Utility Functions ---
+
+        /**
+         * Updates all relevant UI elements with current state data
+         */
+        function updateUI() {
+            // Header
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('headerAvatar').textContent = userAvatar;
+            document.getElementById('userLevel').textContent = userLevel;
+            document.getElementById('userExp').textContent = userExp;
+            document.getElementById('userStreak').textContent = userStreak;
+            // Profile Tab
+            document.getElementById('profileUserName').textContent = userName;
+            document.getElementById('profileAvatar').textContent = userAvatar;
+            document.getElementById('profileLevel').textContent = userLevel;
+            document.getElementById('profileJob').textContent = userJob;
+            document.getElementById('profileStreak').textContent = userStreak;
+            document.getElementById('completedMissionsCount').textContent = completedMissions;
+            // Guild Tab
+            document.getElementById('guildUserName').textContent = userName;
+            document.getElementById('guildUserAvatar').textContent = userAvatar;
+            document.getElementById('guildUserLevel').textContent = userLevel;
+            document.getElementById('guildUserStreak').textContent = userStreak;
+            document.getElementById('guildLevel').textContent = guildLevel;
+            document.getElementById('guildExp').textContent = guildExp;
+        }
+        
+        function updateGuildUserInfo() {
+            updateUI(); // This now handles all UI updates
+        }
+
+        /**
+         * Shows a temporary notification message at the top of the screen
+         * @param {string} message - The message to display
+         */
         function showNotification(message) {
+            const existingNotif = document.querySelector('.floating-notification');
+            if(existingNotif) existingNotif.remove();
+
             const notification = document.createElement('div');
             notification.className = 'floating-notification';
             notification.textContent = message;
@@ -600,37 +1414,37 @@
             }, 3000);
         }
 
-        // 로컬 스토리지에 데이터 저장
+        // --- Data Persistence ---
+
         function saveProgress() {
             const data = {
-                userLevel,
-                userExp,
-                userStreak,
-                completedMissions,
+                userName, userAvatar, userJob, userLevel, userExp, userStreak,
+                completedMissions, guildLevel, guildExp, chatMessages, prayerTimes,
                 lastLogin: new Date().toDateString()
             };
             localStorage.setItem('blueWindProgress', JSON.stringify(data));
         }
 
-        // 로컬 스토리지에서 데이터 불러오기
         function loadProgress() {
             const saved = localStorage.getItem('blueWindProgress');
             if (saved) {
                 const data = JSON.parse(saved);
-                userLevel = data.userLevel || 5;
-                userExp = data.userExp || 750;
-                userStreak = data.userStreak || 7;
+                userName = data.userName || '푸른이';
+                userAvatar = data.userAvatar || '🌟';
+                userLevel = data.userLevel || 1;
+                userExp = data.userExp || 0;
+                userStreak = data.userStreak || 1;
                 completedMissions = data.completedMissions || 0;
+                userJob = data.userJob || '새신자';
+                guildLevel = data.guildLevel || 1;
+                guildExp = data.guildExp || 0;
+                chatMessages = data.chatMessages || [];
                 
-                // UI 업데이트
-                document.getElementById('userLevel').textContent = userLevel;
-                document.getElementById('userExp').textContent = userExp;
-                document.getElementById('userStreak').textContent = userStreak;
-                
-                // 연속 접속일 체크
                 const today = new Date().toDateString();
-                if (data.lastLogin !== today) {
-                    const lastDate = new Date(data.lastLogin);
+                const lastLogin = data.lastLogin || today;
+
+                if (lastLogin !== today) {
+                    const lastDate = new Date(lastLogin);
                     const todayDate = new Date(today);
                     const diffTime = todayDate - lastDate;
                     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
@@ -638,33 +1452,55 @@
                     if (diffDays === 1) {
                         userStreak++;
                     } else if (diffDays > 1) {
-                        userStreak = 1;
+                        userStreak = 1; // Reset streak if more than a day passed
                     }
-                    
-                    document.getElementById('userStreak').textContent = userStreak;
-                    saveProgress();
+                    // Reset daily tasks
+                    prayerTimes = { morning: false, noon: false, evening: false };
+                } else {
+                    prayerTimes = data.prayerTimes || { morning: false, noon: false, evening: false };
                 }
+
+                // Restore prayer UI state
+                Object.keys(prayerTimes).forEach(timeSlot => {
+                    if (prayerTimes[timeSlot]) {
+                        const slots = document.querySelectorAll('.prayer-time-slot');
+                        if (timeSlot === 'morning' && slots[0]) slots[0].classList.add('completed');
+                        if (timeSlot === 'noon' && slots[1]) slots[1].classList.add('completed');
+                        if (timeSlot === 'evening' && slots[2]) slots[2].classList.add('completed');
+                    }
+                });
             }
+            updateUI();
         }
 
-        // 앱 초기화
+        // --- App Initialization ---
+
         function initApp() {
             loadProgress();
             
-            // 환영 메시지
             setTimeout(() => {
-                showNotification('푸른나라학교에 오신 것을 환영합니다! 🌟');
+                showNotification(`${userName}님, 푸른나라학교에 오신 것을 환영합니다! 🌟`);
             }, 1000);
+
+            // Add global event listeners for modals
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
+                }
+            });
         }
 
-        // 페이지 로드 시 초기화
         window.addEventListener('load', initApp);
-
-        // 페이지 종료 시 데이터 저장
         window.addEventListener('beforeunload', saveProgress);
 
-        // 서비스워커는 GitHub Pages 배포 시에만 활성화
-        // 미리보기에서는 비활성화하여 오류 방지
     </script>
 </body>
 </html>
+�
