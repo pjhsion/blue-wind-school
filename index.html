@@ -938,4 +938,1257 @@
 
             <!-- Guild Tab -->
             <div id="guild-tab" class="tab-content hidden">
-                <div style="background: linear-gradient(
+                <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 20px; border-radius: 15px; margin-bottom: 20px; text-align: center; position: relative;">
+                    <h3>👥 푸른바람단</h3>
+                    <strong>길드 레벨: <span id="guildLevel">1</span></strong><br>
+                    <small>다음 레벨까지 <span id="guildExp">0</span>/500 EXP</small>
+                </div>
+
+                <!-- QT Note Section -->
+                <div style="margin-bottom: 30px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                        <h4>📔 QT 노트</h4>
+                        <button style="background: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 5px; font-size: 12px; cursor: pointer;" onclick="showQTNoteModal()">+ QT 노트 작성</button>
+                    </div>
+                    <div id="qt-notes-container">
+                        <!-- QT 노트들이 여기에 표시됩니다 -->
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom: 15px;">🟢 현재 접속 중인 길드원</h4>
+                <div style="background: #f8f9fa; border-radius: 15px; padding: 15px; margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; padding: 10px; margin-bottom: 8px; background: white; border-radius: 10px;">
+                        <div id="guildUserAvatar" style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid #4facfe; background: #4facfe; color: white;">🌟</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; margin-bottom: 2px;"><span id="guildUserName">푸른이</span> (나)</div>
+                            <div style="font-size: 12px; color: #666;">레벨 <span id="guildUserLevel">1</span> <span id="guildUserJob">푸른이</span> • <span id="guildUserStreak">1</span>일 연속 접속</div>
+                        </div>
+                    </div>
+                    <div style="text-align: center; color: #666; padding: 20px;">
+                        <p>다른 길드원들이 접속하면 여기에 표시됩니다</p>
+                        <p>친구들을 초대해보세요! 🎉</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 20px;">
+                    <button style="width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 10px; font-weight: bold;" onclick="showGuildChat()">
+                        💬 길드 채팅 참여하기
+                    </button>
+                    <div id="guild-chat-container" style="margin-top: 15px;"></div>
+                </div>
+            </div>
+
+            <!-- Profile Tab -->
+            <div id="profile-tab" class="tab-content hidden">
+                <div style="background: #f8f9fa; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <div style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 50px; cursor: pointer; border: 3px solid #4facfe; background: white;" id="profileAvatar" onclick="showAvatarModal()">🌟</div>
+                        <div>
+                            <h4 id="profileUserName" style="margin-bottom: 5px; color: #333;">푸른이</h4>
+                            <p style="color: #666; font-size: 14px;">레벨 <span id="profileLevel">1</span> <span id="profileJob">푸른이</span></p>
+                            <p style="color: #666; font-size: 14px;">신앙 여정 <span id="profileStreak">1</span>일차</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px;">🏆 업적 및 뱃지</h4>
+                    <div style="background: white; padding: 15px; border-radius: 10px;">
+                        <div id="badge-container" style="margin-bottom: 10px; min-height: 25px;">
+                           <!-- Badges will be dynamically inserted here -->
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid #e9ecef;">
+                            <span>완료한 미션</span>
+                            <strong id="completedMissionsCount">0</strong>개
+                        </div>
+                    </div>
+                </div>
+
+                <div style="background: #f8f9fa; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px;">⚙️ 관리자 설정</h4>
+                    <div style="background: white; padding: 15px; border-radius: 10px;">
+                        <button style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;" onclick="showResetModal()">
+                            🔄 모든 데이터 초기화
+                        </button>
+                        <div style="font-size: 12px; color: #666; margin-top: 8px; text-align: center;">
+                            모든 진행 상황이 리셋됩니다.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <button class="nav-item active" onclick="showTab('home', this)">
+                🏠<br>홈
+            </button>
+            <button class="nav-item" onclick="showTab('stages', this)">
+                🎮<br>스테이지
+            </button>
+            <button class="nav-item" onclick="showTab('guild', this)">
+                👥<br>길드
+            </button>
+            <button class="nav-item" onclick="showTab('profile', this)">
+                👤<br>프로필
+            </button>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div id="nameModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">닉네임 변경</div>
+            <input type="text" id="nameInput" class="modal-input" placeholder="새로운 닉네임을 입력하세요" maxlength="10">
+            <div class="modal-buttons">
+                <button class="modal-button secondary" onclick="closeNameModal()">취소</button>
+                <button class="modal-button primary" onclick="changeName()">변경</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="avatarModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">프로필 사진 변경</div>
+            <div class="avatar-grid">
+                <div class="avatar-option" onclick="selectAvatar('🌟')">🌟</div>
+                <div class="avatar-option" onclick="selectAvatar('😊')">😊</div>
+                <div class="avatar-option" onclick="selectAvatar('🙏')">🙏</div>
+                <div class="avatar-option" onclick="selectAvatar('✨')">✨</div>
+                <div class="avatar-option" onclick="selectAvatar('🕊️')">🕊️</div>
+                <div class="avatar-option" onclick="selectAvatar('📖')">📖</div>
+                <div class="avatar-option" onclick="selectAvatar('❤️')">❤️</div>
+                <div class="avatar-option" onclick="selectAvatar('🌅')">🌅</div>
+                <div class="avatar-option" onclick="selectAvatar('⭐')">⭐</div>
+                <div class="avatar-option" onclick="selectAvatar('🎵')">🎵</div>
+                <div class="avatar-option" onclick="selectAvatar('🌸')">🌸</div>
+                <div class="avatar-option" onclick="selectAvatar('🌈')">🌈</div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-button secondary" onclick="closeAvatarModal()">취소</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="resetModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">관리자 인증</div>
+            <input type="password" id="adminPassword" class="modal-input" placeholder="관리자 비밀번호를 입력하세요" maxlength="4">
+            <div class="modal-buttons">
+                <button class="modal-button secondary" onclick="closeResetModal()">취소</button>
+                <button class="modal-button primary" onclick="confirmReset()">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notice Modal -->
+    <div id="noticeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">공지사항 작성</div>
+            <input type="password" id="noticePassword" class="modal-input" placeholder="관리자 비밀번호 (0000)" maxlength="4">
+            <input type="text" id="noticeTitle" class="modal-input" placeholder="공지사항 제목">
+            <textarea id="noticeContent" class="modal-textarea" placeholder="공지사항 내용을 입력하세요"></textarea>
+            <div class="modal-buttons">
+                <button class="modal-button secondary" onclick="closeNoticeModal()">취소</button>
+                <button class="modal-button primary" onclick="createNotice()">공지 등록</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QT Note Modal -->
+    <div id="qtNoteModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title" id="qtModalTitle">QT 노트 작성</div>
+            <input type="text" id="qtNoteTitle" class="modal-input" placeholder="QT 노트 제목">
+            <textarea id="qtNoteContent" class="modal-textarea" placeholder="오늘의 QT 내용을 기록해보세요..."></textarea>
+            <input type="password" id="qtNotePassword" class="modal-input" placeholder="비밀번호 (수정/삭제용)" maxlength="10">
+            <div class="modal-buttons">
+                <button class="modal-button secondary" onclick="closeQTNoteModal()">취소</button>
+                <button class="modal-button primary" id="qtSubmitBtn" onclick="createQTNote()">작성 완료</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- QT Note Password Modal -->
+    <div id="qtPasswordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">비밀번호 확인</div>
+            <p id="passwordModalText">비밀번호를 입력하세요:</p>
+            <input type="password" id="qtActionPassword" class="modal-input" placeholder="비밀번호" maxlength="10">
+            <div class="modal-buttons">
+                <button class="modal-button secondary" onclick="closeQTPasswordModal()">취소</button>
+                <button class="modal-button primary" onclick="confirmQTAction()">확인</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="minigameModal" class="modal">
+        <div class="modal-content" id="minigame-content">
+            <!-- Minigame content will be injected here -->
+        </div>
+    </div>
+    
+    <script>
+        // --- Global State Variables ---
+        let userLevel, userExp, userStreak, completedMissions, userName, userAvatar, userJob, userBadges, completedStages;
+        let guildLevel, guildExp;
+        let currentStage = null;
+        let chatMessages = [];
+        let prayerTimes = {};
+        let notices = [];
+        let qtNotes = [];
+        let editingQTNote = null;
+        let pendingQTAction = null;
+        let activeGame = { id: null, interval: null, stage: 0 };
+
+        // --- Data Definitions ---
+
+        const scriptures = [
+            { text: "내 안에 머물러 있어라. 그리하면 나도 너희 안에 머물러 있겠다. 가지가 포도나무에 붙어 있지 아니하면 스스로 열매를 맺을 수 없는 것과 같이, 너희도 내 안에 머물러 있지 아니하면 열매를 맺을 수 없다.", reference: "요한복음 15:4" },
+            { text: "나는 참 포도나무요, 내 아버지는 농부이시다.", reference: "요한복음 15:1" },
+            { text: "너희가 나의 말에 머물러 있으면, 너희는 참으로 나의 제자들이다. 그리고 너희는 진리를 얻게 될 것이며, 진리가 너희를 자유롭게 할 것이다.", reference: "요한복음 8:31-32" },
+            { text: "그러므로 너희는 가서, 모든 민족을 제자로 삼아서, 아버지와 아들과 성령의 이름으로 세례를 주고, 내가 너희에게 명령한 모든 것을 그들에게 가르쳐 지키게 하여라.", reference: "마태복음 28:19-20" },
+            { text: "사람은 마음으로 믿어서 의에 이르고, 입으로 고백해서 구원에 이르게 됩니다.", reference: "로마서 10:10" }
+        ];
+
+        const stageContents = {
+            1: {
+                title: "1강: 패치 시스템 - 거부할 수 없는 특권",
+                lessons: [
+                    {
+                        icon: "🛡️",
+                        title: "예배하기 - 하나님을 만나는 공식 채널",
+                        content: `<h4>📌 예배는 양방향 소통</h4><p>예수님은 우리에게 새로운 생명을 주실 뿐만 아니라, "더 넘치게" 누리며 살게 하기 위해 자기 목숨을 버리겠다고 말씀하셨습니다.</p><h4>💡 예배의 의미</h4><ul><li>하나님이 우리 일상에 얼마나 관심이 많은지 알 수 있는 시간</li><li>우리를 얼마나 소중히 여기는지 깨닫는 시간</li><li>하나님의 계획에서 우리가 얼마나 중요한 사람인지 발견하는 시간</li></ul>
+                        
+                        <h4>⚔️ 거짓 위협 vs 진짜 목소리 (용특새)</h4>
+                        <p><strong>거짓 위협:</strong> "너는 왜 그거밖에 안 되냐?", "너 따위는 여기서 실패하면 바로 끝이야"</p>
+                        <p><strong>진짜 목소리 (용특새):</strong></p>
+                        <ul>
+                            <li>그리스도 안에서 당신은 <strong>용납</strong>되었습니다</li>
+                            <li>그리스도 안에서 당신은 <strong>특별한</strong> 존재입니다</li>
+                            <li>그리스도 안에서 당신은 <strong>새로운</strong> 공동체에 속했습니다</li>
+                        </ul>
+                        <p>예배를 드리면서, 깨진 세상이 주는 거짓 위협과는 전혀 다른, 당신을 향한 진짜 목소리에 귀를 기울이세요. 당신을 향해 불어오는 푸른바람의 메시지는 어떤 공격에도 끄떡없는 체력을 주고 쉴드가 됩니다.</p>`
+                    },
+                    {
+                        icon: "⚡",
+                        title: "성경읽기 - 푸른바람의 냉장고",
+                        content: `<h4>🍯 나의 패치, 나의 특권</h4><p>성경은 푸른바람의 나라 에너지원이 가득한 냉장고입니다. 아무리 냉장고에 먹을 것이 가득해도 꺼내 먹지 않으면 아무 소용이 없습니다.</p><h4>🔍 성경을 꺼내 먹는 꿀팁</h4><ul><li>하나님은 어떤 분일까? (하나님의 성품과 말씀과 하신 일)</li><li>예수님은 어떤 분일까? (예수님의 가르침과 삶과 행동)</li><li>선배들은 어떻게 살았을까? (그들의 믿음과 기도, 실수와 회복과 교훈)</li><li>그러면 나는 어떻게 살아야 할까? (내 현실에 적용할 수 있는 성경 원리)</li></ul>`
+                    },
+                    {
+                        icon: "🔌",
+                        title: "기도하기 - 신에게 빨대 꽂기",
+                        content: `<h4>🌳 포도나무와 가지의 관계</h4><p>예수님은 우리를 "가지"라고 부르시며, 자신에게 딱 붙어 있으라고 하십니다. 나뭇가지의 최고 특권은 농부(하나님)가 땀 흘려 일하고 나무(예수님)가 열심히 공급한 양분을 그냥 받아 누리는 것입니다.</p><h4>🕐 10-10-10 기도법</h4><p>아침, 점심, 저녁 10분씩 예수님과 대화하는 시간을 가져보세요. 부담 없이, 그저 말을 거는 것부터 시작하면 됩니다.</p>`
+                    }
+                ],
+                discussionQuestions: [
+                    "예배, 성경 읽기, 기도 중에서 요즘 나에게 가장 가깝게 느껴지는 것과 가장 멀게 느껴지는 것은 무엇인가요? 그 이유는 무엇일까요?",
+                    "나를 향한 하나님의 '진짜 목소리'(용특새: 용납, 특별함, 새로운 공동체)를 의심하게 만드는 '거짓 위협'에는 어떤 것들이 있었나요?",
+                    "오늘 배운 '10-10-10 기도법'을 내일부터 당장 실천해본다면, 어떤 점이 기대되고 어떤 점이 걱정되나요?"
+                ]
+            },
+            2: {
+                title: "2강: 길드 시스템 - 우리, 같이 해볼까요",
+                lessons: [
+                     {
+                        icon: "🎯",
+                        title: "세례받기 - 길드 가입하기",
+                        content: `<h4>🏰 길드 가입의 의미</h4><p>하나님 나라 사람이 되는 것과 그 나라 방식대로 사는 것 사이에 '세례'가 있습니다. 기독교는 자신만의 전인격적 고백이 필요한 종교이며, 절대 남에게 묻어갈 수 없습니다.</p><h4>💍 비밀 연애에서 공식 발표로</h4><p>세례를 좀 더 설레는 버전으로 설명하면, 비밀 연애를 하는 연인이 사귄다고 공식적으로 밝히는 것과 같습니다. 이 사람이라고 확신하기 때문입니다.</p>`
+                    },
+                    {
+                        icon: "👥",
+                        title: "공동체 속하기 - 병아리 공동체",
+                        content: `<h4>🐣 병아리가 살아남는 법</h4><p>학교 앞에서 산 병아리가 살아남는 비결은 '공동체'였습니다. 공동체를 통해 무엇을 먹고, 어떻게 살아야 하는지 배우며 건강해집니다.</p><h4>🎮 길드 버프 받는 방법</h4><p>공동체 안에서 말씀을 듣고 배우는 버프, 다른 사람의 삶을 보고 배우는 버프를 통해 함께 성장할 수 있습니다.</p>`
+                    },
+                    {
+                        icon: "🕊️",
+                        title: "성령 따르기 - 우리 힘만으로는 어려워",
+                        content: `<h4>🤝 늘 함께하는 참 좋은 스승</h4><p>우리 힘만으로는 어렵습니다. 성령님은 우리와 인격적인 관계를 원하시며, 우리가 자발적으로 하나님의 뜻을 선택하도록 도우시는 분입니다.</p><h4>📖➕🕊️ 성경과 성령의 콤보</h4><p>성경과 성령님은 따로 떼어놓고 생각할 수 없습니다. 성령님은 성경 말씀을 깨닫고 순종하도록 도우십니다.</p>`
+                    }
+                ],
+                discussionQuestions: [
+                    "나에게 신앙 공동체(길드)는 어떤 의미인가요? 공동체를 통해 '길드 버프'를 받았던 경험이 있다면 나눠주세요.",
+                    "세례를 '비밀 연애에서 공식 발표로' 비유한 것처럼, 나의 신앙을 다른 사람들에게 공개적으로 표현하는 것에 대해 어떻게 생각하나요?",
+                    "성령님을 '늘 함께하는 참 좋은 스승'으로 인격적으로 신뢰하고 따르기 위해, 구체적으로 어떤 노력을 할 수 있을까요?"
+                ]
+            },
+            3: {
+                title: "3강: 실전 시스템 - 인생은 장난이 아니니까",
+                lessons: [
+                    {
+                        icon: "📖→🌍",
+                        title: "이론에서 현실로 - 성경은 그림의 떡이 아니다",
+                        content: `<h4>📚 무책임한 동화에서 책임감 쩌는 현실로</h4><p>신앙은 '오래오래 행복하게 살았답니다'에서 끝나지 않습니다. 그 후의 삶을 하나님 나라 방식으로 살아내는 것이 진짜 이야기입니다.</p><h4>🎯 끝날 때까지 끝난 게 아니다</h4><p>일상에서 성경 원리를 적용하고, 실패를 두려워하지 말고, 계속해서 하나님을 알아가며 신뢰를 쌓아가는 것이 중요합니다.</p>`
+                    },
+                    {
+                        icon: "⏰",
+                        title: "매일 그분과 - 루틴! 재밌고 꾸준하게",
+                        content: `<h4>📅 일대일 만남이라니</h4><p>하나님과의 개인적인 만남 시간, 즉 큐티(QT, Quiet Time)를 꾸준히 가지는 것이 중요합니다. 재밌고 꾸준하게 자신만의 루틴을 만들어보세요.</p><h4>📖 큐티, 시작해볼까요</h4><p>성경 읽기 → 하나님 알기 → 메시지 찾기 → 적용하기 → 기도하기 순서로 큐티를 진행해볼 수 있습니다.</p>`
+                    },
+                    {
+                        icon: "🤗",
+                        title: "일생을 함께 - 어, 살아서 움직이네",
+                        content: `<h4>✨ 찬란했던 그 순간과 어둠의 시간</h4><p>인생의 좋은 순간과 힘든 순간 모두 하나님과 함께하며 신앙의 근육을 키워나가야 합니다.</p><h4>🌈 거룩한 상상</h4><p>하나님 나라의 완성된 모습을 소망하며 오늘의 어려움을 견디고, 이 땅에서 하나님 나라를 맛보며 살아갈 수 있습니다.</p>`
+                    }
+                ],
+                discussionQuestions: [
+                    "성경 말씀을 '그림의 떡'이 아닌, 내 삶의 '책임감 쩌는 현실'로 만들기 위해 어떤 노력을 하고 있나요? 또는 어떤 점이 가장 어렵나요?",
+                    "매일 하나님과 만나는 '큐티' 시간을 꾸준히 갖기 위해 나에게 가장 필요한 것은 무엇일까요? (예: 시간, 장소, 의지, 좋은 교재 등)",
+                    "최근 나의 삶에서 경험한 '찬란했던 순간'과 '어둠의 시간'은 각각 무엇이었나요? 그 시간들을 통해 하나님에 대해 무엇을 배우게 되었나요?"
+                ]
+            }
+        };
+
+        // --- Job System ---
+        function getUserJobTitle(level) {
+            if (level >= 90) return '마스터';
+            if (level >= 60) return '청대장';
+            if (level >= 30) return '청기사';
+            return '푸른이';
+        }
+
+        // --- Core App Functions ---
+
+        function showTab(tabName, navElement) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
+            
+            document.getElementById(tabName + '-tab').classList.remove('hidden');
+            navElement.classList.add('active');
+
+            if (tabName === 'stages') backToStages();
+            if (tabName === 'guild') updateQTNotes();
+            if (tabName === 'home') updateNotices();
+        }
+
+        function enterStageContent(stageNumber) {
+            currentStage = stageNumber;
+            const stageData = stageContents[stageNumber];
+            
+            if (!stageData) {
+                showNotification('스테이지 데이터를 찾을 수 없습니다.');
+                return;
+            }
+            
+            document.getElementById('stage-list').classList.add('hidden');
+            document.getElementById('stage-detail').classList.remove('hidden');
+            
+            let contentHtml = stageData.lessons.map(lesson => `
+                <div class="lesson-container">
+                    <div class="lesson-header">
+                        <div class="lesson-icon">${lesson.icon}</div>
+                        <div class="lesson-title">${lesson.title}</div>
+                    </div>
+                    <div class="lesson-content">${lesson.content}</div>
+                </div>
+            `).join('');
+
+            if (stageData.discussionQuestions) {
+                contentHtml += `
+                    <div class="discussion-container">
+                        <h4>🤔 함께 나눌 질문</h4>
+                        <ol>
+                            ${stageData.discussionQuestions.map(q => `<li>${q}</li>`).join('')}
+                        </ol>
+                    </div>
+                `;
+            }
+
+            if (completedStages.includes(stageNumber)) {
+                contentHtml += `<div class="stage-completed-notice">✔️ 이 스테이지를 완료했습니다!</div>`;
+            } else {
+                contentHtml += `<button id="complete-stage-btn" class="modal-button primary" style="width:100%; margin-top:20px; background-color: #28a745;" onclick="completeStage(${stageNumber})">스테이지 완료 및 보상 받기 🏆</button>`;
+            }
+            
+            const stageContentElement = document.getElementById('stage-content');
+            stageContentElement.innerHTML = `
+                <h3 style="margin-bottom: 20px; color: #4facfe;">${stageData.title}</h3>
+                ${contentHtml}
+            `;
+            
+            document.querySelector('.content').scrollTop = 0;
+        }
+
+        function backToStages() {
+            document.getElementById('stage-detail').classList.add('hidden');
+            document.getElementById('stage-list').classList.remove('hidden');
+            currentStage = null;
+        }
+
+        function completeStage(stageNumber) {
+            if (completedStages.includes(stageNumber)) return;
+
+            let badgeName = '';
+            let levelGain = 0;
+            let itemName = '';
+
+            switch (stageNumber) {
+                case 1:
+                    badgeName = '용특새';
+                    itemName = '용특새 메시지';
+                    levelGain = 10;
+                    break;
+                case 2:
+                    badgeName = '길드 버프';
+                    itemName = '길드 버프';
+                    levelGain = 15;
+                    break;
+                case 3:
+                    badgeName = '성령의 열매';
+                    itemName = '성령의 열매';
+                    levelGain = 20;
+                    break;
+            }
+
+            if (badgeName) {
+                grantBadge(badgeName);
+                addExperience(levelGain * 10, `🎉 스테이지 ${stageNumber} 완료! ${itemName} 획득! 레벨 +${levelGain}!`);
+                completedStages.push(stageNumber);
+                
+                const button = document.getElementById('complete-stage-btn');
+                if (button) {
+                    button.remove();
+                    enterStageContent(stageNumber);
+                }
+
+                updateUI();
+                saveProgress();
+            }
+        }
+
+        function completePrayerTime(timeSlot, element) {
+            if (prayerTimes[timeSlot]) {
+                showNotification('이미 완료한 기도 시간입니다!');
+                return;
+            }
+            
+            prayerTimes[timeSlot] = true;
+            element.classList.add('completed');
+            
+            let message = '';
+            let expGain = 30;
+            
+            switch(timeSlot) {
+                case 'morning': message = '🌅 아침 기도 완료! 하루를 주님과 함께 시작하세요!'; break;
+                case 'noon': message = '☀️ 점심 기도 완료! 하루 중반, 주님께 감사드려요!'; break;
+                case 'evening': message = '🌙 저녁 기도 완료! 하루를 주님께 맡겨드려요!'; break;
+            }
+            
+            addExperience(expGain, message);
+            grantBadge('첫 기도');
+            
+            if (prayerTimes.morning && prayerTimes.noon && prayerTimes.evening) {
+                setTimeout(() => {
+                    addExperience(50, '🎉 10-10-10 기도법 완주! 보너스 경험치 +50!');
+                }, 1000);
+            }
+            
+            completedMissions++;
+            updateUI();
+            saveProgress();
+        }
+
+        function showScripture() {
+            const container = document.getElementById('scripture-container');
+            const randomScripture = scriptures[Math.floor(Math.random() * scriptures.length)];
+            
+            container.innerHTML = `
+                <div class="scripture-card">
+                    <div class="scripture-text">"${randomScripture.text}"</div>
+                    <div class="scripture-reference">- ${randomScripture.reference} -</div>
+                </div>
+                <button class="mission-button" onclick="completeMission(this, '말씀 묵상 완료! 영양분을 얻었습니다! 📖', 70, '성경 독자')" style="margin-top: 10px;">묵상 완료</button>
+            `;
+            document.getElementById('mission-btn-scripture').style.display = 'none';
+        }
+        
+        function completeMission(button, message, expGain = 50, badgeToGrant = null) {
+            button.textContent = '완료!';
+            button.disabled = true;
+            
+            addExperience(expGain, message);
+            if (badgeToGrant) grantBadge(badgeToGrant);
+            
+            completedMissions++;
+            updateUI();
+            saveProgress();
+        }
+
+        function addExperience(amount, notificationMessage) {
+            userExp += amount;
+            
+            if (notificationMessage) {
+                showNotification(notificationMessage);
+            }
+
+            while (userExp >= 100) {
+                userLevel++;
+                userExp -= 100;
+                setTimeout(() => showNotification(`🎉 레벨업! Lv.${userLevel} 달성!`), 500);
+            }
+            updateUI();
+        }
+
+        // --- Notice Functions ---
+        function showNoticeModal() {
+            document.getElementById('noticeModal').style.display = 'flex';
+            document.getElementById('noticePassword').focus();
+        }
+
+        function closeNoticeModal() {
+            document.getElementById('noticeModal').style.display = 'none';
+            document.getElementById('noticePassword').value = '';
+            document.getElementById('noticeTitle').value = '';
+            document.getElementById('noticeContent').value = '';
+        }
+
+        function createNotice() {
+            const password = document.getElementById('noticePassword').value;
+            const title = document.getElementById('noticeTitle').value.trim();
+            const content = document.getElementById('noticeContent').value.trim();
+
+            if (password !== '0000') {
+                showNotification('관리자 비밀번호가 틀렸습니다! ❌');
+                return;
+            }
+
+            if (!title || !content) {
+                showNotification('제목과 내용을 모두 입력해주세요!');
+                return;
+            }
+
+            const notice = {
+                id: Date.now(),
+                title: title,
+                content: content,
+                date: new Date().toLocaleDateString('ko-KR')
+            };
+
+            notices.unshift(notice);
+            updateNotices();
+            closeNoticeModal();
+            showNotification('공지사항이 등록되었습니다! 📢');
+            saveProgress();
+        }
+
+        function updateNotices() {
+            const container = document.getElementById('notices-container');
+            if (notices.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: #666; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                        <p>등록된 공지사항이 없습니다.</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = notices.map(notice => `
+                    <div class="notice-card">
+                        <div class="notice-header">
+                            <div class="notice-title">📢 ${notice.title}</div>
+                            <div class="notice-date">${notice.date}</div>
+                        </div>
+                        <div class="notice-content">${notice.content}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // --- QT Note Functions ---
+        function showQTNoteModal() {
+            editingQTNote = null;
+            document.getElementById('qtModalTitle').textContent = 'QT 노트 작성';
+            document.getElementById('qtSubmitBtn').textContent = '작성 완료';
+            document.getElementById('qtSubmitBtn').onclick = createQTNote;
+            document.getElementById('qtNoteTitle').value = '';
+            document.getElementById('qtNoteContent').value = '';
+            document.getElementById('qtNotePassword').value = '';
+            document.getElementById('qtNoteModal').style.display = 'flex';
+        }
+
+        function closeQTNoteModal() {
+            document.getElementById('qtNoteModal').style.display = 'none';
+        }
+
+        function createQTNote() {
+            const title = document.getElementById('qtNoteTitle').value.trim();
+            const content = document.getElementById('qtNoteContent').value.trim();
+            const password = document.getElementById('qtNotePassword').value.trim();
+
+            if (!title || !content || !password) {
+                showNotification('모든 필드를 입력해주세요!');
+                return;
+            }
+
+            if (editingQTNote) {
+                // 수정 모드
+                editingQTNote.title = title;
+                editingQTNote.content = content;
+                editingQTNote.password = password;
+                editingQTNote.date = new Date().toLocaleDateString('ko-KR');
+                showNotification('QT 노트가 수정되었습니다! ✏️');
+            } else {
+                // 새 작성 모드
+                const qtNote = {
+                    id: Date.now(),
+                    title: title,
+                    content: content,
+                    password: password,
+                    author: userName,
+                    date: new Date().toLocaleDateString('ko-KR'),
+                    likes: 0,
+                    likedBy: []
+                };
+                qtNotes.unshift(qtNote);
+                showNotification('QT 노트가 작성되었습니다! 📝');
+            }
+
+            updateQTNotes();
+            closeQTNoteModal();
+            saveProgress();
+        }
+
+        function updateQTNotes() {
+            const container = document.getElementById('qt-notes-container');
+            if (qtNotes.length === 0) {
+                container.innerHTML = `
+                    <div style="text-align: center; color: #666; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                        <p>작성된 QT 노트가 없습니다.</p>
+                        <p>첫 번째 QT 노트를 작성해보세요! 📝</p>
+                    </div>
+                `;
+            } else {
+                container.innerHTML = qtNotes.map(note => `
+                    <div class="qt-note-card">
+                        <div class="qt-note-header">
+                            <div class="qt-note-title">${note.title}</div>
+                            <div class="qt-note-date">${note.date}</div>
+                        </div>
+                        <div class="qt-note-content">${note.content}</div>
+                        <div class="qt-note-actions">
+                            <button class="like-button" onclick="toggleLike(${note.id})">
+                                ${note.likedBy.includes(userName) ? '❤️' : '🤍'} ${note.likes}
+                            </button>
+                            ${note.author === userName ? `
+                                <div class="note-buttons">
+                                    <button class="note-btn edit" onclick="editQTNote(${note.id})">수정</button>
+                                    <button class="note-btn delete" onclick="deleteQTNote(${note.id})">삭제</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function toggleLike(noteId) {
+            const note = qtNotes.find(n => n.id === noteId);
+            if (!note) return;
+
+            if (note.likedBy.includes(userName)) {
+                // 좋아요 취소
+                note.likedBy = note.likedBy.filter(name => name !== userName);
+                note.likes--;
+                showNotification('좋아요를 취소했습니다 💔');
+            } else {
+                // 좋아요 추가
+                note.likedBy.push(userName);
+                note.likes++;
+                showNotification('좋아요를 눌렀습니다! ❤️');
+            }
+
+            updateQTNotes();
+            saveProgress();
+        }
+
+        function editQTNote(noteId) {
+            const note = qtNotes.find(n => n.id === noteId);
+            if (!note) return;
+
+            pendingQTAction = { action: 'edit', noteId: noteId };
+            document.getElementById('passwordModalText').textContent = 'QT 노트를 수정하려면 비밀번호를 입력하세요:';
+            document.getElementById('qtPasswordModal').style.display = 'flex';
+            document.getElementById('qtActionPassword').focus();
+        }
+
+        function deleteQTNote(noteId) {
+            const note = qtNotes.find(n => n.id === noteId);
+            if (!note) return;
+
+            pendingQTAction = { action: 'delete', noteId: noteId };
+            document.getElementById('passwordModalText').textContent = 'QT 노트를 삭제하려면 비밀번호를 입력하세요:';
+            document.getElementById('qtPasswordModal').style.display = 'flex';
+            document.getElementById('qtActionPassword').focus();
+        }
+
+        function closeQTPasswordModal() {
+            document.getElementById('qtPasswordModal').style.display = 'none';
+            document.getElementById('qtActionPassword').value = '';
+            pendingQTAction = null;
+        }
+
+        function confirmQTAction() {
+            if (!pendingQTAction) return;
+
+            const password = document.getElementById('qtActionPassword').value;
+            const note = qtNotes.find(n => n.id === pendingQTAction.noteId);
+
+            if (!note || note.password !== password) {
+                showNotification('비밀번호가 틀렸습니다! ❌');
+                return;
+            }
+
+            if (pendingQTAction.action === 'edit') {
+                editingQTNote = note;
+                document.getElementById('qtModalTitle').textContent = 'QT 노트 수정';
+                document.getElementById('qtSubmitBtn').textContent = '수정 완료';
+                document.getElementById('qtSubmitBtn').onclick = createQTNote;
+                document.getElementById('qtNoteTitle').value = note.title;
+                document.getElementById('qtNoteContent').value = note.content;
+                document.getElementById('qtNotePassword').value = note.password;
+                document.getElementById('qtNoteModal').style.display = 'flex';
+            } else if (pendingQTAction.action === 'delete') {
+                qtNotes = qtNotes.filter(n => n.id !== pendingQTAction.noteId);
+                updateQTNotes();
+                showNotification('QT 노트가 삭제되었습니다! 🗑️');
+                saveProgress();
+            }
+
+            closeQTPasswordModal();
+        }
+
+        // --- Badge Functions ---
+        function grantBadge(badgeName) {
+            if (!userBadges.includes(badgeName)) {
+                userBadges.push(badgeName);
+                showNotification(`🏆 뱃지 획득: ${badgeName}!`);
+                updateUI();
+                saveProgress();
+            }
+        }
+
+        // --- Chat Functions ---
+        function openChat() {
+            const container = document.getElementById('chat-container');
+            container.innerHTML = createChatInterface('chat');
+            updateChatMessages('chat');
+            document.getElementById('mission-btn-chat').style.display = 'none';
+        }
+
+        function showGuildChat() {
+            const container = document.getElementById('guild-chat-container');
+            container.innerHTML = createChatInterface('guild');
+            updateChatMessages('guild');
+        }
+        
+        function createChatInterface(prefix) {
+            return `<div class="chat-container"><div class="chat-messages" id="${prefix}Messages"></div><div class="chat-input-container"><input type="text" class="chat-input" id="${prefix}Input" placeholder="길드원들과 대화해보세요..." onkeypress="handleChatKeyPress(event, '${prefix}')"><button class="chat-send-btn" onclick="sendMessage('${prefix}')">전송</button></div></div>`;
+        }
+
+        function updateChatMessages(prefix) {
+            const messagesContainer = document.getElementById(`${prefix}Messages`);
+            if (!messagesContainer) return;
+            
+            messagesContainer.innerHTML = chatMessages.length === 0 ? `<div style="text-align: center; color: #666; padding: 20px;"><p>첫 번째 메시지를 보내보세요! 💬</p></div>` : chatMessages.map(msg => `<div class="message ${msg.sender === userName ? 'user' : 'other'}"><div class="message-header"><div class="message-avatar">${msg.avatar || '👤'}</div><div class="message-sender">${msg.sender}</div><div class="message-time">${msg.time}</div></div><div class="message-bubble">${msg.message}</div></div>`).join('');
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function sendMessage(prefix) {
+            const input = document.getElementById(`${prefix}Input`);
+            const message = input.value.trim();
+            if (message) {
+                const now = new Date();
+                const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+                
+                chatMessages.push({ sender: userName, avatar: userAvatar, message: message, time: timeString });
+                input.value = '';
+                
+                if (document.getElementById('chatMessages')) updateChatMessages('chat');
+                if (document.getElementById('guildChatMessages')) updateChatMessages('guild');
+                
+                saveProgress();
+            }
+        }
+
+        function handleChatKeyPress(event, prefix) {
+            if (event.key === 'Enter') sendMessage(prefix);
+        }
+
+        // --- Modal Functions ---
+        function showNameModal() {
+            const modal = document.getElementById('nameModal');
+            document.getElementById('nameInput').value = userName;
+            modal.style.display = 'flex';
+            document.getElementById('nameInput').focus();
+        }
+        function closeNameModal() { document.getElementById('nameModal').style.display = 'none'; }
+        function changeName() {
+            const newName = document.getElementById('nameInput').value.trim();
+            if (newName && newName.length > 0 && newName.length <= 10) {
+                userName = newName;
+                updateUI();
+                closeNameModal();
+                showNotification('닉네임이 변경되었습니다! 🎉');
+                saveProgress();
+            } else {
+                showNotification('닉네임은 1~10자 사이로 입력해주세요!');
+            }
+        }
+
+        function showAvatarModal() { document.getElementById('avatarModal').style.display = 'flex'; }
+        function closeAvatarModal() { document.getElementById('avatarModal').style.display = 'none'; }
+        function selectAvatar(emoji) {
+            userAvatar = emoji;
+            updateUI();
+            closeAvatarModal();
+            showNotification('프로필 사진이 변경되었습니다! ✨');
+            saveProgress();
+        }
+
+        function showResetModal() { document.getElementById('resetModal').style.display = 'flex'; }
+        function closeResetModal() { document.getElementById('resetModal').style.display = 'none'; }
+        function confirmReset() {
+            if (document.getElementById('adminPassword').value === '0000') {
+                localStorage.removeItem('blueWindProgress');
+                setInitialState();
+                updateUI();
+                resetMissionUI();
+                closeResetModal();
+                showNotification('모든 데이터가 초기화되었습니다. 🔄');
+            } else {
+                showNotification('비밀번호가 틀렸습니다! ❌');
+            }
+        }
+
+        // --- Minigame Functions ---
+        function launchMinigame(stageNumber) {
+            const modal = document.getElementById('minigameModal');
+            const content = document.getElementById('minigame-content');
+            activeGame.stage = stageNumber;
+
+            let gameHtml = '';
+            switch(stageNumber) {
+                case 1:
+                    gameHtml = `
+                        <div class="modal-title">미니게임: 말씀의 비</div>
+                        <p style="margin-bottom: 15px;">바구니를 움직여 '사랑', '믿음', '소망' 단어를 받고, '미움', '의심' 단어는 피하세요!</p>
+                        <canvas id="minigame-canvas" width="320" height="240"></canvas>
+                        <div class="modal-buttons" style="margin-top:15px;">
+                           <button class="modal-button secondary" onclick="closeMinigame(false)">그만하기</button>
+                        </div>
+                    `;
+                    content.innerHTML = gameHtml;
+                    modal.style.display = 'flex';
+                    initGame1();
+                    break;
+                case 2:
+                    gameHtml = `
+                        <div class="modal-title">미니게임: 공동체 잇기</div>
+                        <p style="margin-bottom: 15px;">같은 아이콘끼리 선으로 연결해서 공동체를 완성하세요!</p>
+                        <canvas id="minigame-canvas" width="320" height="240"></canvas>
+                        <div class="modal-buttons" style="margin-top:15px;">
+                           <button class="modal-button secondary" onclick="closeMinigame(false)">그만하기</button>
+                        </div>
+                    `;
+                    content.innerHTML = gameHtml;
+                    modal.style.display = 'flex';
+                    initGame2();
+                    break;
+                case 3:
+                     gameHtml = `
+                        <div class="modal-title">미니게임: 삶의 갈림길</div>
+                        <p id="quiz-question" style="margin-bottom: 15px;">길에서 도움이 필요한 사람을 만났습니다. 어떻게 하시겠습니까?</p>
+                        <div id="quiz-options">
+                           <button class="quiz-option" onclick="handleQuizAnswer(true)">따뜻한 음료와 함께 위로의 말을 건넨다.</button>
+                           <button class="quiz-option" onclick="handleQuizAnswer(false)">바쁜 일이 있어 그냥 지나간다.</button>
+                        </div>
+                         <div class="modal-buttons" style="margin-top:15px;">
+                           <button class="modal-button secondary" onclick="closeMinigame(false)">그만하기</button>
+                        </div>
+                    `;
+                    content.innerHTML = gameHtml;
+                    modal.style.display = 'flex';
+                    break;
+            }
+        }
+        
+        function closeMinigame(isSuccess) {
+            if (activeGame.interval) {
+                clearInterval(activeGame.interval);
+                activeGame.interval = null;
+            }
+            document.getElementById('minigameModal').style.display = 'none';
+            if (isSuccess) {
+                showNotification('미니게임 성공! 보너스 경험치 +50 EXP 🎉');
+                addExperience(50);
+                saveProgress();
+            }
+            enterStageContent(activeGame.stage);
+        }
+
+        function initGame1() { // 말씀의 비
+            const canvas = document.getElementById('minigame-canvas');
+            const ctx = canvas.getContext('2d');
+            let score = 0;
+            let basket = { x: canvas.width / 2 - 25, y: canvas.height - 30, width: 50, height: 10 };
+            let words = [];
+
+            function moveBasket(e) {
+                const rect = canvas.getBoundingClientRect();
+                basket.x = e.clientX - rect.left - basket.width / 2;
+                if (basket.x < 0) basket.x = 0;
+                if (basket.x > canvas.width - basket.width) basket.x = canvas.width - basket.width;
+            }
+            canvas.addEventListener('mousemove', moveBasket);
+
+            function gameLoop() {
+                // Add new word
+                if (Math.random() < 0.05) {
+                    const isGood = Math.random() > 0.4;
+                    words.push({
+                        text: isGood ? ['사랑', '믿음', '소망'][Math.floor(Math.random()*3)] : ['미움', '의심'][Math.floor(Math.random()*2)],
+                        x: Math.random() * (canvas.width - 30),
+                        y: 0,
+                        speed: Math.random() * 1 + 1,
+                        isGood: isGood
+                    });
+                }
+
+                // Update and draw
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw basket
+                ctx.fillStyle = '#4a148c';
+                ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+
+                // Draw words
+                for (let i = words.length - 1; i >= 0; i--) {
+                    let word = words[i];
+                    word.y += word.speed;
+                    
+                    ctx.font = '16px Pretendard';
+                    ctx.fillStyle = word.isGood ? '#007bff' : '#dc3545';
+                    ctx.fillText(word.text, word.x, word.y);
+
+                    // Collision detection
+                    if (word.y > basket.y && word.x > basket.x && word.x < basket.x + basket.width) {
+                        score += word.isGood ? 10 : -10;
+                        words.splice(i, 1);
+                    } else if (word.y > canvas.height) {
+                        words.splice(i, 1);
+                    }
+                }
+                
+                // Draw score
+                ctx.fillStyle = '#000';
+                ctx.fillText(`점수: ${score}`, 10, 20);
+
+                if (score >= 50) {
+                    canvas.removeEventListener('mousemove', moveBasket);
+                    closeMinigame(true);
+                }
+                 if (score < -20) {
+                    canvas.removeEventListener('mousemove', moveBasket);
+                    closeMinigame(false);
+                }
+            }
+            activeGame.interval = setInterval(gameLoop, 1000 / 60);
+        }
+
+        function initGame2() { // 공동체 잇기
+            const canvas = document.getElementById('minigame-canvas');
+            const ctx = canvas.getContext('2d');
+            const icons = ['😊', '🙏', '🕊️', '❤️'];
+            let points = [];
+            let selectedPoint = null;
+            let lines = [];
+            let pairs = icons.length;
+
+            // Create pairs of points
+            icons.forEach(icon => {
+                for(let i=0; i<2; i++) {
+                    points.push({
+                        x: Math.random() * (canvas.width - 40) + 20,
+                        y: Math.random() * (canvas.height - 40) + 20,
+                        icon: icon,
+                        id: Math.random(),
+                        connected: false
+                    });
+                }
+            });
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.font = '24px Pretendard';
+                // Draw lines
+                lines.forEach(line => {
+                    ctx.beginPath();
+                    ctx.moveTo(line.p1.x, line.p1.y);
+                    ctx.lineTo(line.p2.x, line.p2.y);
+                    ctx.strokeStyle = '#28a745';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                });
+                // Draw points
+                points.forEach(p => {
+                    ctx.fillStyle = p.connected ? '#9e9e9e' : (p === selectedPoint ? '#ffd700' : '#4facfe');
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 15, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = 'white';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(p.icon, p.x, p.y);
+                });
+            }
+
+            function handleClick(e) {
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                for (let p of points) {
+                    const dist = Math.sqrt((p.x - mouseX)**2 + (p.y - mouseY)**2);
+                    if (dist < 15 && !p.connected) {
+                        if (!selectedPoint) {
+                            selectedPoint = p;
+                        } else {
+                            if (selectedPoint.icon === p.icon && selectedPoint.id !== p.id) {
+                                // Match found
+                                selectedPoint.connected = true;
+                                p.connected = true;
+                                lines.push({p1: selectedPoint, p2: p});
+                                selectedPoint = null;
+                                pairs--;
+                                if (pairs === 0) {
+                                    draw();
+                                    canvas.removeEventListener('click', handleClick);
+                                    setTimeout(() => closeMinigame(true), 500);
+                                }
+                            } else {
+                                // No match
+                                selectedPoint = null;
+                            }
+                        }
+                        draw();
+                        return;
+                    }
+                }
+            }
+            
+            canvas.addEventListener('click', handleClick);
+            draw();
+        }
+
+        function handleQuizAnswer(isCorrect) {
+            if (isCorrect) {
+                closeMinigame(true);
+            } else {
+                document.getElementById('quiz-question').textContent = "아쉽네요. 하나님 나라의 방식은 이웃을 사랑하는 것이랍니다. 다시 시도해보세요!";
+                document.getElementById('quiz-options').innerHTML = `<button class="quiz-option" onclick="closeMinigame(false)">학습으로 돌아가기</button>`;
+            }
+        }
+
+        // --- UI and Utility Functions ---
+        function updateUI() {
+            // Update job title based on level
+            userJob = getUserJobTitle(userLevel);
+            
+            // Header
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('headerAvatar').textContent = userAvatar;
+            document.getElementById('userLevel').textContent = userLevel;
+            document.getElementById('userExp').textContent = userExp;
+            document.getElementById('userStreak').textContent = userStreak;
+            
+            // Profile Tab
+            document.getElementById('profileUserName').textContent = userName;
+            document.getElementById('profileAvatar').textContent = userAvatar;
+            document.getElementById('profileLevel').textContent = userLevel;
+            document.getElementById('profileJob').textContent = userJob;
+            document.getElementById('profileStreak').textContent = userStreak;
+            document.getElementById('completedMissionsCount').textContent = completedMissions;
+            
+            // Guild Tab
+            document.getElementById('guildUserName').textContent = userName;
+            document.getElementById('guildUserAvatar').textContent = userAvatar;
+            document.getElementById('guildUserLevel').textContent = userLevel;
+            document.getElementById('guildUserJob').textContent = userJob;
+            document.getElementById('guildUserStreak').textContent = userStreak;
+            document.getElementById('guildLevel').textContent = guildLevel;
+            document.getElementById('guildExp').textContent = guildExp;
+            
+            // Badges
+            const badgeContainer = document.getElementById('badge-container');
+            if(userBadges.length > 0) {
+                badgeContainer.innerHTML = userBadges.map(b => `<span>${b}</span>`).join('');
+            } else {
+                badgeContainer.innerHTML = `<p style="color: #999; font-size: 14px;">아직 획득한 뱃지가 없습니다.</p>`;
+            }
+        }
+        
+        function resetMissionUI() {
+            // Reset prayer slots
+            document.querySelectorAll('.prayer-time-slot').forEach(slot => slot.classList.remove('completed'));
+            // Reset mission buttons
+            document.querySelectorAll('.mission-button').forEach(btn => {
+                btn.disabled = false;
+                if(btn.id === 'mission-btn-worship') btn.textContent = '참여 완료';
+            });
+            document.getElementById('mission-btn-scripture').style.display = 'inline-block';
+            document.getElementById('scripture-container').innerHTML = '';
+            document.getElementById('mission-btn-chat').style.display = 'inline-block';
+            document.getElementById('chat-container').innerHTML = '';
+            document.getElementById('guild-chat-container').innerHTML = '';
+        }
+
+        function showNotification(message) {
+            const existingNotif = document.querySelector('.floating-notification');
+            if(existingNotif) existingNotif.remove();
+            const notification = document.createElement('div');
+            notification.className = 'floating-notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // --- Data Persistence ---
+        function saveProgress() {
+            const data = {
+                userName, userAvatar, userJob, userLevel, userExp, userStreak,
+                completedMissions, userBadges, completedStages, guildLevel, guildExp, 
+                chatMessages, prayerTimes, notices, qtNotes,
+                lastLogin: new Date().toDateString()
+            };
+            localStorage.setItem('blueWindProgress', JSON.stringify(data));
+        }
+
+        function loadProgress() {
+            const saved = localStorage.getItem('blueWindProgress');
+            if (saved) {
+                const data = JSON.parse(saved);
+                userName = data.userName || '푸른이';
+                userAvatar = data.userAvatar || '🌟';
+                userLevel = data.userLevel || 1;
+                userExp = data.userExp || 0;
+                userStreak = data.userStreak || 1;
+                completedMissions = data.completedMissions || 0;
+                userJob = data.userJob || getUserJobTitle(userLevel);
+                userBadges = data.userBadges || [];
+                completedStages = data.completedStages || [];
+                guildLevel = data.guildLevel || 1;
+                guildExp = data.guildExp || 0;
+                chatMessages = data.chatMessages || [];
+                notices = data.notices || [];
+                qtNotes = data.qtNotes || [];
+                
+                const today = new Date().toDateString();
+                const lastLogin = data.lastLogin || today;
+
+                if (lastLogin !== today) {
+                    const lastDate = new Date(lastLogin);
+                    const todayDate = new Date(today);
+                    const diffTime = todayDate - lastDate;
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                    
+                    if (diffDays === 1) {
+                        userStreak++;
+                        grantBadge(`${userStreak}일 연속`);
+                    } else if (diffDays > 1) {
+                        userStreak = 1;
+                    }
+                    prayerTimes = { morning: false, noon: false, evening: false };
+                } else {
+                    prayerTimes = data.prayerTimes || { morning: false, noon: false, evening: false };
+                }
+
+                Object.keys(prayerTimes).forEach(timeSlot => {
+                    if (prayerTimes[timeSlot]) {
+                        const slots = document.querySelectorAll('.prayer-time-slot');
+                        if (timeSlot === 'morning' && slots[0]) slots[0].classList.add('completed');
+                        if (timeSlot === 'noon' && slots[1]) slots[1].classList.add('completed');
+                        if (timeSlot === 'evening' && slots[2]) slots[2].classList.add('completed');
+                    }
+                });
+            } else {
+                setInitialState();
+            }
+            updateUI();
+            updateNotices();
+            updateQTNotes();
+        }
+        
+        function setInitialState() {
+            userLevel = 1;
+            userExp = 0;
+            userStreak = 1;
+            completedMissions = 0;
+            userName = '푸른이';
+            userAvatar = '🌟';
+            userJob = '푸른이';
+            userBadges = [];
+            completedStages = [];
+            guildLevel = 1;
+            guildExp = 0;
+            chatMessages = [];
+            prayerTimes = { morning: false, noon: false, evening: false };
+            notices = [];
+            qtNotes = [];
+            saveProgress();
+        }
+
+        // --- App Initialization ---
+        function initApp() {
+            loadProgress();
+            
+            setTimeout(() => {
+                showNotification(`${userName}님, 푸른나라학교에 오신 것을 환영합니다! 🌟`);
+            }, 1000);
+
+            // Modal close events
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) {
+                        if (modal.id === 'minigameModal') return; // Don't close minigame on background click
+                        modal.style.display = 'none';
+                    }
+                });
+            });
+
+            // Keyboard events
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    if (activeGame.interval) return; // Don't allow escape during canvas games
+                    document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
+                }
+                if (e.key === 'Enter') {
+                    const nameModal = document.getElementById('nameModal');
+                    const resetModal = document.getElementById('resetModal');
+                    const noticeModal = document.getElementById('noticeModal');
+                    const qtNoteModal = document.getElementById('qtNoteModal');
+                    const qtPasswordModal = document.getElementById('qtPasswordModal');
+                    
+                    if (nameModal.style.display === 'flex') {
+                        e.preventDefault();
+                        changeName();
+                    } else if (resetModal.style.display === 'flex') {
+                        e.preventDefault();
+                        confirmReset();
+                    } else if (noticeModal.style.display === 'flex') {
+                        e.preventDefault();
+                        createNotice();
+                    } else if (qtNoteModal.style.display === 'flex') {
+                        e.preventDefault();
+                        createQTNote();
+                    } else if (qtPasswordModal.style.display === 'flex') {
+                        e.preventDefault();
+                        confirmQTAction();
+                    }
+                }
+            });
+        }
+
+        window.addEventListener('load', initApp);
+        window.addEventListener('beforeunload', saveProgress);
+
+    </script>
+</body>
+</html>
