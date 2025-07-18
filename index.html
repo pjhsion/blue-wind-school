@@ -170,48 +170,6 @@
             transition: width 0.3s ease;
         }
 
-        .patch-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            margin-top: 20px;
-        }
-
-        .patch-item {
-            background: white;
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .patch-item:hover {
-            border-color: #4facfe;
-            transform: scale(1.05);
-        }
-
-        .patch-item.completed {
-            background: #d4edda;
-            border-color: #28a745;
-        }
-
-        .patch-icon {
-            font-size: 30px;
-            margin-bottom: 10px;
-        }
-
-        .patch-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .patch-description {
-            font-size: 12px;
-            color: #666;
-        }
-
         .mission-card {
             background: #f8f9fa;
             border: 1px solid #dee2e6;
@@ -331,60 +289,7 @@
             margin-bottom: 5px;
         }
 
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.5);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 1000;
-        }
 
-        .modal-content {
-            background: white;
-            padding: 30px;
-            border-radius: 15px;
-            max-width: 300px;
-            text-align: center;
-            animation: modalSlideIn 0.3s ease;
-        }
-
-        @keyframes modalSlideIn {
-            from {
-                opacity: 0;
-                transform: translateY(-50px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .modal-title {
-            font-size: 20px;
-            font-weight: bold;
-            margin-bottom: 15px;
-            color: #4facfe;
-        }
-
-        .modal-text {
-            margin-bottom: 20px;
-            line-height: 1.5;
-        }
-
-        .modal-button {
-            background: #4facfe;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-weight: bold;
-        }
 
         .floating-notification {
             position: fixed;
@@ -488,7 +393,6 @@
                 </div>
             </div>
 
-            <!-- 스테이지 탭 -->
             <div id="stages-tab" class="tab-content hidden">
                 <h3 style="margin-bottom: 20px;">🎯 학습 스테이지</h3>
                 
@@ -517,43 +421,6 @@
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: 10%"></div>
                     </div>
-                </div>
-
-                <div id="stage-1-detail" class="hidden">
-                    <h3>🛡️ 1강: 패치 시스템</h3>
-                    <p style="margin-bottom: 20px; line-height: 1.6;">
-                        푸른바람의 나라에서 제공하는 특별한 능력을 익혀보세요!
-                    </p>
-                    
-                    <div class="patch-grid">
-                        <div class="patch-item completed" onclick="openPatchDetail('예배하기', '🛡️', '진리의 방패로 거짓 위협을 막아보세요')">
-                            <div class="patch-icon">🛡️</div>
-                            <div class="patch-name">예배하기</div>
-                            <div class="patch-description">진리의 방패</div>
-                        </div>
-                        
-                        <div class="patch-item completed" onclick="openPatchDetail('성경읽기', '⚡', '푸른바람 에너지로 HP를 회복하세요')">
-                            <div class="patch-icon">⚡</div>
-                            <div class="patch-name">성경읽기</div>
-                            <div class="patch-description">에너지 충전</div>
-                        </div>
-                        
-                        <div class="patch-item" onclick="openPatchDetail('기도하기', '🔌', '하나님께 직접 연결되어 소통하세요')">
-                            <div class="patch-icon">🔌</div>
-                            <div class="patch-name">기도하기</div>
-                            <div class="patch-description">신에게 빨대꽂기</div>
-                        </div>
-                        
-                        <div class="patch-item">
-                            <div class="patch-icon">🔒</div>
-                            <div class="patch-name">???</div>
-                            <div class="patch-description">잠김</div>
-                        </div>
-                    </div>
-                    
-                    <button style="margin-top: 20px; width: 100%; padding: 15px; background: #4facfe; color: white; border: none; border-radius: 10px; font-weight: bold;" onclick="showTab('stages')">
-                        ← 스테이지로 돌아가기
-                    </button>
                 </div>
             </div>
 
@@ -654,14 +521,7 @@
         </div>
     </div>
 
-    <!-- 모달 -->
-    <div id="modal" class="modal hidden">
-        <div class="modal-content">
-            <div class="modal-title" id="modal-title">제목</div>
-            <div class="modal-text" id="modal-text">내용</div>
-            <button class="modal-button" onclick="closeModal()">확인</button>
-        </div>
-    </div>
+        <!-- 모달 제거됨 - 더 이상 필요없음 -->
 
     <script>
         // 전역 변수
@@ -689,26 +549,22 @@
             event.target.classList.add('active');
         }
 
-        // 스테이지 입장
+        // 스테이지 입장 - 단순화
         function enterStage(stageNumber) {
-            if (stageNumber === 1) {
-                document.getElementById('stages-tab').classList.add('hidden');
-                document.getElementById('stage-1-detail').classList.remove('hidden');
-            }
+            showNotification(`${stageNumber}강 스테이지 준비중입니다!`);
         }
 
-        // 패치 상세 보기
+        // 패치 상세 보기 - 단순화  
         function openPatchDetail(name, icon, description) {
-            showModal(
-                `${icon} ${name}`,
-                `${description}\n\n이 패치를 활성화하면 일상생활에서 특별한 능력을 사용할 수 있습니다!`
-            );
+            showNotification(`${icon} ${name}: ${description}`);
         }
 
         // 미션 완료
         function completeMission(button, message) {
+            if (!message) message = '미션 완료!';
+            
             button.textContent = '완료!';
-            button.classList.add('completed');
+            button.style.background = '#28a745';
             button.disabled = true;
             
             // 경험치 증가
@@ -727,19 +583,10 @@
             }
             
             completedMissions++;
+            saveProgress();
         }
 
-        // 모달 표시
-        function showModal(title, text) {
-            document.getElementById('modal-title').textContent = title;
-            document.getElementById('modal-text').textContent = text;
-            document.getElementById('modal').classList.remove('hidden');
-        }
-
-        // 모달 닫기
-        function closeModal() {
-            document.getElementById('modal').classList.add('hidden');
-        }
+        // 모달 관련 함수들 제거됨 - 더 간단한 알림 방식 사용
 
         // 알림 표시
         function showNotification(message) {
@@ -816,10 +663,8 @@
         // 페이지 종료 시 데이터 저장
         window.addEventListener('beforeunload', saveProgress);
 
-        // PWA 매니페스트 데이터 (모바일 설치 지원)
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('data:text/javascript;base64,');
-        }
+        // 서비스워커는 GitHub Pages 배포 시에만 활성화
+        // 미리보기에서는 비활성화하여 오류 방지
     </script>
 </body>
 </html>
