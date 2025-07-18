@@ -4,14 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>푸른나라학교 - 신앙 RPG</title>
-    <!-- Web App Manifest for 'Add to Home Screen' -->
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="푸른나라학교">
     
     <style>
-        /* General styling for the entire page */
         * {
             margin: 0;
             padding: 0;
@@ -25,7 +23,6 @@
             color: #333;
         }
 
-        /* Main application container */
         .app-container {
             max-width: 414px;
             margin: 0 auto;
@@ -38,7 +35,6 @@
             flex-direction: column;
         }
 
-        /* Header section with user profile */
         .header {
             background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
             color: white;
@@ -97,7 +93,6 @@
             font-size: 18px;
         }
 
-        /* Bottom navigation bar */
         .navigation {
             display: flex;
             background: #f8f9fa;
@@ -130,14 +125,12 @@
             background: #3d8bfe;
         }
 
-        /* Main content area */
         .content {
             padding: 20px;
             flex-grow: 1;
             overflow-y: auto;
         }
 
-        /* Notice board styling */
         .notice-card {
             background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
             border: 1px solid #ffc107;
@@ -170,19 +163,6 @@
             line-height: 1.5;
         }
 
-        .admin-button {
-            position: absolute;
-            top: 5px;
-            right: 10px;
-            background: transparent;
-            border: none;
-            font-size: 12px;
-            opacity: 0.7;
-            cursor: pointer;
-            color: #856404;
-        }
-
-        /* Styling for mission cards on the home tab */
         .mission-card {
             background: #f8f9fa;
             border: 1px solid #dee2e6;
@@ -245,12 +225,10 @@
             transform: none;
         }
 
-        /* Utility class to hide elements */
         .hidden {
             display: none;
         }
 
-        /* Floating notification style */
         .floating-notification {
             position: fixed;
             top: 20px;
@@ -262,7 +240,7 @@
             border-radius: 25px;
             font-weight: bold;
             animation: slideInDown 0.3s ease;
-            z-index: 1001; /* Ensure it's above modals */
+            z-index: 1001;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
@@ -277,7 +255,6 @@
             }
         }
 
-        /* 10-10-10 prayer card styling */
         .prayer-time-card {
             background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
             border-radius: 15px;
@@ -318,7 +295,6 @@
             border-color: #28a745;
         }
 
-        /* Scripture display card */
         .scripture-card {
             background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
             border: 1px solid #2196f3;
@@ -348,7 +324,6 @@
             font-size: 14px;
         }
 
-        /* Chat interface styling */
         .chat-container {
             background: #f8f9fa;
             border-radius: 15px;
@@ -433,6 +408,19 @@
             font-size: 10px;
         }
 
+        .message-image {
+            max-width: 200px;
+            max-height: 200px;
+            border-radius: 10px;
+            margin-top: 5px;
+            cursor: pointer;
+            transition: transform 0.2s ease;
+        }
+
+        .message-image:hover {
+            transform: scale(1.05);
+        }
+
         .chat-input-container {
             display: flex;
             gap: 10px;
@@ -466,7 +454,24 @@
             background: #3d8bfe;
         }
 
-        /* QT Note styling */
+        .image-upload-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .image-upload-btn:hover {
+            background: #138496;
+        }
+
+        .hidden-file-input {
+            display: none;
+        }
+
         .qt-note-card {
             background: white;
             border: 1px solid #dee2e6;
@@ -540,7 +545,6 @@
         .note-btn.edit { background: #ffc107; }
         .note-btn.delete { background: #dc3545; }
 
-        /* Modal styling */
         .modal {
             position: fixed;
             top: 0;
@@ -644,7 +648,6 @@
             background: #5a6268;
         }
 
-        /* Stage lesson content styling */
         .lesson-container {
             background: white;
             border-radius: 15px;
@@ -713,7 +716,6 @@
             color: #2c5aa0;
         }
         
-        /* Stage selection cards */
         .stage-card {
             background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
             color: white;
@@ -728,7 +730,6 @@
             box-shadow: 0 8px 20px rgba(0,0,0,0.15);
         }
         
-        /* Avatar selection modal */
         .avatar-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -746,7 +747,6 @@
             background: #e9ecef;
         }
         
-        /* Discussion Questions Styling */
         .discussion-container {
             background: #f1f8e9;
             border-left: 5px solid #8bc34a;
@@ -764,7 +764,6 @@
             color: #555;
         }
         
-        /* Badge Styling */
         #badge-container span {
             display: inline-block;
             background: #ffd700;
@@ -776,7 +775,6 @@
             margin: 3px;
         }
 
-        /* Minigame Modal Styling */
         #minigame-canvas {
             border-radius: 10px;
             background: #e0f7fa;
@@ -911,19 +909,19 @@
                         교재 내용 기반 학습 단계입니다
                     </p>
                     
-                    <div class="stage-card" onclick="launchMinigame(1)">
+                    <div class="stage-card" onclick="enterStageContent(1)">
                         <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">1. 패치 시스템</div>
                         <div style="font-size: 14px; opacity: 0.9;">거부할 수 없는 특권</div>
                         <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">예배하기 • 성경읽기 • 기도하기</div>
                     </div>
 
-                    <div class="stage-card" onclick="launchMinigame(2)">
+                    <div class="stage-card" onclick="enterStageContent(2)">
                         <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">2. 길드 시스템</div>
                         <div style="font-size: 14px; opacity: 0.9;">우리, 같이 해볼까요</div>
                         <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">세례받기 • 공동체 속하기 • 성령 따르기</div>
                     </div>
 
-                    <div class="stage-card" onclick="launchMinigame(3)">
+                    <div class="stage-card" onclick="enterStageContent(3)">
                         <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">3. 실전 시스템</div>
                         <div style="font-size: 14px; opacity: 0.9;">인생은 장난이 아니니까</div>
                         <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">이론에서 현실로 • 매일 그분과 • 일생을 함께</div>
@@ -1085,7 +1083,7 @@
     <div id="noticeModal" class="modal">
         <div class="modal-content">
             <div class="modal-title">공지사항 작성</div>
-            <input type="password" id="noticePassword" class="modal-input" placeholder="관리자 비밀번호 (0000)" maxlength="4">
+            <input type="password" id="noticePassword" class="modal-input" placeholder="관리자 비밀번호" maxlength="4">
             <input type="text" id="noticeTitle" class="modal-input" placeholder="공지사항 제목">
             <textarea id="noticeContent" class="modal-textarea" placeholder="공지사항 내용을 입력하세요"></textarea>
             <div class="modal-buttons">
@@ -1140,6 +1138,60 @@
         let editingQTNote = null;
         let pendingQTAction = null;
         let activeGame = { id: null, interval: null, stage: 0 };
+
+        // 메모리 기반 저장소 (localStorage 대체)
+        let memoryStorage = {};
+        
+        // localStorage 체크 및 대체 함수
+        function isLocalStorageAvailable() {
+            try {
+                const test = '__localStorage_test__';
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+                return true;
+            } catch (e) {
+                return false;
+            }
+        }
+
+        function safeSetItem(key, value) {
+            if (isLocalStorageAvailable()) {
+                try {
+                    localStorage.setItem(key, value);
+                    return true;
+                } catch (error) {
+                    console.warn('localStorage setItem 실패, 메모리 저장소 사용:', error);
+                }
+            }
+            // localStorage 사용 불가 시 메모리에 저장
+            memoryStorage[key] = value;
+            return false;
+        }
+
+        function safeGetItem(key) {
+            if (isLocalStorageAvailable()) {
+                try {
+                    return localStorage.getItem(key);
+                } catch (error) {
+                    console.warn('localStorage getItem 실패, 메모리 저장소 사용:', error);
+                }
+            }
+            // localStorage 사용 불가 시 메모리에서 가져오기
+            return memoryStorage[key] || null;
+        }
+
+        function safeRemoveItem(key) {
+            if (isLocalStorageAvailable()) {
+                try {
+                    localStorage.removeItem(key);
+                    return;
+                } catch (error) {
+                    console.warn('localStorage removeItem 실패, 메모리 저장소 사용:', error);
+                }
+            }
+            // localStorage 사용 불가 시 메모리에서 삭제
+            delete memoryStorage[key];
+        }
 
         // --- Data Definitions ---
 
@@ -1319,30 +1371,29 @@
             if (completedStages.includes(stageNumber)) return;
 
             let badgeName = '';
-            let levelGain = 0;
+            let levelGain = 30; // 모든 스테이지 완료 시 30레벨 증가
             let itemName = '';
 
             switch (stageNumber) {
                 case 1:
                     badgeName = '용특새';
                     itemName = '용특새 메시지';
-                    levelGain = 10;
                     break;
                 case 2:
                     badgeName = '길드 버프';
                     itemName = '길드 버프';
-                    levelGain = 15;
                     break;
                 case 3:
                     badgeName = '성령의 열매';
                     itemName = '성령의 열매';
-                    levelGain = 20;
                     break;
             }
 
             if (badgeName) {
                 grantBadge(badgeName);
-                addExperience(levelGain * 10, `🎉 스테이지 ${stageNumber} 완료! ${itemName} 획득! 레벨 +${levelGain}!`);
+                // 직접 레벨 증가 (30레벨)
+                userLevel += levelGain;
+                showNotification(`🎉 스테이지 ${stageNumber} 완료! ${itemName} 획득! 레벨 +${levelGain}!`);
                 completedStages.push(stageNumber);
                 
                 const button = document.getElementById('complete-stage-btn');
@@ -1429,6 +1480,183 @@
             updateUI();
         }
 
+        // --- UI and Utility Functions ---
+        function updateUI() {
+            // Update job title based on level
+            userJob = getUserJobTitle(userLevel);
+            
+            // Header
+            document.getElementById('userName').textContent = userName;
+            document.getElementById('headerAvatar').textContent = userAvatar;
+            document.getElementById('userLevel').textContent = userLevel;
+            document.getElementById('userExp').textContent = userExp;
+            document.getElementById('userStreak').textContent = userStreak;
+            
+            // Profile Tab
+            document.getElementById('profileUserName').textContent = userName;
+            document.getElementById('profileAvatar').textContent = userAvatar;
+            document.getElementById('profileLevel').textContent = userLevel;
+            document.getElementById('profileJob').textContent = userJob;
+            document.getElementById('profileStreak').textContent = userStreak;
+            document.getElementById('completedMissionsCount').textContent = completedMissions;
+            
+            // Guild Tab
+            document.getElementById('guildUserName').textContent = userName;
+            document.getElementById('guildUserAvatar').textContent = userAvatar;
+            document.getElementById('guildUserLevel').textContent = userLevel;
+            document.getElementById('guildUserJob').textContent = userJob;
+            document.getElementById('guildUserStreak').textContent = userStreak;
+            document.getElementById('guildLevel').textContent = guildLevel;
+            document.getElementById('guildExp').textContent = guildExp;
+            
+            // Badges
+            const badgeContainer = document.getElementById('badge-container');
+            if(userBadges.length > 0) {
+                badgeContainer.innerHTML = userBadges.map(b => `<span>${b}</span>`).join('');
+            } else {
+                badgeContainer.innerHTML = `<p style="color: #999; font-size: 14px;">아직 획득한 뱃지가 없습니다.</p>`;
+            }
+        }
+        
+        function resetMissionUI() {
+            // Reset prayer slots
+            document.querySelectorAll('.prayer-time-slot').forEach(slot => slot.classList.remove('completed'));
+            // Reset mission buttons
+            document.querySelectorAll('.mission-button').forEach(btn => {
+                btn.disabled = false;
+                if(btn.id === 'mission-btn-worship') btn.textContent = '참여 완료';
+            });
+            document.getElementById('mission-btn-scripture').style.display = 'inline-block';
+            document.getElementById('scripture-container').innerHTML = '';
+            document.getElementById('mission-btn-chat').style.display = 'inline-block';
+            document.getElementById('chat-container').innerHTML = '';
+            document.getElementById('guild-chat-container').innerHTML = '';
+        }
+
+        function showNotification(message) {
+            const existingNotif = document.querySelector('.floating-notification');
+            if(existingNotif) existingNotif.remove();
+            const notification = document.createElement('div');
+            notification.className = 'floating-notification';
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        // --- Data Persistence ---
+        function saveProgress() {
+            try {
+                const data = {
+                    userName, userAvatar, userJob, userLevel, userExp, userStreak,
+                    completedMissions, userBadges, completedStages, guildLevel, guildExp, 
+                    chatMessages, prayerTimes, notices, qtNotes,
+                    lastLogin: new Date().toDateString()
+                };
+                
+                const success = safeSetItem('blueWindProgress', JSON.stringify(data));
+                if (!success && !isLocalStorageAvailable()) {
+                    // localStorage 사용 불가 시 한 번만 알림
+                    if (!memoryStorage._warningShown) {
+                        showNotification('브라우저 설정으로 인해 데이터가 세션 동안만 유지됩니다. 📝');
+                        memoryStorage._warningShown = true;
+                    }
+                }
+            } catch (error) {
+                console.error('데이터 저장 실패:', error);
+                showNotification('데이터 저장에 실패했습니다.');
+            }
+        }
+
+        function loadProgress() {
+            try {
+                const saved = safeGetItem('blueWindProgress');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    userName = data.userName || '푸른이';
+                    userAvatar = data.userAvatar || '🌟';
+                    userLevel = data.userLevel || 1;
+                    userExp = data.userExp || 0;
+                    userStreak = data.userStreak || 1;
+                    completedMissions = data.completedMissions || 0;
+                    userJob = data.userJob || getUserJobTitle(userLevel);
+                    userBadges = data.userBadges || [];
+                    completedStages = data.completedStages || [];
+                    guildLevel = data.guildLevel || 1;
+                    guildExp = data.guildExp || 0;
+                    chatMessages = data.chatMessages || [];
+                    notices = data.notices || [];
+                    qtNotes = data.qtNotes || [];
+                    
+                    const today = new Date().toDateString();
+                    const lastLogin = data.lastLogin || today;
+
+                    if (lastLogin !== today) {
+                        const lastDate = new Date(lastLogin);
+                        const todayDate = new Date(today);
+                        const diffTime = todayDate - lastDate;
+                        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                        
+                        if (diffDays === 1) {
+                            userStreak++;
+                            setTimeout(() => grantBadge(`${userStreak}일 연속`), 500);
+                        } else if (diffDays > 1) {
+                            userStreak = 1;
+                        }
+                        prayerTimes = { morning: false, noon: false, evening: false };
+                    } else {
+                        prayerTimes = data.prayerTimes || { morning: false, noon: false, evening: false };
+                    }
+
+                    // DOM이 로드된 후에 기도 시간 상태 업데이트
+                    setTimeout(() => {
+                        Object.keys(prayerTimes).forEach(timeSlot => {
+                            if (prayerTimes[timeSlot]) {
+                                const slots = document.querySelectorAll('.prayer-time-slot');
+                                if (timeSlot === 'morning' && slots[0]) slots[0].classList.add('completed');
+                                if (timeSlot === 'noon' && slots[1]) slots[1].classList.add('completed');
+                                if (timeSlot === 'evening' && slots[2]) slots[2].classList.add('completed');
+                            }
+                        });
+                    }, 100);
+                } else {
+                    setInitialState();
+                }
+            } catch (error) {
+                console.error('데이터 로드 실패:', error);
+                showNotification('데이터 로드에 실패했습니다. 초기 설정으로 시작합니다.');
+                setInitialState();
+            }
+            
+            updateUI();
+            updateNotices();
+            updateQTNotes();
+        }
+        
+        function setInitialState() {
+            userLevel = 1;
+            userExp = 0;
+            userStreak = 1;
+            completedMissions = 0;
+            userName = '푸른이';
+            userAvatar = '🌟';
+            userJob = '푸른이';
+            userBadges = [];
+            completedStages = [];
+            guildLevel = 1;
+            guildExp = 0;
+            chatMessages = [];
+            prayerTimes = { morning: false, noon: false, evening: false };
+            notices = [];
+            qtNotes = [];
+            
+            // 초기 상태 저장 시도
+            try {
+                saveProgress();
+            } catch (error) {
+                console.error('초기 데이터 저장 실패:', error);
+            }
+        }
+
         // --- Notice Functions ---
         function showNoticeModal() {
             document.getElementById('noticeModal').style.display = 'flex';
@@ -1464,7 +1692,8 @@
                 date: new Date().toLocaleDateString('ko-KR')
             };
 
-            notices.unshift(notice);
+            // 기존 공지사항을 새 공지사항으로 교체 (1개만 유지)
+            notices = [notice];
             updateNotices();
             closeNoticeModal();
             showNotification('공지사항이 등록되었습니다! 📢');
@@ -1480,7 +1709,9 @@
                     </div>
                 `;
             } else {
-                container.innerHTML = notices.map(notice => `
+                // 최신 공지사항 1개만 표시
+                const notice = notices[0];
+                container.innerHTML = `
                     <div class="notice-card">
                         <div class="notice-header">
                             <div class="notice-title">📢 ${notice.title}</div>
@@ -1488,7 +1719,7 @@
                         </div>
                         <div class="notice-content">${notice.content}</div>
                     </div>
-                `).join('');
+                `;
             }
         }
 
@@ -1680,15 +1911,111 @@
         }
         
         function createChatInterface(prefix) {
-            return `<div class="chat-container"><div class="chat-messages" id="${prefix}Messages"></div><div class="chat-input-container"><input type="text" class="chat-input" id="${prefix}Input" placeholder="길드원들과 대화해보세요..." onkeypress="handleChatKeyPress(event, '${prefix}')"><button class="chat-send-btn" onclick="sendMessage('${prefix}')">전송</button></div></div>`;
+            return `
+                <div class="chat-container">
+                    <div class="chat-messages" id="${prefix}Messages"></div>
+                    <div class="chat-input-container">
+                        <input type="text" class="chat-input" id="${prefix}Input" placeholder="길드원들과 대화해보세요..." onkeypress="handleChatKeyPress(event, '${prefix}')">
+                        <button class="image-upload-btn" onclick="document.getElementById('${prefix}FileInput').click()">📷</button>
+                        <button class="chat-send-btn" onclick="sendMessage('${prefix}')">전송</button>
+                        <input type="file" id="${prefix}FileInput" class="hidden-file-input" accept="image/*" onchange="handleImageUpload(event, '${prefix}')">
+                    </div>
+                </div>
+            `;
         }
 
         function updateChatMessages(prefix) {
             const messagesContainer = document.getElementById(`${prefix}Messages`);
             if (!messagesContainer) return;
             
-            messagesContainer.innerHTML = chatMessages.length === 0 ? `<div style="text-align: center; color: #666; padding: 20px;"><p>첫 번째 메시지를 보내보세요! 💬</p></div>` : chatMessages.map(msg => `<div class="message ${msg.sender === userName ? 'user' : 'other'}"><div class="message-header"><div class="message-avatar">${msg.avatar || '👤'}</div><div class="message-sender">${msg.sender}</div><div class="message-time">${msg.time}</div></div><div class="message-bubble">${msg.message}</div></div>`).join('');
+            if (chatMessages.length === 0) {
+                messagesContainer.innerHTML = `<div style="text-align: center; color: #666; padding: 20px;"><p>첫 번째 메시지를 보내보세요! 💬</p></div>`;
+            } else {
+                messagesContainer.innerHTML = chatMessages.map(msg => {
+                    let messageContent = `<div class="message-bubble">${msg.message}</div>`;
+                    if (msg.image) {
+                        messageContent += `<img src="${msg.image}" alt="업로드된 이미지" class="message-image" onclick="showImageModal('${msg.image}')">`;
+                    }
+                    
+                    return `
+                        <div class="message ${msg.sender === userName ? 'user' : 'other'}">
+                            <div class="message-header">
+                                <div class="message-avatar">${msg.avatar || '👤'}</div>
+                                <div class="message-sender">${msg.sender}</div>
+                                <div class="message-time">${msg.time}</div>
+                            </div>
+                            ${messageContent}
+                        </div>
+                    `;
+                }).join('');
+            }
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function handleImageUpload(event, prefix) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            if (file.size > 5 * 1024 * 1024) { // 5MB 제한
+                showNotification('이미지 크기는 5MB 이하만 업로드 가능합니다! 📷');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const now = new Date();
+                const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+                
+                chatMessages.push({ 
+                    sender: userName, 
+                    avatar: userAvatar, 
+                    message: '사진을 업로드했습니다 📷', 
+                    image: e.target.result,
+                    time: timeString 
+                });
+                
+                if (document.getElementById('chatMessages')) updateChatMessages('chat');
+                if (document.getElementById('guildChatMessages')) updateChatMessages('guild');
+                
+                showNotification('사진이 업로드되었습니다! 📷');
+                saveProgress();
+            };
+            reader.readAsDataURL(file);
+            
+            // 파일 입력 초기화
+            event.target.value = '';
+        }
+
+        function showImageModal(imageSrc) {
+            // 이미지 확대 보기 모달 생성
+            const existingModal = document.getElementById('imageViewModal');
+            if (existingModal) existingModal.remove();
+
+            const modal = document.createElement('div');
+            modal.id = 'imageViewModal';
+            modal.className = 'modal';
+            modal.style.display = 'flex';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width: 90%; max-height: 90%; padding: 20px;">
+                    <div class="modal-title">이미지 보기</div>
+                    <img src="${imageSrc}" style="max-width: 100%; max-height: 70vh; border-radius: 10px;">
+                    <div class="modal-buttons" style="margin-top: 15px;">
+                        <button class="modal-button secondary" onclick="closeImageModal()">닫기</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            
+            // 모달 배경 클릭으로 닫기
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) closeImageModal();
+            });
+        }
+
+        function closeImageModal() {
+            const modal = document.getElementById('imageViewModal');
+            if (modal) modal.remove();
         }
 
         function sendMessage(prefix) {
@@ -1747,7 +2074,14 @@
         function closeResetModal() { document.getElementById('resetModal').style.display = 'none'; }
         function confirmReset() {
             if (document.getElementById('adminPassword').value === '0000') {
-                localStorage.removeItem('blueWindProgress');
+                try {
+                    safeRemoveItem('blueWindProgress');
+                } catch (error) {
+                    console.error('데이터 삭제 실패:', error);
+                }
+                // 메모리 저장소도 초기화
+                memoryStorage = {};
+                
                 setInitialState();
                 updateUI();
                 resetMissionUI();
@@ -1758,436 +2092,76 @@
             }
         }
 
-        // --- Minigame Functions ---
-        function launchMinigame(stageNumber) {
-            const modal = document.getElementById('minigameModal');
-            const content = document.getElementById('minigame-content');
-            activeGame.stage = stageNumber;
-
-            let gameHtml = '';
-            switch(stageNumber) {
-                case 1:
-                    gameHtml = `
-                        <div class="modal-title">미니게임: 말씀의 비</div>
-                        <p style="margin-bottom: 15px;">바구니를 움직여 '사랑', '믿음', '소망' 단어를 받고, '미움', '의심' 단어는 피하세요!</p>
-                        <canvas id="minigame-canvas" width="320" height="240"></canvas>
-                        <div class="modal-buttons" style="margin-top:15px;">
-                           <button class="modal-button secondary" onclick="closeMinigame(false)">그만하기</button>
-                        </div>
-                    `;
-                    content.innerHTML = gameHtml;
-                    modal.style.display = 'flex';
-                    initGame1();
-                    break;
-                case 2:
-                    gameHtml = `
-                        <div class="modal-title">미니게임: 공동체 잇기</div>
-                        <p style="margin-bottom: 15px;">같은 아이콘끼리 선으로 연결해서 공동체를 완성하세요!</p>
-                        <canvas id="minigame-canvas" width="320" height="240"></canvas>
-                        <div class="modal-buttons" style="margin-top:15px;">
-                           <button class="modal-button secondary" onclick="closeMinigame(false)">그만하기</button>
-                        </div>
-                    `;
-                    content.innerHTML = gameHtml;
-                    modal.style.display = 'flex';
-                    initGame2();
-                    break;
-                case 3:
-                     gameHtml = `
-                        <div class="modal-title">미니게임: 삶의 갈림길</div>
-                        <p id="quiz-question" style="margin-bottom: 15px;">길에서 도움이 필요한 사람을 만났습니다. 어떻게 하시겠습니까?</p>
-                        <div id="quiz-options">
-                           <button class="quiz-option" onclick="handleQuizAnswer(true)">따뜻한 음료와 함께 위로의 말을 건넨다.</button>
-                           <button class="quiz-option" onclick="handleQuizAnswer(false)">바쁜 일이 있어 그냥 지나간다.</button>
-                        </div>
-                         <div class="modal-buttons" style="margin-top:15px;">
-                           <button class="modal-button secondary" onclick="closeMinigame(false)">그만하기</button>
-                        </div>
-                    `;
-                    content.innerHTML = gameHtml;
-                    modal.style.display = 'flex';
-                    break;
-            }
-        }
-        
-        function closeMinigame(isSuccess) {
-            if (activeGame.interval) {
-                clearInterval(activeGame.interval);
-                activeGame.interval = null;
-            }
-            document.getElementById('minigameModal').style.display = 'none';
-            if (isSuccess) {
-                showNotification('미니게임 성공! 보너스 경험치 +50 EXP 🎉');
-                addExperience(50);
-                saveProgress();
-            }
-            enterStageContent(activeGame.stage);
-        }
-
-        function initGame1() { // 말씀의 비
-            const canvas = document.getElementById('minigame-canvas');
-            const ctx = canvas.getContext('2d');
-            let score = 0;
-            let basket = { x: canvas.width / 2 - 25, y: canvas.height - 30, width: 50, height: 10 };
-            let words = [];
-
-            function moveBasket(e) {
-                const rect = canvas.getBoundingClientRect();
-                basket.x = e.clientX - rect.left - basket.width / 2;
-                if (basket.x < 0) basket.x = 0;
-                if (basket.x > canvas.width - basket.width) basket.x = canvas.width - basket.width;
-            }
-            canvas.addEventListener('mousemove', moveBasket);
-
-            function gameLoop() {
-                // Add new word
-                if (Math.random() < 0.05) {
-                    const isGood = Math.random() > 0.4;
-                    words.push({
-                        text: isGood ? ['사랑', '믿음', '소망'][Math.floor(Math.random()*3)] : ['미움', '의심'][Math.floor(Math.random()*2)],
-                        x: Math.random() * (canvas.width - 30),
-                        y: 0,
-                        speed: Math.random() * 1 + 1,
-                        isGood: isGood
-                    });
-                }
-
-                // Update and draw
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                
-                // Draw basket
-                ctx.fillStyle = '#4a148c';
-                ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
-
-                // Draw words
-                for (let i = words.length - 1; i >= 0; i--) {
-                    let word = words[i];
-                    word.y += word.speed;
-                    
-                    ctx.font = '16px Pretendard';
-                    ctx.fillStyle = word.isGood ? '#007bff' : '#dc3545';
-                    ctx.fillText(word.text, word.x, word.y);
-
-                    // Collision detection
-                    if (word.y > basket.y && word.x > basket.x && word.x < basket.x + basket.width) {
-                        score += word.isGood ? 10 : -10;
-                        words.splice(i, 1);
-                    } else if (word.y > canvas.height) {
-                        words.splice(i, 1);
-                    }
-                }
-                
-                // Draw score
-                ctx.fillStyle = '#000';
-                ctx.fillText(`점수: ${score}`, 10, 20);
-
-                if (score >= 50) {
-                    canvas.removeEventListener('mousemove', moveBasket);
-                    closeMinigame(true);
-                }
-                 if (score < -20) {
-                    canvas.removeEventListener('mousemove', moveBasket);
-                    closeMinigame(false);
-                }
-            }
-            activeGame.interval = setInterval(gameLoop, 1000 / 60);
-        }
-
-        function initGame2() { // 공동체 잇기
-            const canvas = document.getElementById('minigame-canvas');
-            const ctx = canvas.getContext('2d');
-            const icons = ['😊', '🙏', '🕊️', '❤️'];
-            let points = [];
-            let selectedPoint = null;
-            let lines = [];
-            let pairs = icons.length;
-
-            // Create pairs of points
-            icons.forEach(icon => {
-                for(let i=0; i<2; i++) {
-                    points.push({
-                        x: Math.random() * (canvas.width - 40) + 20,
-                        y: Math.random() * (canvas.height - 40) + 20,
-                        icon: icon,
-                        id: Math.random(),
-                        connected: false
-                    });
-                }
-            });
-
-            function draw() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                ctx.font = '24px Pretendard';
-                // Draw lines
-                lines.forEach(line => {
-                    ctx.beginPath();
-                    ctx.moveTo(line.p1.x, line.p1.y);
-                    ctx.lineTo(line.p2.x, line.p2.y);
-                    ctx.strokeStyle = '#28a745';
-                    ctx.lineWidth = 2;
-                    ctx.stroke();
-                });
-                // Draw points
-                points.forEach(p => {
-                    ctx.fillStyle = p.connected ? '#9e9e9e' : (p === selectedPoint ? '#ffd700' : '#4facfe');
-                    ctx.beginPath();
-                    ctx.arc(p.x, p.y, 15, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = 'white';
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(p.icon, p.x, p.y);
-                });
-            }
-
-            function handleClick(e) {
-                const rect = canvas.getBoundingClientRect();
-                const mouseX = e.clientX - rect.left;
-                const mouseY = e.clientY - rect.top;
-
-                for (let p of points) {
-                    const dist = Math.sqrt((p.x - mouseX)**2 + (p.y - mouseY)**2);
-                    if (dist < 15 && !p.connected) {
-                        if (!selectedPoint) {
-                            selectedPoint = p;
-                        } else {
-                            if (selectedPoint.icon === p.icon && selectedPoint.id !== p.id) {
-                                // Match found
-                                selectedPoint.connected = true;
-                                p.connected = true;
-                                lines.push({p1: selectedPoint, p2: p});
-                                selectedPoint = null;
-                                pairs--;
-                                if (pairs === 0) {
-                                    draw();
-                                    canvas.removeEventListener('click', handleClick);
-                                    setTimeout(() => closeMinigame(true), 500);
-                                }
-                            } else {
-                                // No match
-                                selectedPoint = null;
-                            }
-                        }
-                        draw();
-                        return;
-                    }
-                }
-            }
-            
-            canvas.addEventListener('click', handleClick);
-            draw();
-        }
-
-        function handleQuizAnswer(isCorrect) {
-            if (isCorrect) {
-                closeMinigame(true);
-            } else {
-                document.getElementById('quiz-question').textContent = "아쉽네요. 하나님 나라의 방식은 이웃을 사랑하는 것이랍니다. 다시 시도해보세요!";
-                document.getElementById('quiz-options').innerHTML = `<button class="quiz-option" onclick="closeMinigame(false)">학습으로 돌아가기</button>`;
-            }
-        }
-
-        // --- UI and Utility Functions ---
-        function updateUI() {
-            // Update job title based on level
-            userJob = getUserJobTitle(userLevel);
-            
-            // Header
-            document.getElementById('userName').textContent = userName;
-            document.getElementById('headerAvatar').textContent = userAvatar;
-            document.getElementById('userLevel').textContent = userLevel;
-            document.getElementById('userExp').textContent = userExp;
-            document.getElementById('userStreak').textContent = userStreak;
-            
-            // Profile Tab
-            document.getElementById('profileUserName').textContent = userName;
-            document.getElementById('profileAvatar').textContent = userAvatar;
-            document.getElementById('profileLevel').textContent = userLevel;
-            document.getElementById('profileJob').textContent = userJob;
-            document.getElementById('profileStreak').textContent = userStreak;
-            document.getElementById('completedMissionsCount').textContent = completedMissions;
-            
-            // Guild Tab
-            document.getElementById('guildUserName').textContent = userName;
-            document.getElementById('guildUserAvatar').textContent = userAvatar;
-            document.getElementById('guildUserLevel').textContent = userLevel;
-            document.getElementById('guildUserJob').textContent = userJob;
-            document.getElementById('guildUserStreak').textContent = userStreak;
-            document.getElementById('guildLevel').textContent = guildLevel;
-            document.getElementById('guildExp').textContent = guildExp;
-            
-            // Badges
-            const badgeContainer = document.getElementById('badge-container');
-            if(userBadges.length > 0) {
-                badgeContainer.innerHTML = userBadges.map(b => `<span>${b}</span>`).join('');
-            } else {
-                badgeContainer.innerHTML = `<p style="color: #999; font-size: 14px;">아직 획득한 뱃지가 없습니다.</p>`;
-            }
-        }
-        
-        function resetMissionUI() {
-            // Reset prayer slots
-            document.querySelectorAll('.prayer-time-slot').forEach(slot => slot.classList.remove('completed'));
-            // Reset mission buttons
-            document.querySelectorAll('.mission-button').forEach(btn => {
-                btn.disabled = false;
-                if(btn.id === 'mission-btn-worship') btn.textContent = '참여 완료';
-            });
-            document.getElementById('mission-btn-scripture').style.display = 'inline-block';
-            document.getElementById('scripture-container').innerHTML = '';
-            document.getElementById('mission-btn-chat').style.display = 'inline-block';
-            document.getElementById('chat-container').innerHTML = '';
-            document.getElementById('guild-chat-container').innerHTML = '';
-        }
-
-        function showNotification(message) {
-            const existingNotif = document.querySelector('.floating-notification');
-            if(existingNotif) existingNotif.remove();
-            const notification = document.createElement('div');
-            notification.className = 'floating-notification';
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            setTimeout(() => notification.remove(), 3000);
-        }
-
-        // --- Data Persistence ---
-        function saveProgress() {
-            const data = {
-                userName, userAvatar, userJob, userLevel, userExp, userStreak,
-                completedMissions, userBadges, completedStages, guildLevel, guildExp, 
-                chatMessages, prayerTimes, notices, qtNotes,
-                lastLogin: new Date().toDateString()
-            };
-            localStorage.setItem('blueWindProgress', JSON.stringify(data));
-        }
-
-        function loadProgress() {
-            const saved = localStorage.getItem('blueWindProgress');
-            if (saved) {
-                const data = JSON.parse(saved);
-                userName = data.userName || '푸른이';
-                userAvatar = data.userAvatar || '🌟';
-                userLevel = data.userLevel || 1;
-                userExp = data.userExp || 0;
-                userStreak = data.userStreak || 1;
-                completedMissions = data.completedMissions || 0;
-                userJob = data.userJob || getUserJobTitle(userLevel);
-                userBadges = data.userBadges || [];
-                completedStages = data.completedStages || [];
-                guildLevel = data.guildLevel || 1;
-                guildExp = data.guildExp || 0;
-                chatMessages = data.chatMessages || [];
-                notices = data.notices || [];
-                qtNotes = data.qtNotes || [];
-                
-                const today = new Date().toDateString();
-                const lastLogin = data.lastLogin || today;
-
-                if (lastLogin !== today) {
-                    const lastDate = new Date(lastLogin);
-                    const todayDate = new Date(today);
-                    const diffTime = todayDate - lastDate;
-                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                    
-                    if (diffDays === 1) {
-                        userStreak++;
-                        grantBadge(`${userStreak}일 연속`);
-                    } else if (diffDays > 1) {
-                        userStreak = 1;
-                    }
-                    prayerTimes = { morning: false, noon: false, evening: false };
-                } else {
-                    prayerTimes = data.prayerTimes || { morning: false, noon: false, evening: false };
-                }
-
-                Object.keys(prayerTimes).forEach(timeSlot => {
-                    if (prayerTimes[timeSlot]) {
-                        const slots = document.querySelectorAll('.prayer-time-slot');
-                        if (timeSlot === 'morning' && slots[0]) slots[0].classList.add('completed');
-                        if (timeSlot === 'noon' && slots[1]) slots[1].classList.add('completed');
-                        if (timeSlot === 'evening' && slots[2]) slots[2].classList.add('completed');
-                    }
-                });
-            } else {
-                setInitialState();
-            }
-            updateUI();
-            updateNotices();
-            updateQTNotes();
-        }
-        
-        function setInitialState() {
-            userLevel = 1;
-            userExp = 0;
-            userStreak = 1;
-            completedMissions = 0;
-            userName = '푸른이';
-            userAvatar = '🌟';
-            userJob = '푸른이';
-            userBadges = [];
-            completedStages = [];
-            guildLevel = 1;
-            guildExp = 0;
-            chatMessages = [];
-            prayerTimes = { morning: false, noon: false, evening: false };
-            notices = [];
-            qtNotes = [];
-            saveProgress();
-        }
-
         // --- App Initialization ---
         function initApp() {
-            loadProgress();
-            
-            setTimeout(() => {
-                showNotification(`${userName}님, 푸른나라학교에 오신 것을 환영합니다! 🌟`);
-            }, 1000);
+            try {
+                loadProgress();
+                
+                setTimeout(() => {
+                    showNotification(`${userName}님, 푸른나라학교에 오신 것을 환영합니다! 🌟`);
+                }, 1000);
 
-            // Modal close events
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        if (modal.id === 'minigameModal') return; // Don't close minigame on background click
-                        modal.style.display = 'none';
+                // Modal close events
+                document.querySelectorAll('.modal').forEach(modal => {
+                    modal.addEventListener('click', (e) => {
+                        if (e.target === modal) {
+                            modal.style.display = 'none';
+                        }
+                    });
+                });
+
+                // Keyboard events
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
+                        closeImageModal();
+                    }
+                    if (e.key === 'Enter') {
+                        const nameModal = document.getElementById('nameModal');
+                        const resetModal = document.getElementById('resetModal');
+                        const noticeModal = document.getElementById('noticeModal');
+                        const qtNoteModal = document.getElementById('qtNoteModal');
+                        const qtPasswordModal = document.getElementById('qtPasswordModal');
+                        
+                        if (nameModal.style.display === 'flex') {
+                            e.preventDefault();
+                            changeName();
+                        } else if (resetModal.style.display === 'flex') {
+                            e.preventDefault();
+                            confirmReset();
+                        } else if (noticeModal.style.display === 'flex') {
+                            e.preventDefault();
+                            createNotice();
+                        } else if (qtNoteModal.style.display === 'flex') {
+                            e.preventDefault();
+                            createQTNote();
+                        } else if (qtPasswordModal.style.display === 'flex') {
+                            e.preventDefault();
+                            confirmQTAction();
+                        }
                     }
                 });
-            });
-
-            // Keyboard events
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape') {
-                    if (activeGame.interval) return; // Don't allow escape during canvas games
-                    document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
-                }
-                if (e.key === 'Enter') {
-                    const nameModal = document.getElementById('nameModal');
-                    const resetModal = document.getElementById('resetModal');
-                    const noticeModal = document.getElementById('noticeModal');
-                    const qtNoteModal = document.getElementById('qtNoteModal');
-                    const qtPasswordModal = document.getElementById('qtPasswordModal');
-                    
-                    if (nameModal.style.display === 'flex') {
-                        e.preventDefault();
-                        changeName();
-                    } else if (resetModal.style.display === 'flex') {
-                        e.preventDefault();
-                        confirmReset();
-                    } else if (noticeModal.style.display === 'flex') {
-                        e.preventDefault();
-                        createNotice();
-                    } else if (qtNoteModal.style.display === 'flex') {
-                        e.preventDefault();
-                        createQTNote();
-                    } else if (qtPasswordModal.style.display === 'flex') {
-                        e.preventDefault();
-                        confirmQTAction();
-                    }
-                }
-            });
+            } catch (error) {
+                console.error('앱 초기화 실패:', error);
+                showNotification('앱 초기화에 실패했습니다. 페이지를 새로고침해주세요.');
+            }
         }
 
-        window.addEventListener('load', initApp);
-        window.addEventListener('beforeunload', saveProgress);
+        // 페이지 로드 후 안전하게 초기화
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initApp);
+        } else {
+            initApp();
+        }
+
+        // 데이터 저장을 안전하게 처리
+        window.addEventListener('beforeunload', () => {
+            try {
+                saveProgress();
+            } catch (error) {
+                console.error('종료 시 데이터 저장 실패:', error);
+            }
+        });
 
     </script>
 </body>
