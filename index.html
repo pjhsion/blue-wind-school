@@ -217,7 +217,7 @@
             border-radius: 25px;
             font-weight: bold;
             animation: slideInDown 0.3s ease;
-            z-index: 999;
+            z-index: 1001; /* Ensure it's above modals */
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
@@ -439,7 +439,7 @@
             background: white;
             padding: 30px;
             border-radius: 15px;
-            max-width: 320px;
+            max-width: 380px;
             width: 90%;
             text-align: center;
             animation: modalSlideIn 0.3s ease;
@@ -643,6 +643,30 @@
             margin: 3px;
         }
 
+        /* Minigame Modal Styling */
+        #minigame-canvas {
+            border-radius: 10px;
+            background: #e0f7fa;
+            cursor: pointer;
+        }
+
+        #minigame-content .quiz-option {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 16px;
+            border-radius: 10px;
+            border: 2px solid #4facfe;
+            background: white;
+            color: #4facfe;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        #minigame-content .quiz-option:hover {
+            background: #e3f2fd;
+        }
+
     </style>
 </head>
 <body>
@@ -696,7 +720,7 @@
 
                 <div class="mission-card">
                     <div class="mission-header">
-                        <div class="mission-title">📖 성경 말씀 읽기</div>
+                        <div class="mission-title">� 성경 말씀 읽기</div>
                         <div class="mission-reward">+70 EXP</div>
                     </div>
                     <div class="mission-description">푸른바람의 냉장고에서 오늘의 영양분을 섭취하세요</div>
@@ -732,19 +756,19 @@
                         교재 내용 기반 학습 단계입니다
                     </p>
                     
-                    <div class="stage-card" onclick="enterStage(1)">
+                    <div class="stage-card" onclick="launchMinigame(1)">
                         <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">1. 패치 시스템</div>
                         <div style="font-size: 14px; opacity: 0.9;">거부할 수 없는 특권</div>
                         <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">예배하기 • 성경읽기 • 기도하기</div>
                     </div>
 
-                    <div class="stage-card" onclick="enterStage(2)">
+                    <div class="stage-card" onclick="launchMinigame(2)">
                         <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">2. 길드 시스템</div>
                         <div style="font-size: 14px; opacity: 0.9;">우리, 같이 해볼까요</div>
                         <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">세례받기 • 공동체 속하기 • 성령 따르기</div>
                     </div>
 
-                    <div class="stage-card" onclick="enterStage(3)">
+                    <div class="stage-card" onclick="launchMinigame(3)">
                         <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">3. 실전 시스템</div>
                         <div style="font-size: 14px; opacity: 0.9;">인생은 장난이 아니니까</div>
                         <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">이론에서 현실로 • 매일 그분과 • 일생을 함께</div>
@@ -890,6 +914,12 @@
             </div>
         </div>
     </div>
+
+    <div id="minigameModal" class="modal">
+        <div class="modal-content" id="minigame-content">
+            <!-- Minigame content will be injected here -->
+        </div>
+    </div>
     
     <script>
         // --- Global State Variables ---
@@ -898,6 +928,7 @@
         let currentStage = null;
         let chatMessages = [];
         let prayerTimes = {};
+        let activeGame = { id: null, interval: null, stage: 0 };
 
         // --- Data Definitions ---
 
@@ -999,7 +1030,7 @@
             if (tabName === 'stages') backToStages();
         }
 
-        function enterStage(stageNumber) {
+        function enterStageContent(stageNumber) {
             currentStage = stageNumber;
             const stageData = stageContents[stageNumber];
             
@@ -1223,6 +1254,236 @@
             }
         }
 
+        // --- Minigame Functions ---
+        function launchMinigame(stageNumber) {
+            const modal = document.getElementById('minigameModal');
+            const content = document.getElementById('minigame-content');
+            activeGame.stage = stageNumber;
+
+            let gameHtml = '';
+            switch(stageNumber) {
+                case 1:
+                    gameHtml = `
+                        <div class="modal-title">미니게임: 말씀의 비</div>
+                        <p style="margin-bottom: 15px;">바구니를 움직여 '사랑', '믿음', '소망' 단어를 받고, '미움', '의심' 단어는 피하세요!</p>
+                        <canvas id="minigame-canvas" width="320" height="240"></canvas>
+                        <div class="modal-buttons" style="margin-top:15px;">
+                           <button class="modal-button secondary" onclick="closeMinigame(false)">그만하기</button>
+                        </div>
+                    `;
+                    content.innerHTML = gameHtml;
+                    modal.style.display = 'flex';
+                    initGame1();
+                    break;
+                case 2:
+                    gameHtml = `
+                        <div class="modal-title">미니게임: 공동체 잇기</div>
+                        <p style="margin-bottom: 15px;">같은 아이콘끼리 선으로 연결해서 공동체를 완성하세요!</p>
+                        <canvas id="minigame-canvas" width="320" height="240"></canvas>
+                        <div class="modal-buttons" style="margin-top:15px;">
+                           <button class="modal-button secondary" onclick="closeMinigame(false)">그만하기</button>
+                        </div>
+                    `;
+                    content.innerHTML = gameHtml;
+                    modal.style.display = 'flex';
+                    initGame2();
+                    break;
+                case 3:
+                     gameHtml = `
+                        <div class="modal-title">미니게임: 삶의 갈림길</div>
+                        <p id="quiz-question" style="margin-bottom: 15px;">길에서 도움이 필요한 사람을 만났습니다. 어떻게 하시겠습니까?</p>
+                        <div id="quiz-options">
+                           <button class="quiz-option" onclick="handleQuizAnswer(true)">따뜻한 음료와 함께 위로의 말을 건넨다.</button>
+                           <button class="quiz-option" onclick="handleQuizAnswer(false)">바쁜 일이 있어 그냥 지나간다.</button>
+                        </div>
+                         <div class="modal-buttons" style="margin-top:15px;">
+                           <button class="modal-button secondary" onclick="closeMinigame(false)">그만하기</button>
+                        </div>
+                    `;
+                    content.innerHTML = gameHtml;
+                    modal.style.display = 'flex';
+                    break;
+            }
+        }
+        
+        function closeMinigame(isSuccess) {
+            if (activeGame.interval) {
+                clearInterval(activeGame.interval);
+                activeGame.interval = null;
+            }
+            document.getElementById('minigameModal').style.display = 'none';
+            if (isSuccess) {
+                showNotification('미니게임 성공! 보너스 경험치 +50 EXP 🎉');
+                addExperience(50);
+                saveProgress();
+            }
+            enterStageContent(activeGame.stage);
+        }
+
+        function initGame1() { // 말씀의 비
+            const canvas = document.getElementById('minigame-canvas');
+            const ctx = canvas.getContext('2d');
+            let score = 0;
+            let basket = { x: canvas.width / 2 - 25, y: canvas.height - 30, width: 50, height: 10 };
+            let words = [];
+
+            function moveBasket(e) {
+                const rect = canvas.getBoundingClientRect();
+                basket.x = e.clientX - rect.left - basket.width / 2;
+                if (basket.x < 0) basket.x = 0;
+                if (basket.x > canvas.width - basket.width) basket.x = canvas.width - basket.width;
+            }
+            canvas.addEventListener('mousemove', moveBasket);
+
+            function gameLoop() {
+                // Add new word
+                if (Math.random() < 0.05) {
+                    const isGood = Math.random() > 0.4;
+                    words.push({
+                        text: isGood ? ['사랑', '믿음', '소망'][Math.floor(Math.random()*3)] : ['미움', '의심'][Math.floor(Math.random()*2)],
+                        x: Math.random() * (canvas.width - 30),
+                        y: 0,
+                        speed: Math.random() * 1 + 1,
+                        isGood: isGood
+                    });
+                }
+
+                // Update and draw
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw basket
+                ctx.fillStyle = '#4a148c';
+                ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+
+                // Draw words
+                for (let i = words.length - 1; i >= 0; i--) {
+                    let word = words[i];
+                    word.y += word.speed;
+                    
+                    ctx.font = '16px Pretendard';
+                    ctx.fillStyle = word.isGood ? '#007bff' : '#dc3545';
+                    ctx.fillText(word.text, word.x, word.y);
+
+                    // Collision detection
+                    if (word.y > basket.y && word.x > basket.x && word.x < basket.x + basket.width) {
+                        score += word.isGood ? 10 : -10;
+                        words.splice(i, 1);
+                    } else if (word.y > canvas.height) {
+                        words.splice(i, 1);
+                    }
+                }
+                
+                // Draw score
+                ctx.fillStyle = '#000';
+                ctx.fillText(`점수: ${score}`, 10, 20);
+
+                if (score >= 50) {
+                    canvas.removeEventListener('mousemove', moveBasket);
+                    closeMinigame(true);
+                }
+                 if (score < -20) {
+                    canvas.removeEventListener('mousemove', moveBasket);
+                    closeMinigame(false);
+                }
+            }
+            activeGame.interval = setInterval(gameLoop, 1000 / 60);
+        }
+
+        function initGame2() { // 공동체 잇기
+            const canvas = document.getElementById('minigame-canvas');
+            const ctx = canvas.getContext('2d');
+            const icons = ['😊', '🙏', '🕊️', '❤️'];
+            let points = [];
+            let selectedPoint = null;
+            let lines = [];
+            let pairs = icons.length;
+
+            // Create pairs of points
+            icons.forEach(icon => {
+                for(let i=0; i<2; i++) {
+                    points.push({
+                        x: Math.random() * (canvas.width - 40) + 20,
+                        y: Math.random() * (canvas.height - 40) + 20,
+                        icon: icon,
+                        id: Math.random(),
+                        connected: false
+                    });
+                }
+            });
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.font = '24px Pretendard';
+                // Draw lines
+                lines.forEach(line => {
+                    ctx.beginPath();
+                    ctx.moveTo(line.p1.x, line.p1.y);
+                    ctx.lineTo(line.p2.x, line.p2.y);
+                    ctx.strokeStyle = '#28a745';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                });
+                // Draw points
+                points.forEach(p => {
+                    ctx.fillStyle = p.connected ? '#9e9e9e' : (p === selectedPoint ? '#ffd700' : '#4facfe');
+                    ctx.beginPath();
+                    ctx.arc(p.x, p.y, 15, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = 'white';
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(p.icon, p.x, p.y);
+                });
+            }
+
+            function handleClick(e) {
+                const rect = canvas.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const mouseY = e.clientY - rect.top;
+
+                for (let p of points) {
+                    const dist = Math.sqrt((p.x - mouseX)**2 + (p.y - mouseY)**2);
+                    if (dist < 15 && !p.connected) {
+                        if (!selectedPoint) {
+                            selectedPoint = p;
+                        } else {
+                            if (selectedPoint.icon === p.icon && selectedPoint.id !== p.id) {
+                                // Match found
+                                selectedPoint.connected = true;
+                                p.connected = true;
+                                lines.push({p1: selectedPoint, p2: p});
+                                selectedPoint = null;
+                                pairs--;
+                                if (pairs === 0) {
+                                    draw();
+                                    canvas.removeEventListener('click', handleClick);
+                                    setTimeout(() => closeMinigame(true), 500);
+                                }
+                            } else {
+                                // No match
+                                selectedPoint = null;
+                            }
+                        }
+                        draw();
+                        return;
+                    }
+                }
+            }
+            
+            canvas.addEventListener('click', handleClick);
+            draw();
+        }
+
+        function handleQuizAnswer(isCorrect) {
+            if (isCorrect) {
+                closeMinigame(true);
+            } else {
+                document.getElementById('quiz-question').textContent = "아쉽네요. 하나님 나라의 방식은 이웃을 사랑하는 것이랍니다. 다시 시도해보세요!";
+                document.getElementById('quiz-options').innerHTML = `<button class="quiz-option" onclick="closeMinigame(false)">학습으로 돌아가기</button>`;
+            }
+        }
+
+
         // --- UI and Utility Functions ---
         function updateUI() {
             // Header
@@ -1266,6 +1527,7 @@
             document.getElementById('scripture-container').innerHTML = '';
             document.getElementById('mission-btn-chat').style.display = 'inline-block';
             document.getElementById('chat-container').innerHTML = '';
+            document.getElementById('guild-chat-container').innerHTML = '';
         }
 
         function showNotification(message) {
@@ -1364,11 +1626,15 @@
 
             document.querySelectorAll('.modal').forEach(modal => {
                 modal.addEventListener('click', (e) => {
-                    if (e.target === modal) modal.style.display = 'none';
+                    if (e.target === modal) {
+                        if (modal.id === 'minigameModal') return; // Don't close minigame on background click
+                        modal.style.display = 'none';
+                    }
                 });
             });
             document.addEventListener('keydown', (e) => {
                 if (e.key === 'Escape') {
+                    if (activeGame.interval) return; // Don't allow escape during canvas games
                     document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
                 }
             });
@@ -1380,3 +1646,4 @@
     </script>
 </body>
 </html>
+�
