@@ -10,6 +10,196 @@
     <meta name="apple-mobile-web-app-title" content="푸른나라학교">
     
     <style>
+        /* Pretendard 폰트 임포트 */
+        @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
+
+        :root {
+            --bg-gradient-start: #667eea;
+            --bg-gradient-end: #764ba2;
+            --app-bg: white;
+            --text-color: #333;
+            --header-gradient-start: #4facfe;
+            --header-gradient-end: #00f2fe;
+            --header-text-color: white;
+            --nav-bg: #f8f9fa;
+            --nav-border: #dee2e6;
+            --nav-item-color: #495057;
+            --nav-item-active-bg: #4facfe;
+            --nav-item-active-color: white;
+            --nav-item-hover-bg: #e9ecef;
+            --nav-item-active-hover-bg: #3d8bfe;
+            --notice-bg-start: #fff3cd;
+            --notice-bg-end: #ffeeba;
+            --notice-border: #ffc107;
+            --notice-text: #856404;
+            --mission-card-bg: #f8f9fa;
+            --mission-card-border: #dee2e6;
+            --mission-button-bg: #4facfe;
+            --mission-button-hover-bg: #3d8bfe;
+            --mission-button-disabled-bg: #28a745;
+            --prayer-card-bg-start: #ffecd2;
+            --prayer-card-bg-end: #fcb69f;
+            --prayer-card-title: #8b4513;
+            --prayer-slot-bg: rgba(255,255,255,0.7);
+            --prayer-slot-hover-border: #8b4513;
+            --prayer-slot-completed-bg: #d4edda;
+            --prayer-slot-completed-border: #28a745;
+            --scripture-card-bg-start: #e3f2fd;
+            --scripture-card-bg-end: #bbdefb;
+            --scripture-card-border: #2196f3;
+            --scripture-text: #1565c0;
+            --scripture-reference: #0d47a1;
+            --chat-container-bg: #f8f9fa;
+            --chat-messages-bg: white;
+            --chat-input-border: #dee2e6;
+            --chat-input-focus-border: #4facfe;
+            --chat-send-btn-bg: #4facfe;
+            --chat-send-btn-hover-bg: #3d8bfe;
+            --image-upload-btn-bg: #17a2b8;
+            --image-upload-btn-hover-bg: #138496;
+            --message-user-bubble-bg: #4facfe;
+            --message-user-bubble-color: white;
+            --message-other-bubble-bg: #f1f3f4;
+            --message-other-bubble-color: #333;
+            --message-user-avatar-bg: #3d8bfe;
+            --message-other-avatar-bg: #6c757d;
+            --qt-note-card-bg: white;
+            --qt-note-card-border: #dee2e6;
+            --qt-note-title: #4facfe;
+            --qt-note-date: #666;
+            --qt-note-content: #333;
+            --like-button-color: #e91e63;
+            --like-button-hover-color: #c2185b;
+            --note-btn-bg: #6c757d;
+            --note-btn-edit-bg: #ffc107;
+            --note-btn-delete-bg: #dc3545;
+            --modal-bg: rgba(0,0,0,0.5);
+            --modal-content-bg: white;
+            --modal-title-color: #4facfe;
+            --modal-input-border: #dee2e6;
+            --modal-input-focus-border: #4facfe;
+            --modal-button-primary-bg: #4facfe;
+            --modal-button-primary-hover-bg: #3d8bfe;
+            --modal-button-secondary-bg: #6c757d;
+            --modal-button-secondary-hover-bg: #5a6268;
+            --lesson-container-bg: white;
+            --lesson-header-border: #e9ecef;
+            --lesson-title-color: #4facfe;
+            --lesson-content-color: #333;
+            --lesson-content-h4-color: #4facfe;
+            --lesson-content-strong-color: #2c5aa0;
+            --stage-card-bg-start: #89f7fe;
+            --stage-card-bg-end: #66a6ff;
+            --stage-completed-bg: #e8f5e9;
+            --stage-completed-color: #2e7d32;
+            --stage-completed-border: #a5d6a7;
+            --discussion-bg: #f1f8e9;
+            --discussion-border-left: #8bc34a;
+            --discussion-h4-color: #33691e;
+            --discussion-ol-color: #555;
+            --badge-bg: #ffd700;
+            --badge-color: #333;
+            --minigame-canvas-bg: #e0f7fa;
+            --quiz-option-border: #4facfe;
+            --quiz-option-bg: white;
+            --quiz-option-color: #4facfe;
+            --quiz-option-hover-bg: #e3f2fd;
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            --bg-gradient-start: #2c3e50;
+            --bg-gradient-end: #34495e;
+            --app-bg: #3b4d61;
+            --text-color: #ecf0f1;
+            --header-gradient-start: #1a2a3a;
+            --header-gradient-end: #2a3a4a;
+            --header-text-color: #ecf0f1;
+            --nav-bg: #2c3e50;
+            --nav-border: #44586b;
+            --nav-item-color: #bdc3c7;
+            --nav-item-active-bg: #1abc9c;
+            --nav-item-active-color: white;
+            --nav-item-hover-bg: #34495e;
+            --nav-item-active-hover-bg: #16a085;
+            --notice-bg-start: #4a4a3a;
+            --notice-bg-end: #5a5a4a;
+            --notice-border: #8b8b7a;
+            --notice-text: #e0e0d1;
+            --mission-card-bg: #44586b;
+            --mission-card-border: #5a6e80;
+            --mission-button-bg: #1abc9c;
+            --mission-button-hover-bg: #16a085;
+            --mission-button-disabled-bg: #27ae60;
+            --prayer-card-bg-start: #5a4a3a;
+            --prayer-card-bg-end: #6a5a4a;
+            --prayer-card-title: #e0d1b1;
+            --prayer-slot-bg: rgba(255,255,255,0.1);
+            --prayer-slot-hover-border: #e0d1b1;
+            --prayer-slot-completed-bg: #27ae60;
+            --prayer-slot-completed-border: #2ecc71;
+            --scripture-card-bg-start: #3a4a5a;
+            --scripture-card-bg-end: #4a5a6a;
+            --scripture-card-border: #3498db;
+            --scripture-text: #aed6f1;
+            --scripture-reference: #85c1e9;
+            --chat-container-bg: #44586b;
+            --chat-messages-bg: #3b4d61;
+            --chat-input-border: #5a6e80;
+            --chat-input-focus-border: #1abc9c;
+            --chat-send-btn-bg: #1abc9c;
+            --chat-send-btn-hover-bg: #16a085;
+            --image-upload-btn-bg: #2980b9;
+            --image-upload-btn-hover-bg: #2c3e50;
+            --message-user-bubble-bg: #1abc9c;
+            --message-user-bubble-color: white;
+            --message-other-bubble-bg: #5a6e80;
+            --message-other-bubble-color: #ecf0f1;
+            --message-user-avatar-bg: #16a085;
+            --message-other-avatar-bg: #7f8c8d;
+            --qt-note-card-bg: #44586b;
+            --qt-note-card-border: #5a6e80;
+            --qt-note-title: #1abc9c;
+            --qt-note-date: #bdc3c7;
+            --qt-note-content: #ecf0f1;
+            --like-button-color: #e74c3c;
+            --like-button-hover-color: #c0392b;
+            --note-btn-bg: #7f8c8d;
+            --note-btn-edit-bg: #f39c12;
+            --note-btn-delete-bg: #e74c3c;
+            --modal-bg: rgba(0,0,0,0.7);
+            --modal-content-bg: #3b4d61;
+            --modal-title-color: #1abc9c;
+            --modal-input-border: #5a6e80;
+            --modal-input-focus-border: #1abc9c;
+            --modal-button-primary-bg: #1abc9c;
+            --modal-button-primary-hover-bg: #16a085;
+            --modal-button-secondary-bg: #7f8c8d;
+            --modal-button-secondary-hover-bg: #6c757d;
+            --lesson-container-bg: #44586b;
+            --lesson-header-border: #5a6e80;
+            --lesson-title-color: #1abc9c;
+            --lesson-content-color: #ecf0f1;
+            --lesson-content-h4-color: #1abc9c;
+            --lesson-content-strong-color: #3498db;
+            --stage-card-bg-start: #1abc9c;
+            --stage-card-bg-end: #3498db;
+            --stage-completed-bg: #27ae60;
+            --stage-completed-color: #d4edda;
+            --stage-completed-border: #2ecc71;
+            --discussion-bg: #2ecc71;
+            --discussion-border-left: #27ae60;
+            --discussion-h4-color: #1a532d;
+            --discussion-ol-color: #ecf0f1;
+            --badge-bg: #f1c40f;
+            --badge-color: #333;
+            --minigame-canvas-bg: #3a4a5a;
+            --quiz-option-border: #1abc9c;
+            --quiz-option-bg: #44586b;
+            --quiz-option-color: #ecf0f1;
+            --quiz-option-hover-bg: #5a6e80;
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -18,35 +208,38 @@
 
         body {
             font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, var(--bg-gradient-start) 0%, var(--bg-gradient-end) 100%);
             min-height: 100vh;
-            color: #333;
+            color: var(--text-color);
+            transition: background 0.5s ease, color 0.5s ease;
         }
 
         .app-container {
             max-width: 414px;
             margin: 0 auto;
-            background: white;
+            background: var(--app-bg);
             min-height: 100vh;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
             position: relative;
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            transition: background 0.5s ease;
         }
 
         .header {
-            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            color: white;
+            background: linear-gradient(135deg, var(--header-gradient-start) 0%, var(--header-gradient-end) 100%);
+            color: var(--header-text-color);
             padding: 20px;
             text-align: center;
             position: relative;
+            transition: background 0.5s ease, color 0.5s ease;
         }
 
         .character-avatar {
             width: 80px;
             height: 80px;
-            background: #fff;
+            background: var(--app-bg);
             border-radius: 50%;
             margin: 0 auto 10px;
             display: flex;
@@ -55,7 +248,7 @@
             font-size: 40px;
             border: 3px solid rgba(255,255,255,0.3);
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: transform 0.3s ease, background 0.5s ease;
         }
 
         .character-avatar:hover {
@@ -95,9 +288,10 @@
 
         .navigation {
             display: flex;
-            background: #f8f9fa;
-            border-top: 1px solid #dee2e6;
+            background: var(--nav-bg);
+            border-top: 1px solid var(--nav-border);
             flex-shrink: 0;
+            transition: background 0.5s ease, border-color 0.5s ease;
         }
 
         .nav-item {
@@ -107,22 +301,22 @@
             background: none;
             border: none;
             cursor: pointer;
-            transition: all 0.3s ease;
             font-size: 12px;
-            color: #495057;
+            color: var(--nav-item-color);
+            transition: all 0.3s ease;
         }
 
         .nav-item.active {
-            background: #4facfe;
-            color: white;
+            background: var(--nav-item-active-bg);
+            color: var(--nav-item-active-color);
         }
 
         .nav-item:hover {
-            background: #e9ecef;
+            background: var(--nav-item-hover-bg);
         }
 
         .nav-item.active:hover {
-            background: #3d8bfe;
+            background: var(--nav-item-active-hover-bg);
         }
 
         .content {
@@ -132,12 +326,13 @@
         }
 
         .notice-card {
-            background: linear-gradient(135deg, #fff3cd 0%, #ffeeba 100%);
-            border: 1px solid #ffc107;
+            background: linear-gradient(135deg, var(--notice-bg-start) 0%, var(--notice-bg-end) 100%);
+            border: 1px solid var(--notice-border);
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 15px;
             position: relative;
+            transition: background 0.5s ease, border-color 0.5s ease;
         }
 
         .notice-header {
@@ -149,27 +344,27 @@
 
         .notice-title {
             font-weight: bold;
-            color: #856404;
+            color: var(--notice-text);
         }
 
         .notice-date {
             font-size: 12px;
-            color: #856404;
+            color: var(--notice-text);
             opacity: 0.8;
         }
 
         .notice-content {
-            color: #856404;
+            color: var(--notice-text);
             line-height: 1.5;
         }
 
         .mission-card {
-            background: #f8f9fa;
-            border: 1px solid #dee2e6;
+            background: var(--mission-card-bg);
+            border: 1px solid var(--mission-card-border);
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 10px;
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.5s ease, border-color 0.5s ease;
         }
 
         .mission-card:hover {
@@ -186,6 +381,7 @@
 
         .mission-title {
             font-weight: bold;
+            color: var(--text-color);
         }
 
         .mission-reward {
@@ -204,7 +400,7 @@
         }
 
         .mission-button {
-            background: #4facfe;
+            background: var(--mission-button-bg);
             color: white;
             border: none;
             padding: 8px 16px;
@@ -215,12 +411,12 @@
         }
 
         .mission-button:hover {
-            background: #3d8bfe;
+            background: var(--mission-button-hover-bg);
             transform: scale(1.05);
         }
 
         .mission-button:disabled {
-            background: #28a745;
+            background: var(--mission-button-disabled-bg);
             cursor: not-allowed;
             transform: none;
         }
@@ -256,17 +452,18 @@
         }
 
         .prayer-time-card {
-            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+            background: linear-gradient(135deg, var(--prayer-card-bg-start) 0%, var(--prayer-card-bg-end) 100%);
             border-radius: 15px;
             padding: 20px;
             margin: 15px 0;
             text-align: center;
+            transition: background 0.5s ease;
         }
 
         .prayer-time-title {
             font-size: 18px;
             font-weight: bold;
-            color: #8b4513;
+            color: var(--prayer-card-title);
             margin-bottom: 15px;
         }
 
@@ -277,32 +474,33 @@
         }
 
         .prayer-time-slot {
-            background: rgba(255,255,255,0.7);
+            background: var(--prayer-slot-bg);
             padding: 15px;
             border-radius: 10px;
             border: 2px solid transparent;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.3s ease, background 0.5s ease;
         }
 
         .prayer-time-slot:hover {
-            border-color: #8b4513;
+            border-color: var(--prayer-slot-hover-border);
             transform: scale(1.05);
         }
 
         .prayer-time-slot.completed {
-            background: #d4edda;
-            border-color: #28a745;
+            background: var(--prayer-slot-completed-bg);
+            border-color: var(--prayer-slot-completed-border);
         }
 
         .scripture-card {
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            border: 1px solid #2196f3;
+            background: linear-gradient(135deg, var(--scripture-card-bg-start) 0%, var(--scripture-card-bg-end) 100%);
+            border: 1px solid var(--scripture-card-border);
             border-radius: 15px;
             padding: 20px;
             margin: 15px 0;
             text-align: center;
             animation: fadeIn 0.5s ease;
+            transition: background 0.5s ease, border-color 0.5s ease;
         }
 
         @keyframes fadeIn {
@@ -313,25 +511,26 @@
         .scripture-text {
             font-size: 16px;
             line-height: 1.6;
-            color: #1565c0;
+            color: var(--scripture-text);
             margin-bottom: 10px;
             font-style: italic;
         }
 
         .scripture-reference {
             font-weight: bold;
-            color: #0d47a1;
+            color: var(--scripture-reference);
             font-size: 14px;
         }
 
         .chat-container {
-            background: #f8f9fa;
+            background: var(--chat-container-bg);
             border-radius: 15px;
             padding: 15px;
             margin-top: 15px;
             height: 350px;
             display: flex;
             flex-direction: column;
+            transition: background 0.5s ease;
         }
 
         .chat-messages {
@@ -339,8 +538,9 @@
             overflow-y: auto;
             margin-bottom: 15px;
             padding: 10px;
-            background: white;
+            background: var(--chat-messages-bg);
             border-radius: 10px;
+            transition: background 0.5s ease;
         }
 
         .message {
@@ -366,13 +566,13 @@
         }
         
         .message.user .message-bubble {
-            background: #4facfe;
-            color: white;
+            background: var(--message-user-bubble-bg);
+            color: var(--message-user-bubble-color);
         }
 
         .message.other .message-bubble {
-            background: #f1f3f4;
-            color: #333;
+            background: var(--message-other-bubble-bg);
+            color: var(--message-other-bubble-color);
         }
 
         .message-header {
@@ -395,17 +595,19 @@
             margin-right: 8px;
         }
         
-        .message.user .message-avatar { background: #3d8bfe; }
-        .message.other .message-avatar { background: #6c757d; }
+        .message.user .message-avatar { background: var(--message-user-avatar-bg); }
+        .message.other .message-avatar { background: var(--message-other-avatar-bg); }
 
         .message-sender {
             font-weight: bold;
+            color: var(--text-color);
         }
 
         .message-time {
             margin-left: 8px;
             opacity: 0.7;
             font-size: 10px;
+            color: var(--text-color);
         }
 
         .message-image {
@@ -429,19 +631,21 @@
         .chat-input {
             flex: 1;
             padding: 12px;
-            border: 1px solid #dee2e6;
+            border: 1px solid var(--chat-input-border);
             border-radius: 20px;
             font-size: 14px;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, background 0.5s ease, color 0.5s ease;
+            background: var(--chat-messages-bg); /* Use chat messages bg for input */
+            color: var(--text-color);
         }
 
         .chat-input:focus {
-            border-color: #4facfe;
+            border-color: var(--chat-input-focus-border);
             outline: none;
         }
 
         .chat-send-btn {
-            background: #4facfe;
+            background: var(--chat-send-btn-bg);
             color: white;
             border: none;
             padding: 12px 20px;
@@ -451,21 +655,22 @@
         }
 
         .chat-send-btn:hover {
-            background: #3d8bfe;
+            background: var(--chat-send-btn-hover-bg);
         }
 
         .image-upload-btn {
-            background: #17a2b8;
+            background: var(--image-upload-btn-bg);
             color: white;
             border: none;
             padding: 8px 12px;
             border-radius: 15px;
             cursor: pointer;
             font-size: 12px;
+            transition: background 0.3s ease;
         }
 
         .image-upload-btn:hover {
-            background: #138496;
+            background: var(--image-upload-btn-hover-bg);
         }
 
         .hidden-file-input {
@@ -473,12 +678,13 @@
         }
 
         .qt-note-card {
-            background: white;
-            border: 1px solid #dee2e6;
+            background: var(--qt-note-card-bg);
+            border: 1px solid var(--qt-note-card-border);
             border-radius: 10px;
             padding: 15px;
             margin-bottom: 15px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: background 0.5s ease, border-color 0.5s ease;
         }
 
         .qt-note-header {
@@ -487,23 +693,23 @@
             align-items: center;
             margin-bottom: 10px;
             padding-bottom: 10px;
-            border-bottom: 1px solid #e9ecef;
+            border-bottom: 1px solid var(--nav-border);
         }
 
         .qt-note-title {
             font-weight: bold;
-            color: #4facfe;
+            color: var(--qt-note-title);
         }
 
         .qt-note-date {
             font-size: 12px;
-            color: #666;
+            color: var(--qt-note-date);
         }
 
         .qt-note-content {
             margin-bottom: 10px;
             line-height: 1.6;
-            color: #333;
+            color: var(--qt-note-content);
         }
 
         .qt-note-actions {
@@ -515,7 +721,7 @@
         .like-button {
             background: none;
             border: none;
-            color: #e91e63;
+            color: var(--like-button-color);
             cursor: pointer;
             font-size: 14px;
             display: flex;
@@ -524,7 +730,7 @@
         }
 
         .like-button:hover {
-            color: #c2185b;
+            color: var(--like-button-hover-color);
         }
 
         .note-buttons {
@@ -533,7 +739,7 @@
         }
 
         .note-btn {
-            background: #6c757d;
+            background: var(--note-btn-bg);
             color: white;
             border: none;
             padding: 5px 10px;
@@ -542,8 +748,8 @@
             font-size: 11px;
         }
 
-        .note-btn.edit { background: #ffc107; }
-        .note-btn.delete { background: #dc3545; }
+        .note-btn.edit { background: var(--note-btn-edit-bg); }
+        .note-btn.delete { background: var(--note-btn-delete-bg); }
 
         .modal {
             position: fixed;
@@ -551,7 +757,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0,0,0,0.5);
+            background: var(--modal-bg);
             display: none;
             align-items: center;
             justify-content: center;
@@ -559,7 +765,7 @@
         }
 
         .modal-content {
-            background: white;
+            background: var(--modal-content-bg);
             padding: 30px;
             border-radius: 15px;
             max-width: 380px;
@@ -568,6 +774,7 @@
             animation: modalSlideIn 0.3s ease;
             max-height: 80vh;
             overflow-y: auto;
+            transition: background 0.5s ease;
         }
 
         @keyframes modalSlideIn {
@@ -585,33 +792,38 @@
             font-size: 18px;
             font-weight: bold;
             margin-bottom: 20px;
-            color: #4facfe;
+            color: var(--modal-title-color);
         }
 
         .modal-input {
             width: 100%;
             padding: 12px;
-            border: 2px solid #dee2e6;
+            border: 2px solid var(--modal-input-border);
             border-radius: 8px;
             margin-bottom: 15px;
             font-size: 16px;
-            transition: border-color 0.3s ease;
+            transition: border-color 0.3s ease, background 0.5s ease, color 0.5s ease;
+            background: var(--app-bg);
+            color: var(--text-color);
         }
 
         .modal-textarea {
             width: 100%;
             min-height: 150px;
             padding: 12px;
-            border: 2px solid #dee2e6;
+            border: 2px solid var(--modal-input-border);
             border-radius: 8px;
             margin-bottom: 15px;
             font-size: 14px;
             resize: vertical;
             font-family: inherit;
+            transition: border-color 0.3s ease, background 0.5s ease, color 0.5s ease;
+            background: var(--app-bg);
+            color: var(--text-color);
         }
 
         .modal-input:focus, .modal-textarea:focus {
-            border-color: #4facfe;
+            border-color: var(--modal-input-focus-border);
             outline: none;
         }
 
@@ -631,30 +843,31 @@
         }
 
         .modal-button.primary {
-            background: #4facfe;
+            background: var(--modal-button-primary-bg);
             color: white;
         }
 
         .modal-button.primary:hover {
-            background: #3d8bfe;
+            background: var(--modal-button-primary-hover-bg);
         }
 
         .modal-button.secondary {
-            background: #6c757d;
+            background: var(--modal-button-secondary-bg);
             color: white;
         }
 
         .modal-button.secondary:hover {
-            background: #5a6268;
+            background: var(--modal-button-secondary-hover-bg);
         }
 
         .lesson-container {
-            background: white;
+            background: var(--lesson-container-bg);
             border-radius: 15px;
             padding: 20px;
             margin-bottom: 20px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.05);
             animation: slideInUp 0.4s ease;
+            transition: background 0.5s ease;
         }
 
         @keyframes slideInUp {
@@ -673,7 +886,7 @@
             align-items: center;
             margin-bottom: 15px;
             padding-bottom: 10px;
-            border-bottom: 2px solid #e9ecef;
+            border-bottom: 2px solid var(--lesson-header-border);
         }
 
         .lesson-icon {
@@ -684,17 +897,17 @@
         .lesson-title {
             font-size: 18px;
             font-weight: bold;
-            color: #4facfe;
+            color: var(--lesson-title-color);
         }
 
         .lesson-content {
             line-height: 1.7;
-            color: #333;
+            color: var(--lesson-content-color);
             font-size: 15px;
         }
 
         .lesson-content h4 {
-            color: #4facfe;
+            color: var(--lesson-content-h4-color);
             margin: 20px 0 10px 0;
             font-size: 16px;
         }
@@ -713,11 +926,11 @@
         }
 
         .lesson-content strong {
-            color: #2c5aa0;
+            color: var(--lesson-content-strong-color);
         }
         
         .stage-card {
-            background: linear-gradient(135deg, #89f7fe 0%, #66a6ff 100%);
+            background: linear-gradient(135deg, var(--stage-card-bg-start) 0%, var(--stage-card-bg-end) 100%);
             color: white;
             padding: 20px;
             border-radius: 15px;
@@ -744,30 +957,31 @@
             transition: background 0.2s ease;
         }
         .avatar-option:hover {
-            background: #e9ecef;
+            background: var(--nav-item-hover-bg);
         }
         
         .discussion-container {
-            background: #f1f8e9;
-            border-left: 5px solid #8bc34a;
+            background: var(--discussion-bg);
+            border-left: 5px solid var(--discussion-border-left);
             border-radius: 10px;
             padding: 20px;
             margin-top: 25px;
+            transition: background 0.5s ease, border-color 0.5s ease;
         }
         .discussion-container h4 {
-            color: #33691e;
+            color: var(--discussion-h4-color);
             margin-bottom: 15px;
         }
         .discussion-container ol {
             padding-left: 20px;
             line-height: 1.8;
-            color: #555;
+            color: var(--discussion-ol-color);
         }
         
         #badge-container span {
             display: inline-block;
-            background: #ffd700;
-            color: #333;
+            background: var(--badge-bg);
+            color: var(--badge-color);
             padding: 5px 10px;
             border-radius: 15px;
             font-size: 12px;
@@ -777,7 +991,7 @@
 
         #minigame-canvas {
             border-radius: 10px;
-            background: #e0f7fa;
+            background: var(--minigame-canvas-bg);
             cursor: pointer;
         }
 
@@ -788,30 +1002,184 @@
             margin: 10px 0;
             font-size: 16px;
             border-radius: 10px;
-            border: 2px solid #4facfe;
-            background: white;
-            color: #4facfe;
+            border: 2px solid var(--quiz-option-border);
+            background: var(--quiz-option-bg);
+            color: var(--quiz-option-color);
             cursor: pointer;
             transition: all 0.2s ease;
         }
         #minigame-content .quiz-option:hover {
-            background: #e3f2fd;
+            background: var(--quiz-option-hover-bg);
         }
         
         .stage-completed-notice {
             text-align: center;
             padding: 20px;
             margin-top: 20px;
-            background: #e8f5e9;
-            color: #2e7d32;
+            background: var(--stage-completed-bg);
+            color: var(--stage-completed-color);
             font-weight: bold;
             border-radius: 10px;
-            border: 2px dashed #a5d6a7;
+            border: 2px dashed var(--stage-completed-border);
+            transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease;
         }
 
+        /* Theme Toggle Button */
+        .theme-toggle-container {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid var(--nav-border);
+            text-align: center;
+        }
+        .theme-toggle-button {
+            background: var(--modal-button-secondary-bg);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s ease;
+        }
+        .theme-toggle-button:hover {
+            background: var(--modal-button-secondary-hover-bg);
+        }
+
+        /* QT Comments */
+        .comments-section {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid var(--nav-border);
+            text-align: left;
+        }
+        .comments-section h5 {
+            color: var(--text-color);
+            margin-bottom: 10px;
+        }
+        .comment-input-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .comment-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--chat-input-border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--chat-messages-bg);
+            color: var(--text-color);
+        }
+        .comment-password-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--chat-input-border);
+            border-radius: 8px;
+            font-size: 14px;
+            background: var(--chat-messages-bg);
+            color: var(--text-color);
+        }
+        .comment-send-btn {
+            background: #17a2b8;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            align-self: flex-end;
+        }
+        .comment-send-btn:hover {
+            background: #138496;
+        }
+        .comment-list {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid var(--nav-border);
+            border-radius: 8px;
+            padding: 10px;
+            background: var(--chat-messages-bg);
+        }
+        .comment-item {
+            background: var(--mission-card-bg);
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            border: 1px solid var(--mission-card-border);
+        }
+        .comment-item:last-child {
+            margin-bottom: 0;
+        }
+        .comment-header {
+            display: flex;
+            align-items: center;
+            font-size: 12px;
+            color: var(--text-color);
+        }
+        .comment-author {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+        .comment-time {
+            opacity: 0.7;
+        }
+        .comment-content {
+            font-size: 14px;
+            color: var(--text-color);
+            word-wrap: break-word;
+        }
+        .comment-actions {
+            display: flex;
+            gap: 5px;
+            margin-top: 5px;
+            align-self: flex-end;
+        }
+        .comment-action-btn {
+            background: var(--note-btn-bg);
+            color: white;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 10px;
+        }
+        .comment-action-btn.edit { background: var(--note-btn-edit-bg); }
+        .comment-action-btn.delete { background: var(--note-btn-delete-bg); }
+
+        /* Icebreaker Modal Specific Styles */
+        #icebreakerModal .modal-content {
+            padding: 25px;
+        }
+        #icebreakerModal .modal-title {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+        #icebreakerModal .icebreaker-prompt {
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            color: var(--text-color);
+        }
+        #icebreakerModal .icebreaker-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 12px;
+            border: 2px solid var(--modal-input-border);
+            border-radius: 8px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            resize: vertical;
+            font-family: inherit;
+            background: var(--app-bg);
+            color: var(--text-color);
+        }
     </style>
 </head>
-<body>
+<body class="light-mode">
     <div class="app-container">
         <!-- Header -->
         <div class="header">
@@ -843,7 +1211,7 @@
                 <!-- Notice Board -->
                 <div id="notice-section">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h3>📢 공지사항</h3>
+                        <h3 style="color: var(--text-color);">📢 공지사항</h3>
                         <button style="background: #17a2b8; color: white; border: none; padding: 8px 12px; border-radius: 5px; font-size: 12px; cursor: pointer;" onclick="showNoticeModal()">+ 공지 작성</button>
                     </div>
                     <div id="notices-container">
@@ -851,7 +1219,7 @@
                     </div>
                 </div>
 
-                <h3 style="margin-bottom: 15px;">📋 오늘의 미션</h3>
+                <h3 style="margin-bottom: 15px; color: var(--text-color);">📋 오늘의 미션</h3>
                 
                 <div class="prayer-time-card">
                     <div class="prayer-time-title">⏰ 10-10-10 기도법</div>
@@ -892,6 +1260,15 @@
 
                 <div class="mission-card">
                     <div class="mission-header">
+                        <div class="mission-title">🧠 신앙 퀴즈 풀기</div>
+                        <div class="mission-reward">+50 EXP</div>
+                    </div>
+                    <div class="mission-description">신앙 지식을 테스트하고 경험치를 얻으세요!</div>
+                    <button class="mission-button" id="mission-btn-quiz" onclick="showMinigameModal('quiz')">퀴즈 시작</button>
+                </div>
+
+                <div class="mission-card">
+                    <div class="mission-header">
                         <div class="mission-title">👥 길드원과 대화하기</div>
                         <div class="mission-reward">+30 EXP</div>
                     </div>
@@ -903,49 +1280,49 @@
 
             <!-- Stages Tab -->
             <div id="stages-tab" class="tab-content hidden">
-                 <div id="stage-list">
-                    <h3 style="margin-bottom: 20px;">🎯 학습 스테이지</h3>
-                    <p style="text-align: center; color: #666; margin-bottom: 20px;">
-                        교재 내용 기반 학습 단계입니다
-                    </p>
+                    <div id="stage-list">
+                        <h3 style="margin-bottom: 20px; color: var(--text-color);">🎯 학습 스테이지</h3>
+                        <p style="text-align: center; color: var(--text-color); margin-bottom: 20px;">
+                            교재 내용 기반 학습 단계입니다
+                        </p>
+                        
+                        <div class="stage-card" onclick="enterStageContent(1)">
+                            <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">1. 패치 시스템</div>
+                            <div style="font-size: 14px; opacity: 0.9;">거부할 수 없는 특권</div>
+                            <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">예배하기 • 성경읽기 • 기도하기</div>
+                        </div>
+
+                        <div class="stage-card" onclick="enterStageContent(2)">
+                            <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">2. 길드 시스템</div>
+                            <div style="font-size: 14px; opacity: 0.9;">우리, 같이 해볼까요</div>
+                            <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">세례받기 • 공동체 속하기 • 성령 따르기</div>
+                        </div>
+
+                        <div class="stage-card" onclick="enterStageContent(3)">
+                            <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">3. 실전 시스템</div>
+                            <div style="font-size: 14px; opacity: 0.9;">인생은 장난이 아니니까</div>
+                            <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">이론에서 현실로 • 매일 그분과 • 일생을 함께</div>
+                        </div>
+                    </div>
                     
-                    <div class="stage-card" onclick="enterStageContent(1)">
-                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">1. 패치 시스템</div>
-                        <div style="font-size: 14px; opacity: 0.9;">거부할 수 없는 특권</div>
-                        <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">예배하기 • 성경읽기 • 기도하기</div>
+                    <div id="stage-detail" class="hidden">
+                        <div id="stage-content"></div>
+                        <button style="background: var(--modal-button-secondary-bg); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-top: 20px; width: 100%;" onclick="backToStages()">← 스테이지 목록으로</button>
                     </div>
-
-                    <div class="stage-card" onclick="enterStageContent(2)">
-                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">2. 길드 시스템</div>
-                        <div style="font-size: 14px; opacity: 0.9;">우리, 같이 해볼까요</div>
-                        <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">세례받기 • 공동체 속하기 • 성령 따르기</div>
-                    </div>
-
-                    <div class="stage-card" onclick="enterStageContent(3)">
-                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">3. 실전 시스템</div>
-                        <div style="font-size: 14px; opacity: 0.9;">인생은 장난이 아니니까</div>
-                        <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">이론에서 현실로 • 매일 그분과 • 일생을 함께</div>
-                    </div>
-                </div>
-                
-                <div id="stage-detail" class="hidden">
-                    <div id="stage-content"></div>
-                    <button style="background: #6c757d; color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-top: 20px; width: 100%;" onclick="backToStages()">← 스테이지 목록으로</button>
-                </div>
             </div>
 
             <!-- Guild Tab -->
             <div id="guild-tab" class="tab-content hidden">
-                <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 20px; border-radius: 15px; margin-bottom: 20px; text-align: center; position: relative;">
-                    <h3>👥 푸른바람단</h3>
-                    <strong>길드 레벨: <span id="guildLevel">1</span></strong><br>
-                    <small>다음 레벨까지 <span id="guildExp">0</span>/500 EXP</small>
+                <div style="background: linear-gradient(135deg, var(--scripture-card-bg-start) 0%, var(--scripture-card-bg-end) 100%); padding: 20px; border-radius: 15px; margin-bottom: 20px; text-align: center; position: relative;">
+                    <h3 style="color: var(--text-color);">👥 푸른바람단</h3>
+                    <strong style="color: var(--text-color);">길드 레벨: <span id="guildLevel">1</span></strong><br>
+                    <small style="color: var(--text-color);">다음 레벨까지 <span id="guildExp">0</span>/500 EXP</small>
                 </div>
 
                 <!-- QT Note Section -->
                 <div style="margin-bottom: 30px;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                        <h4>📔 QT 노트</h4>
+                        <h4 style="color: var(--text-color);">📔 QT 노트</h4>
                         <button style="background: #28a745; color: white; border: none; padding: 8px 12px; border-radius: 5px; font-size: 12px; cursor: pointer;" onclick="showQTNoteModal()">+ QT 노트 작성</button>
                     </div>
                     <div id="qt-notes-container">
@@ -953,16 +1330,16 @@
                     </div>
                 </div>
 
-                <h4 style="margin-bottom: 15px;">🟢 현재 접속 중인 길드원</h4>
-                <div style="background: #f8f9fa; border-radius: 15px; padding: 15px; margin-bottom: 15px;">
-                    <div style="display: flex; align-items: center; padding: 10px; margin-bottom: 8px; background: white; border-radius: 10px;">
-                        <div id="guildUserAvatar" style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid #4facfe; background: #4facfe; color: white;">🌟</div>
+                <h4 style="margin-bottom: 15px; color: var(--text-color);">🟢 현재 접속 중인 길드원</h4>
+                <div style="background: var(--mission-card-bg); border-radius: 15px; padding: 15px; margin-bottom: 15px;">
+                    <div style="display: flex; align-items: center; padding: 10px; margin-bottom: 8px; background: var(--chat-messages-bg); border-radius: 10px;">
+                        <div id="guildUserAvatar" style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid var(--modal-button-primary-bg); background: var(--modal-button-primary-bg); color: white;">🌟</div>
                         <div style="flex: 1;">
-                            <div style="font-weight: bold; margin-bottom: 2px;"><span id="guildUserName">푸른이</span> (나)</div>
-                            <div style="font-size: 12px; color: #666;">레벨 <span id="guildUserLevel">1</span> <span id="guildUserJob">푸른이</span> • <span id="guildUserStreak">1</span>일 연속 접속</div>
+                            <div style="font-weight: bold; margin-bottom: 2px; color: var(--text-color);"><span id="guildUserName">푸른이</span> (나)</div>
+                            <div style="font-size: 12px; color: var(--text-color);">레벨 <span id="guildUserLevel">1</span> <span id="guildUserJob">푸른이</span> • <span id="guildUserStreak">1</span>일 연속 접속</div>
                         </div>
                     </div>
-                    <div style="text-align: center; color: #666; padding: 20px;">
+                    <div style="text-align: center; color: var(--text-color); padding: 20px;">
                         <p>다른 길드원들이 접속하면 여기에 표시됩니다</p>
                         <p>친구들을 초대해보세요! 🎉</p>
                     </div>
@@ -978,37 +1355,44 @@
 
             <!-- Profile Tab -->
             <div id="profile-tab" class="tab-content hidden">
-                <div style="background: #f8f9fa; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                <div style="background: var(--mission-card-bg); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
                     <div style="text-align: center; margin-bottom: 20px;">
-                        <div style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 50px; cursor: pointer; border: 3px solid #4facfe; background: white;" id="profileAvatar" onclick="showAvatarModal()">🌟</div>
+                        <div style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 50px; cursor: pointer; border: 3px solid var(--modal-button-primary-bg); background: var(--app-bg); color: var(--text-color);" id="profileAvatar" onclick="showAvatarModal()">🌟</div>
                         <div>
-                            <h4 id="profileUserName" style="margin-bottom: 5px; color: #333;">푸른이</h4>
-                            <p style="color: #666; font-size: 14px;">레벨 <span id="profileLevel">1</span> <span id="profileJob">푸른이</span></p>
-                            <p style="color: #666; font-size: 14px;">신앙 여정 <span id="profileStreak">1</span>일차</p>
+                            <h4 id="profileUserName" style="margin-bottom: 5px; color: var(--text-color);">푸른이</h4>
+                            <p style="color: var(--text-color); font-size: 14px;">레벨 <span id="profileLevel">1</span> <span id="profileJob">푸른이</span></p>
+                            <p style="color: var(--text-color); font-size: 14px;">신앙 여정 <span id="profileStreak">1</span>일차</p>
                         </div>
                     </div>
                 </div>
 
-                <div style="background: #f8f9fa; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
-                    <h4 style="margin-bottom: 15px;">🏆 업적 및 뱃지</h4>
-                    <div style="background: white; padding: 15px; border-radius: 10px;">
+                <div style="background: var(--mission-card-bg); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; color: var(--text-color);">🏆 업적 및 뱃지</h4>
+                    <div style="background: var(--chat-messages-bg); padding: 15px; border-radius: 10px;">
                         <div id="badge-container" style="margin-bottom: 10px; min-height: 25px;">
-                           <!-- Badges will be dynamically inserted here -->
+                            <!-- Badges will be dynamically inserted here -->
                         </div>
-                        <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid #e9ecef;">
-                            <span>완료한 미션</span>
-                            <strong id="completedMissionsCount">0</strong>개
+                        <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid var(--nav-border);">
+                            <span style="color: var(--text-color);">완료한 미션</span>
+                            <strong id="completedMissionsCount" style="color: var(--text-color);">0</strong><span style="color: var(--text-color);">개</span>
                         </div>
                     </div>
                 </div>
 
-                <div style="background: #f8f9fa; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
-                    <h4 style="margin-bottom: 15px;">⚙️ 관리자 설정</h4>
-                    <div style="background: white; padding: 15px; border-radius: 10px;">
+                <div style="background: var(--mission-card-bg); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; color: var(--text-color);">🎨 테마 설정</h4>
+                    <div class="theme-toggle-container">
+                        <button class="theme-toggle-button" onclick="toggleTheme()">테마 전환</button>
+                    </div>
+                </div>
+
+                <div style="background: var(--mission-card-bg); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; color: var(--text-color);">⚙️ 관리자 설정</h4>
+                    <div style="background: var(--chat-messages-bg); padding: 15px; border-radius: 10px;">
                         <button style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;" onclick="showResetModal()">
                             🔄 모든 데이터 초기화
                         </button>
-                        <div style="font-size: 12px; color: #666; margin-top: 8px; text-align: center;">
+                        <div style="font-size: 12px; color: var(--text-color); margin-top: 8px; text-align: center;">
                             모든 진행 상황이 리셋됩니다.
                         </div>
                     </div>
@@ -1115,14 +1499,27 @@
             <input type="password" id="qtActionPassword" class="modal-input" placeholder="비밀번호" maxlength="10">
             <div class="modal-buttons">
                 <button class="modal-button secondary" onclick="closeQTPasswordModal()">취소</button>
-                <button class="modal-button primary" onclick="confirmQTAction()">확인</button>
+                <button class="modal-button primary" id="qtConfirmActionButton" onclick="confirmQTAction()">확인</button>
             </div>
         </div>
     </div>
 
+    <!-- Minigame Modal -->
     <div id="minigameModal" class="modal">
         <div class="modal-content" id="minigame-content">
             <!-- Minigame content will be injected here -->
+        </div>
+    </div>
+
+    <!-- Icebreaker Modal -->
+    <div id="icebreakerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">아이스브레이크</div>
+            <p class="icebreaker-prompt" id="icebreakerPrompt"></p>
+            <textarea id="icebreakerInput" class="icebreaker-input" placeholder="당신의 생각을 자유롭게 적어보세요..."></textarea>
+            <div class="modal-buttons">
+                <button class="modal-button primary" id="icebreakerSubmitBtn" onclick="completeIcebreaker()">제출하고 강의 보기</button>
+            </div>
         </div>
     </div>
     
@@ -1136,8 +1533,11 @@
         let notices = [];
         let qtNotes = [];
         let editingQTNote = null;
-        let pendingQTAction = null;
+        let pendingQTAction = null; // { type: 'qtNote' | 'comment', action: 'edit' | 'delete', noteId: ..., commentId: ... (if comment) }
         let activeGame = { id: null, interval: null, stage: 0 };
+        let currentTheme = 'light-mode'; // Default theme
+        let quizCompletedToday = false; // To track daily quiz completion
+        let completedIcebreakers = []; // Array of stage numbers for which icebreaker is completed
 
         // 메모리 기반 저장소 (localStorage 대체)
         let memoryStorage = {};
@@ -1203,9 +1603,41 @@
             { text: "사람은 마음으로 믿어서 의에 이르고, 입으로 고백해서 구원에 이르게 됩니다.", reference: "로마서 10:10" }
         ];
 
+        const quizQuestions = [
+            {
+                question: "성경에서 예수님을 '참 포도나무'로, 하나님 아버지를 '농부'로 비유하며, 우리가 예수님 안에 '머물러' 있어야 열매를 맺을 수 있다고 말씀하신 성경 구절은 어디인가요?",
+                options: ["마태복음 5:1-2", "요한복음 15:1-5", "로마서 8:28", "빌립보서 4:13"],
+                answer: "요한복음 15:1-5"
+            },
+            {
+                question: "예수님께서 우리에게 새로운 생명을 주시고 '더 넘치게' 누리게 하시려고 자기 목숨을 버리겠다고 말씀하신 성경 구절은 어디인가요?",
+                options: ["창세기 1:1", "시편 23:1", "요한복음 10:10-11", "고린도전서 13:4-7"],
+                answer: "요한복음 10:10-11"
+            },
+            {
+                question: "'그리스도 안에서 당신은 용납되었습니다', '그리스도 안에서 당신은 특별한 존재입니다', '그리스도 안에서 당신은 새로운 공동체에 속했습니다' 이 세 가지를 줄여서 무엇이라고 부르나요?",
+                options: ["용기백배", "용특새", "새로운 시작", "믿음의 3단계"],
+                answer: "용특새"
+            },
+            {
+                question: "성경은 푸른바람의 나라 에너지원이 가득한 무엇에 비유되나요?",
+                options: ["보물상자", "냉장고", "도서관", "놀이터"],
+                answer: "냉장고"
+            },
+            {
+                question: "예수님께서 부활하신 후 제자들을 찾아가 차려 주신 아침 식사 장소는 어디였나요?",
+                options: ["갈릴리 호숫가", "예루살렘 성전", "감람산", "베다니"],
+                answer: "갈릴리 호숫가"
+            }
+        ];
+
         const stageContents = {
             1: {
                 title: "1강: 패치 시스템 - 거부할 수 없는 특권",
+                item: "용특새 메시지",
+                icebreaker: {
+                    prompt: "1강을 시작하기 전에, '패치'라는 단어를 들으면 어떤 생각이 드나요? 신앙생활에서 '패치'가 필요하다고 느낀 적이 있나요?"
+                },
                 lessons: [
                     {
                         icon: "🛡️",
@@ -1241,8 +1673,12 @@
             },
             2: {
                 title: "2강: 길드 시스템 - 우리, 같이 해볼까요",
+                item: "길드 버프",
+                icebreaker: {
+                    prompt: "2강을 시작하기 전에, '길드'라는 단어를 들으면 어떤 생각이 드나요? 신앙 공동체가 '길드'처럼 느껴진 적이 있나요?"
+                },
                 lessons: [
-                     {
+                    {
                         icon: "🎯",
                         title: "세례받기 - 길드 가입하기",
                         content: `<h4>🏰 길드 가입의 의미</h4><p>하나님 나라 사람이 되는 것과 그 나라 방식대로 사는 것 사이에 '세례'가 있습니다. 기독교는 자신만의 전인격적 고백이 필요한 종교이며, 절대 남에게 묻어갈 수 없습니다.</p><h4>💍 비밀 연애에서 공식 발표로</h4><p>세례를 좀 더 설레는 버전으로 설명하면, 비밀 연애를 하는 연인이 사귄다고 공식적으로 밝히는 것과 같습니다. 이 사람이라고 확신하기 때문입니다.</p>`
@@ -1266,6 +1702,10 @@
             },
             3: {
                 title: "3강: 실전 시스템 - 인생은 장난이 아니니까",
+                item: "성령의 열매",
+                icebreaker: {
+                    prompt: "3강을 시작하기 전에, '실전'이라는 단어를 들으면 어떤 생각이 드나요? 나의 신앙이 '실전'에 강하다고 생각하나요?"
+                },
                 lessons: [
                     {
                         icon: "📖→🌍",
@@ -1321,6 +1761,19 @@
                 showNotification('스테이지 데이터를 찾을 수 없습니다.');
                 return;
             }
+
+            // Check if icebreaker needs to be shown
+            if (stageData.icebreaker && !completedIcebreakers.includes(stageNumber)) {
+                showIcebreakerModal(stageNumber, stageData.icebreaker.prompt);
+            } else {
+                // If no icebreaker or already completed, proceed to show stage details
+                _showStageContentDetails(stageNumber);
+            }
+        }
+
+        // Internal function to show stage content details after icebreaker
+        function _showStageContentDetails(stageNumber) {
+            const stageData = stageContents[stageNumber];
             
             document.getElementById('stage-list').classList.add('hidden');
             document.getElementById('stage-detail').classList.remove('hidden');
@@ -1354,12 +1807,13 @@
             
             const stageContentElement = document.getElementById('stage-content');
             stageContentElement.innerHTML = `
-                <h3 style="margin-bottom: 20px; color: #4facfe;">${stageData.title}</h3>
+                <h3 style="margin-bottom: 20px; color: var(--lesson-title-color);">${stageData.title}</h3>
                 ${contentHtml}
             `;
             
             document.querySelector('.content').scrollTop = 0;
         }
+
 
         function backToStages() {
             document.getElementById('stage-detail').classList.add('hidden');
@@ -1370,41 +1824,23 @@
         function completeStage(stageNumber) {
             if (completedStages.includes(stageNumber)) return;
 
-            let badgeName = '';
-            let levelGain = 30; // 모든 스테이지 완료 시 30레벨 증가
-            let itemName = '';
+            const stageData = stageContents[stageNumber];
+            let levelGain = 3000; // 모든 스테이지 완료 시 3000레벨 증가
+            let itemName = stageData.item || '특별한 아이템'; // 스테이지별 아이템 이름
 
-            switch (stageNumber) {
-                case 1:
-                    badgeName = '용특새';
-                    itemName = '용특새 메시지';
-                    break;
-                case 2:
-                    badgeName = '길드 버프';
-                    itemName = '길드 버프';
-                    break;
-                case 3:
-                    badgeName = '성령의 열매';
-                    itemName = '성령의 열매';
-                    break;
+            grantBadge(`${itemName} 획득`); // 아이템 획득 뱃지 부여
+            addExperience(levelGain, `🎉 스테이지 ${stageNumber} 완료! ${itemName} 획득! 레벨 +${levelGain}!`);
+            completedStages.push(stageNumber);
+            
+            const button = document.getElementById('complete-stage-btn');
+            if (button) {
+                button.remove();
+                // 스테이지 완료 후 다시 콘텐츠를 로드하여 완료 메시지 표시
+                _showStageContentDetails(stageNumber); 
             }
 
-            if (badgeName) {
-                grantBadge(badgeName);
-                // 직접 레벨 증가 (30레벨)
-                userLevel += levelGain;
-                showNotification(`🎉 스테이지 ${stageNumber} 완료! ${itemName} 획득! 레벨 +${levelGain}!`);
-                completedStages.push(stageNumber);
-                
-                const button = document.getElementById('complete-stage-btn');
-                if (button) {
-                    button.remove();
-                    enterStageContent(stageNumber);
-                }
-
-                updateUI();
-                saveProgress();
-            }
+            updateUI();
+            saveProgress();
         }
 
         function completePrayerTime(timeSlot, element) {
@@ -1431,6 +1867,7 @@
             if (prayerTimes.morning && prayerTimes.noon && prayerTimes.evening) {
                 setTimeout(() => {
                     addExperience(50, '🎉 10-10-10 기도법 완주! 보너스 경험치 +50!');
+                    grantBadge('10-10-10 마스터');
                 }, 1000);
             }
             
@@ -1514,7 +1951,7 @@
             if(userBadges.length > 0) {
                 badgeContainer.innerHTML = userBadges.map(b => `<span>${b}</span>`).join('');
             } else {
-                badgeContainer.innerHTML = `<p style="color: #999; font-size: 14px;">아직 획득한 뱃지가 없습니다.</p>`;
+                badgeContainer.innerHTML = `<p style="color: var(--text-color); font-size: 14px;">아직 획득한 뱃지가 없습니다.</p>`;
             }
         }
         
@@ -1525,6 +1962,7 @@
             document.querySelectorAll('.mission-button').forEach(btn => {
                 btn.disabled = false;
                 if(btn.id === 'mission-btn-worship') btn.textContent = '참여 완료';
+                if(btn.id === 'mission-btn-quiz') btn.textContent = '퀴즈 시작';
             });
             document.getElementById('mission-btn-scripture').style.display = 'inline-block';
             document.getElementById('scripture-container').innerHTML = '';
@@ -1549,7 +1987,8 @@
                 const data = {
                     userName, userAvatar, userJob, userLevel, userExp, userStreak,
                     completedMissions, userBadges, completedStages, guildLevel, guildExp, 
-                    chatMessages, prayerTimes, notices, qtNotes,
+                    chatMessages, prayerTimes, notices, qtNotes, currentTheme,
+                    quizCompletedToday, completedIcebreakers, // Save new states
                     lastLogin: new Date().toDateString()
                 };
                 
@@ -1586,7 +2025,10 @@
                     chatMessages = data.chatMessages || [];
                     notices = data.notices || [];
                     qtNotes = data.qtNotes || [];
-                    
+                    currentTheme = data.currentTheme || 'light-mode'; // Load theme
+                    quizCompletedToday = data.quizCompletedToday || false; // Load quiz completion
+                    completedIcebreakers = data.completedIcebreakers || []; // Load icebreaker completion
+
                     const today = new Date().toDateString();
                     const lastLogin = data.lastLogin || today;
 
@@ -1603,6 +2045,7 @@
                             userStreak = 1;
                         }
                         prayerTimes = { morning: false, noon: false, evening: false };
+                        quizCompletedToday = false; // Reset daily quiz completion
                     } else {
                         prayerTimes = data.prayerTimes || { morning: false, noon: false, evening: false };
                     }
@@ -1627,6 +2070,8 @@
                 setInitialState();
             }
             
+            // Apply theme after loading
+            document.body.className = currentTheme;
             updateUI();
             updateNotices();
             updateQTNotes();
@@ -1648,6 +2093,9 @@
             prayerTimes = { morning: false, noon: false, evening: false };
             notices = [];
             qtNotes = [];
+            currentTheme = 'light-mode';
+            quizCompletedToday = false;
+            completedIcebreakers = [];
             
             // 초기 상태 저장 시도
             try {
@@ -1675,7 +2123,7 @@
             const title = document.getElementById('noticeTitle').value.trim();
             const content = document.getElementById('noticeContent').value.trim();
 
-            if (password !== '0000') {
+            if (password !== '0000') { // 관리자 비밀번호 (하드코딩, 실제 서비스에서는 보안 강화 필요)
                 showNotification('관리자 비밀번호가 틀렸습니다! ❌');
                 return;
             }
@@ -1704,7 +2152,7 @@
             const container = document.getElementById('notices-container');
             if (notices.length === 0) {
                 container.innerHTML = `
-                    <div style="text-align: center; color: #666; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                    <div style="text-align: center; color: var(--text-color); padding: 20px; background: var(--mission-card-bg); border-radius: 10px;">
                         <p>등록된 공지사항이 없습니다.</p>
                     </div>
                 `;
@@ -1753,7 +2201,7 @@
                 // 수정 모드
                 editingQTNote.title = title;
                 editingQTNote.content = content;
-                editingQTNote.password = password;
+                editingQTNote.password = password; // 비밀번호도 업데이트 가능
                 editingQTNote.date = new Date().toLocaleDateString('ko-KR');
                 showNotification('QT 노트가 수정되었습니다! ✏️');
             } else {
@@ -1766,7 +2214,8 @@
                     author: userName,
                     date: new Date().toLocaleDateString('ko-KR'),
                     likes: 0,
-                    likedBy: []
+                    likedBy: [], // 좋아요 누른 사용자 닉네임 목록
+                    comments: [] // Initialize comments array
                 };
                 qtNotes.unshift(qtNote);
                 showNotification('QT 노트가 작성되었습니다! 📝');
@@ -1781,7 +2230,7 @@
             const container = document.getElementById('qt-notes-container');
             if (qtNotes.length === 0) {
                 container.innerHTML = `
-                    <div style="text-align: center; color: #666; padding: 20px; background: #f8f9fa; border-radius: 10px;">
+                    <div style="text-align: center; color: var(--text-color); padding: 20px; background: var(--mission-card-bg); border-radius: 10px;">
                         <p>작성된 QT 노트가 없습니다.</p>
                         <p>첫 번째 QT 노트를 작성해보세요! 📝</p>
                     </div>
@@ -1804,6 +2253,31 @@
                                     <button class="note-btn delete" onclick="deleteQTNote(${note.id})">삭제</button>
                                 </div>
                             ` : ''}
+                        </div>
+                        <div class="comments-section">
+                            <h5>💬 댓글 (${note.comments.length})</h5>
+                            <div class="comment-input-container">
+                                <textarea id="commentInput-${note.id}" class="comment-input" placeholder="댓글을 입력하세요..." rows="2"></textarea>
+                                <input type="password" id="commentPassword-${note.id}" class="comment-password-input" placeholder="비밀번호 (수정/삭제용)" maxlength="10">
+                                <button class="comment-send-btn" onclick="addComment(${note.id})">댓글 작성</button>
+                            </div>
+                            <div class="comment-list">
+                                ${note.comments.length === 0 ? `<p style="color: var(--text-color); text-align: center;">아직 댓글이 없습니다.</p>` : note.comments.map(comment => `
+                                    <div class="comment-item">
+                                        <div class="comment-header">
+                                            <span class="comment-author">${comment.author}</span>
+                                            <span class="comment-time">${comment.time}</span>
+                                        </div>
+                                        <div class="comment-content">${comment.content}</div>
+                                        ${comment.author === userName ? `
+                                            <div class="comment-actions">
+                                                <button class="comment-action-btn edit" onclick="editComment(${note.id}, ${comment.id})">수정</button>
+                                                <button class="comment-action-btn delete" onclick="deleteComment(${note.id}, ${comment.id})">삭제</button>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                `).join('')}
+                            </div>
                         </div>
                     </div>
                 `).join('');
@@ -1830,56 +2304,115 @@
             saveProgress();
         }
 
-        function editQTNote(noteId) {
+        // --- Comment Functions ---
+        function addComment(noteId) {
             const note = qtNotes.find(n => n.id === noteId);
             if (!note) return;
 
-            pendingQTAction = { action: 'edit', noteId: noteId };
-            document.getElementById('passwordModalText').textContent = 'QT 노트를 수정하려면 비밀번호를 입력하세요:';
+            const inputElement = document.getElementById(`commentInput-${noteId}`);
+            const passwordElement = document.getElementById(`commentPassword-${noteId}`);
+            const commentContent = inputElement.value.trim();
+            const commentPassword = passwordElement.value.trim();
+
+            if (!commentContent || !commentPassword) {
+                showNotification('댓글 내용과 비밀번호를 모두 입력해주세요!');
+                return;
+            }
+
+            const newComment = {
+                id: Date.now(),
+                author: userName,
+                avatar: userAvatar,
+                content: commentContent,
+                password: commentPassword,
+                time: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
+            };
+
+            note.comments.push(newComment);
+            inputElement.value = '';
+            passwordElement.value = '';
+            showNotification('댓글이 작성되었습니다! 💬');
+            updateQTNotes();
+            saveProgress();
+        }
+
+        function editComment(noteId, commentId) {
+            const note = qtNotes.find(n => n.id === noteId);
+            if (!note) return;
+            const comment = note.comments.find(c => c.id === commentId);
+            if (!comment) return;
+
+            pendingQTAction = { type: 'comment', action: 'edit', noteId: noteId, commentId: commentId };
+            document.getElementById('passwordModalText').textContent = '댓글을 수정하려면 비밀번호를 입력하세요:';
             document.getElementById('qtPasswordModal').style.display = 'flex';
             document.getElementById('qtActionPassword').focus();
         }
 
-        function deleteQTNote(noteId) {
+        function deleteComment(noteId, commentId) {
             const note = qtNotes.find(n => n.id === noteId);
             if (!note) return;
+            const comment = note.comments.find(c => c.id === commentId);
+            if (!comment) return;
 
-            pendingQTAction = { action: 'delete', noteId: noteId };
-            document.getElementById('passwordModalText').textContent = 'QT 노트를 삭제하려면 비밀번호를 입력하세요:';
+            pendingQTAction = { type: 'comment', action: 'delete', noteId: noteId, commentId: commentId };
+            document.getElementById('passwordModalText').textContent = '댓글을 삭제하려면 비밀번호를 입력하세요:';
             document.getElementById('qtPasswordModal').style.display = 'flex';
             document.getElementById('qtActionPassword').focus();
         }
 
-        function closeQTPasswordModal() {
-            document.getElementById('qtPasswordModal').style.display = 'none';
-            document.getElementById('qtActionPassword').value = '';
-            pendingQTAction = null;
-        }
-
+        // Modified confirmQTAction to handle both QT notes and comments
         function confirmQTAction() {
             if (!pendingQTAction) return;
 
             const password = document.getElementById('qtActionPassword').value;
-            const note = qtNotes.find(n => n.id === pendingQTAction.noteId);
+            let targetItem = null; // Either a QT note or a comment
 
-            if (!note || note.password !== password) {
+            if (pendingQTAction.type === 'qtNote') {
+                targetItem = qtNotes.find(n => n.id === pendingQTAction.noteId);
+            } else if (pendingQTAction.type === 'comment') {
+                const note = qtNotes.find(n => n.id === pendingQTAction.noteId);
+                if (note) {
+                    targetItem = note.comments.find(c => c.id === pendingQTAction.commentId);
+                }
+            }
+
+            if (!targetItem || targetItem.password !== password) {
                 showNotification('비밀번호가 틀렸습니다! ❌');
                 return;
             }
 
-            if (pendingQTAction.action === 'edit') {
-                editingQTNote = note;
-                document.getElementById('qtModalTitle').textContent = 'QT 노트 수정';
-                document.getElementById('qtSubmitBtn').textContent = '수정 완료';
-                document.getElementById('qtSubmitBtn').onclick = createQTNote;
-                document.getElementById('qtNoteTitle').value = note.title;
-                document.getElementById('qtNoteContent').value = note.content;
-                document.getElementById('qtNotePassword').value = note.password;
-                document.getElementById('qtNoteModal').style.display = 'flex';
-            } else if (pendingQTAction.action === 'delete') {
-                qtNotes = qtNotes.filter(n => n.id !== pendingQTAction.noteId);
+            if (pendingQTAction.type === 'qtNote') {
+                if (pendingQTAction.action === 'edit') {
+                    editingQTNote = targetItem;
+                    document.getElementById('qtModalTitle').textContent = 'QT 노트 수정';
+                    document.getElementById('qtSubmitBtn').textContent = '수정 완료';
+                    document.getElementById('qtSubmitBtn').onclick = createQTNote;
+                    document.getElementById('qtNoteTitle').value = targetItem.title;
+                    document.getElementById('qtNoteContent').value = targetItem.content;
+                    document.getElementById('qtNotePassword').value = targetItem.password;
+                    document.getElementById('qtNoteModal').style.display = 'flex';
+                } else if (pendingQTAction.action === 'delete') {
+                    qtNotes = qtNotes.filter(n => n.id !== pendingQTAction.noteId);
+                    updateQTNotes();
+                    showNotification('QT 노트가 삭제되었습니다! 🗑️');
+                    saveProgress();
+                }
+            } else if (pendingQTAction.type === 'comment') {
+                const note = qtNotes.find(n => n.id === pendingQTAction.noteId);
+                if (!note) return;
+
+                if (pendingQTAction.action === 'edit') {
+                    const newContent = prompt('새로운 댓글 내용을 입력하세요:', targetItem.content);
+                    if (newContent !== null) { // User didn't cancel
+                        targetItem.content = newContent.trim();
+                        targetItem.time = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) + ' (수정됨)';
+                        showNotification('댓글이 수정되었습니다! ✏️');
+                    }
+                } else if (pendingQTAction.action === 'delete') {
+                    note.comments = note.comments.filter(c => c.id !== pendingQTAction.commentId);
+                    showNotification('댓글이 삭제되었습니다! 🗑️');
+                }
                 updateQTNotes();
-                showNotification('QT 노트가 삭제되었습니다! 🗑️');
                 saveProgress();
             }
 
@@ -1902,6 +2435,10 @@
             container.innerHTML = createChatInterface('chat');
             updateChatMessages('chat');
             document.getElementById('mission-btn-chat').style.display = 'none';
+            // 채팅 참여 완료 시 미션 완료 처리 (한 번만)
+            if (!document.getElementById('mission-btn-chat').disabled) {
+                completeMission(document.getElementById('mission-btn-chat'), '길드원과 대화 완료! 공동체 버프를 받았습니다! 💬', 30, '대화의 시작');
+            }
         }
 
         function showGuildChat() {
@@ -1929,7 +2466,7 @@
             if (!messagesContainer) return;
             
             if (chatMessages.length === 0) {
-                messagesContainer.innerHTML = `<div style="text-align: center; color: #666; padding: 20px;"><p>첫 번째 메시지를 보내보세요! 💬</p></div>`;
+                messagesContainer.innerHTML = `<div style="text-align: center; color: var(--text-color); padding: 20px;"><p>첫 번째 메시지를 보내보세요! 💬</p></div>`;
             } else {
                 messagesContainer.innerHTML = chatMessages.map(msg => {
                     let messageContent = `<div class="message-bubble">${msg.message}</div>`;
@@ -2039,6 +2576,120 @@
             if (event.key === 'Enter') sendMessage(prefix);
         }
 
+        // --- Minigame (Quiz) Functions ---
+        let currentQuizIndex = 0;
+
+        function showMinigameModal(gameType) {
+            const minigameContent = document.getElementById('minigame-content');
+            minigameContent.innerHTML = ''; // Clear previous content
+
+            if (gameType === 'quiz') {
+                if (quizCompletedToday) {
+                    minigameContent.innerHTML = `
+                        <div class="modal-title">오늘의 퀴즈</div>
+                        <p style="color: var(--text-color); margin-bottom: 20px;">오늘은 이미 퀴즈를 완료했습니다! 내일 다시 도전해주세요. 😊</p>
+                        <div class="modal-buttons">
+                            <button class="modal-button secondary" onclick="closeMinigameModal()">닫기</button>
+                        </div>
+                    `;
+                    document.getElementById('minigameModal').style.display = 'flex';
+                    return;
+                }
+                startQuiz();
+            }
+        }
+
+        function closeMinigameModal() {
+            document.getElementById('minigameModal').style.display = 'none';
+        }
+
+        function startQuiz() {
+            currentQuizIndex = 0;
+            displayQuizQuestion();
+            document.getElementById('minigameModal').style.display = 'flex';
+        }
+
+        function displayQuizQuestion() {
+            const minigameContent = document.getElementById('minigame-content');
+            const questionData = quizQuestions[currentQuizIndex];
+
+            if (!questionData) {
+                // All questions answered
+                minigameContent.innerHTML = `
+                    <div class="modal-title">퀴즈 완료!</div>
+                    <p style="color: var(--text-color); margin-bottom: 20px;">모든 퀴즈를 완료했습니다. 대단해요! 🎉</p>
+                    <div class="modal-buttons">
+                        <button class="modal-button primary" onclick="completeQuizMission()">보상 받기</button>
+                        <button class="modal-button secondary" onclick="closeMinigameModal()">닫기</button>
+                    </div>
+                `;
+                return;
+            }
+
+            let optionsHtml = questionData.options.map(option => `
+                <button class="quiz-option" onclick="checkAnswer('${option}')">${option}</button>
+            `).join('');
+
+            minigameContent.innerHTML = `
+                <div class="modal-title">신앙 퀴즈 (${currentQuizIndex + 1}/${quizQuestions.length})</div>
+                <p style="color: var(--text-color); margin-bottom: 20px; font-weight: bold;">${questionData.question}</p>
+                <div>${optionsHtml}</div>
+            `;
+        }
+
+        function checkAnswer(selectedOption) {
+            const questionData = quizQuestions[currentQuizIndex];
+            if (selectedOption === questionData.answer) {
+                showNotification('정답입니다! 🥳');
+                currentQuizIndex++;
+                setTimeout(displayQuizQuestion, 500); // Show next question after a short delay
+            } else {
+                showNotification('오답입니다. 다시 시도해보세요. 😔');
+            }
+        }
+
+        function completeQuizMission() {
+            addExperience(50, '퀴즈 미션 완료! 지혜가 +50 증가했습니다! 🧠');
+            grantBadge('퀴즈 마스터');
+            quizCompletedToday = true; // Mark quiz as completed for the day
+            document.getElementById('mission-btn-quiz').textContent = '완료!';
+            document.getElementById('mission-btn-quiz').disabled = true;
+            closeMinigameModal();
+            saveProgress();
+        }
+
+        // --- Icebreaker Functions ---
+        let currentIcebreakerStage = null;
+
+        function showIcebreakerModal(stageNumber, promptText) {
+            currentIcebreakerStage = stageNumber;
+            document.getElementById('icebreakerPrompt').textContent = promptText;
+            document.getElementById('icebreakerInput').value = ''; // Clear previous input
+            document.getElementById('icebreakerModal').style.display = 'flex';
+        }
+
+        function closeIcebreakerModal() {
+            document.getElementById('icebreakerModal').style.display = 'none';
+            currentIcebreakerStage = null;
+        }
+
+        function completeIcebreaker() {
+            const answer = document.getElementById('icebreakerInput').value.trim();
+            if (!answer) {
+                showNotification('답변을 입력해주세요!');
+                return;
+            }
+
+            if (!completedIcebreakers.includes(currentIcebreakerStage)) {
+                completedIcebreakers.push(currentIcebreakerStage);
+                showNotification(`아이스브레이크 완료! 스테이지 ${currentIcebreakerStage}의 문이 열렸습니다!`);
+                saveProgress();
+            }
+            
+            closeIcebreakerModal();
+            _showStageContentDetails(currentIcebreakerStage); // Proceed to show stage content
+        }
+
         // --- Modal Functions ---
         function showNameModal() {
             const modal = document.getElementById('nameModal');
@@ -2092,6 +2743,22 @@
             }
         }
 
+        // --- Theme Toggle Function ---
+        function toggleTheme() {
+            if (document.body.classList.contains('light-mode')) {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+                currentTheme = 'dark-mode';
+                showNotification('다크 모드로 전환되었습니다 🌙');
+            } else {
+                document.body.classList.remove('dark-mode');
+                document.body.classList.add('light-mode');
+                currentTheme = 'light-mode';
+                showNotification('라이트 모드로 전환되었습니다 ☀️');
+            }
+            saveProgress();
+        }
+
         // --- App Initialization ---
         function initApp() {
             try {
@@ -2100,6 +2767,25 @@
                 setTimeout(() => {
                     showNotification(`${userName}님, 푸른나라학교에 오신 것을 환영합니다! 🌟`);
                 }, 1000);
+
+                // Check if quiz was completed today
+                const lastQuizDate = safeGetItem('lastQuizDate');
+                const today = new Date().toDateString();
+                if (lastQuizDate === today) {
+                    quizCompletedToday = true;
+                    const quizButton = document.getElementById('mission-btn-quiz');
+                    if (quizButton) {
+                        quizButton.textContent = '완료!';
+                        quizButton.disabled = true;
+                    }
+                } else {
+                    quizCompletedToday = false;
+                    const quizButton = document.getElementById('mission-btn-quiz');
+                    if (quizButton) {
+                        quizButton.textContent = '퀴즈 시작';
+                        quizButton.disabled = false;
+                    }
+                }
 
                 // Modal close events
                 document.querySelectorAll('.modal').forEach(modal => {
@@ -2122,6 +2808,8 @@
                         const noticeModal = document.getElementById('noticeModal');
                         const qtNoteModal = document.getElementById('qtNoteModal');
                         const qtPasswordModal = document.getElementById('qtPasswordModal');
+                        const minigameModal = document.getElementById('minigameModal');
+                        const icebreakerModal = document.getElementById('icebreakerModal');
                         
                         if (nameModal.style.display === 'flex') {
                             e.preventDefault();
@@ -2138,6 +2826,13 @@
                         } else if (qtPasswordModal.style.display === 'flex') {
                             e.preventDefault();
                             confirmQTAction();
+                        } else if (minigameModal.style.display === 'flex' && document.getElementById('minigame-content').querySelector('.quiz-option')) {
+                            // Prevent default Enter key behavior in quiz modal if an option is focused
+                            // This part needs more sophisticated handling if quiz options are focusable
+                            // For now, it will just close the modal if no specific action is tied to Enter
+                        } else if (icebreakerModal.style.display === 'flex') {
+                            e.preventDefault();
+                            completeIcebreaker();
                         }
                     }
                 });
