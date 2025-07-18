@@ -612,6 +612,36 @@
         .avatar-option:hover {
             background: #e9ecef;
         }
+        
+        /* Discussion Questions Styling */
+        .discussion-container {
+            background: #f1f8e9;
+            border-left: 5px solid #8bc34a;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+        .discussion-container h4 {
+            color: #33691e;
+            margin-bottom: 15px;
+        }
+        .discussion-container ol {
+            padding-left: 20px;
+            line-height: 1.8;
+            color: #555;
+        }
+        
+        /* Badge Styling */
+        #badge-container span {
+            display: inline-block;
+            background: #ffd700;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            font-weight: bold;
+            margin: 3px;
+        }
 
     </style>
 </head>
@@ -626,15 +656,15 @@
             </div>
             <div class="user-stats">
                 <div class="stat">
-                    <div class="stat-value" id="userLevel">5</div>
+                    <div class="stat-value" id="userLevel">1</div>
                     <div>레벨</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value" id="userExp">750</div>
+                    <div class="stat-value" id="userExp">0</div>
                     <div>경험치</div>
                 </div>
                 <div class="stat">
-                    <div class="stat-value" id="userStreak">7</div>
+                    <div class="stat-value" id="userStreak">1</div>
                     <div>연속일</div>
                 </div>
             </div>
@@ -670,7 +700,7 @@
                         <div class="mission-reward">+70 EXP</div>
                     </div>
                     <div class="mission-description">푸른바람의 냉장고에서 오늘의 영양분을 섭취하세요</div>
-                    <button class="mission-button" onclick="showScripture()">말씀 보기</button>
+                    <button class="mission-button" id="mission-btn-scripture" onclick="showScripture()">말씀 보기</button>
                     <div id="scripture-container"></div>
                 </div>
 
@@ -680,16 +710,16 @@
                         <div class="mission-reward">+100 EXP</div>
                     </div>
                     <div class="mission-description">하나님을 만나는 공식 채널에서 양방향 소통하세요</div>
-                    <button class="mission-button" onclick="completeMission(this, '예배 참여 완료! 용특새 메시지를 받았습니다! 🙏', 100)">참여 완료</button>
+                    <button class="mission-button" id="mission-btn-worship" onclick="completeMission(this, '예배 참여 완료! 용특새 메시지를 받았습니다! 🙏', 100, '예배 참석')">참여 완료</button>
                 </div>
 
                 <div class="mission-card">
                     <div class="mission-header">
-                        <div class="mission-title">� 길드원과 대화하기</div>
+                        <div class="mission-title">👥 길드원과 대화하기</div>
                         <div class="mission-reward">+30 EXP</div>
                     </div>
                     <div class="mission-description">병아리 공동체에서 길드 버프를 받아보세요</div>
-                    <button class="mission-button" onclick="openChat()">채팅 참여</button>
+                    <button class="mission-button" id="mission-btn-chat" onclick="openChat()">채팅 참여</button>
                     <div id="chat-container"></div>
                 </div>
             </div>
@@ -731,8 +761,8 @@
             <div id="guild-tab" class="tab-content hidden">
                 <div style="background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); padding: 20px; border-radius: 15px; margin-bottom: 20px; text-align: center; position: relative;">
                     <h3>👥 푸른바람단</h3>
-                    <strong>길드 레벨: <span id="guildLevel">12</span></strong><br>
-                    <small>다음 레벨까지 <span id="guildExp">350</span>/500 EXP</small>
+                    <strong>길드 레벨: <span id="guildLevel">1</span></strong><br>
+                    <small>다음 레벨까지 <span id="guildExp">0</span>/500 EXP</small>
                 </div>
 
                 <h4 style="margin-bottom: 15px;">🟢 현재 접속 중인 길드원</h4>
@@ -741,7 +771,7 @@
                         <div id="guildUserAvatar" style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid #4facfe; background: #4facfe; color: white;">🌟</div>
                         <div style="flex: 1;">
                             <div style="font-weight: bold; margin-bottom: 2px;"><span id="guildUserName">푸른이</span> (나)</div>
-                            <div style="font-size: 12px; color: #666;">레벨 <span id="guildUserLevel">5</span> • <span id="guildUserStreak">7</span>일 연속 접속</div>
+                            <div style="font-size: 12px; color: #666;">레벨 <span id="guildUserLevel">1</span> • <span id="guildUserStreak">1</span>일 연속 접속</div>
                         </div>
                     </div>
                     <div style="text-align: center; color: #666; padding: 20px;">
@@ -765,8 +795,8 @@
                         <div style="width: 100px; height: 100px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 50px; cursor: pointer; border: 3px solid #4facfe; background: white;" id="profileAvatar" onclick="showAvatarModal()">🌟</div>
                         <div>
                             <h4 id="profileUserName" style="margin-bottom: 5px; color: #333;">푸른이</h4>
-                            <p style="color: #666; font-size: 14px;">레벨 <span id="profileLevel">5</span> <span id="profileJob">새신자</span></p>
-                            <p style="color: #666; font-size: 14px;">신앙 여정 <span id="profileStreak">7</span>일차</p>
+                            <p style="color: #666; font-size: 14px;">레벨 <span id="profileLevel">1</span> <span id="profileJob">새신자</span></p>
+                            <p style="color: #666; font-size: 14px;">신앙 여정 <span id="profileStreak">1</span>일차</p>
                         </div>
                     </div>
                 </div>
@@ -774,14 +804,12 @@
                 <div style="background: #f8f9fa; border-radius: 15px; padding: 20px; margin-bottom: 20px;">
                     <h4 style="margin-bottom: 15px;">🏆 업적 및 뱃지</h4>
                     <div style="background: white; padding: 15px; border-radius: 10px;">
-                        <div style="margin-bottom: 10px;">
-                            <span style="display: inline-block; background: #ffd700; color: #333; padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin: 2px;">첫 기도</span>
-                            <span style="display: inline-block; background: #ffd700; color: #333; padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin: 2px;">성경 독자</span>
-                            <span style="display: inline-block; background: #ffd700; color: #333; padding: 5px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; margin: 2px;">7일 연속</span>
+                        <div id="badge-container" style="margin-bottom: 10px; min-height: 25px;">
+                           <!-- Badges will be dynamically inserted here -->
                         </div>
                         <div style="display: flex; justify-content: space-between; margin-top: 15px; padding-top: 15px; border-top: 1px solid #e9ecef;">
                             <span>완료한 미션</span>
-                            <strong id="completedMissionsCount">15</strong>개
+                            <strong id="completedMissionsCount">0</strong>개
                         </div>
                     </div>
                 </div>
@@ -790,10 +818,10 @@
                     <h4 style="margin-bottom: 15px;">⚙️ 관리자 설정</h4>
                     <div style="background: white; padding: 15px; border-radius: 10px;">
                         <button style="width: 100%; padding: 12px; background: #dc3545; color: white; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;" onclick="showResetModal()">
-                            🔄 레벨/경험치 초기화
+                            🔄 모든 데이터 초기화
                         </button>
                         <div style="font-size: 12px; color: #666; margin-top: 8px; text-align: center;">
-                            관리자만 사용할 수 있습니다
+                            모든 진행 상황이 리셋됩니다.
                         </div>
                     </div>
                 </div>
@@ -865,31 +893,22 @@
     
     <script>
         // --- Global State Variables ---
-        let userLevel = 5;
-        let userExp = 750;
-        let userStreak = 7;
-        let completedMissions = 15;
-        let userName = '푸른이';
-        let userAvatar = '🌟';
-        let userJob = '새신자';
-        let guildLevel = 12;
-        let guildExp = 350;
+        let userLevel, userExp, userStreak, completedMissions, userName, userAvatar, userJob, userBadges;
+        let guildLevel, guildExp;
         let currentStage = null;
         let chatMessages = [];
-        let prayerTimes = { morning: false, noon: false, evening: false };
+        let prayerTimes = {};
 
         // --- Data Definitions ---
 
-        // Scripture data for daily missions
         const scriptures = [
-            { text: "내 안에 머물러 있어라. 그리하면 나도 너희 안에 머물러 있겠다. 가지가 포도나무에 붙어 있지 아니하면 스스로 열매를 맺을 수 없는 것과 같이, 너희도 내 안에 머물러 있지 아니하면 열매를 맺을 수 없다.", reference: "요한복음 15:4" },
+            { text: "내 안에 머물러 있어라. 그리하면 나도 너희 안에 머물러 있겠다...", reference: "요한복음 15:4" },
             { text: "나는 참 포도나무요, 내 아버지는 농부이시다.", reference: "요한복음 15:1" },
-            { text: "너희가 나의 말에 머물러 있으면, 너희는 참으로 나의 제자들이다. 그리고 너희는 진리를 얻게 될 것이며, 진리가 너희를 자유롭게 할 것이다.", reference: "요한복음 8:31-32" },
-            { text: "그러므로 너희는 가서, 모든 민족을 제자로 삼아서, 아버지와 아들과 성령의 이름으로 세례를 주고, 내가 너희에게 명령한 모든 것을 그들에게 가르쳐 지키게 하여라.", reference: "마태복음 28:19-20" },
+            { text: "너희가 나의 말에 머물러 있으면, 너희는 참으로 나의 제자들이다...", reference: "요한복음 8:31-32" },
+            { text: "그러므로 너희는 가서, 모든 민족을 제자로 삼아서...", reference: "마태복음 28:19-20" },
             { text: "사람은 마음으로 믿어서 의에 이르고, 입으로 고백해서 구원에 이르게 됩니다.", reference: "로마서 10:10" }
         ];
 
-        // Stage content based on the provided PDF
         const stageContents = {
             1: {
                 title: "1강: 패치 시스템 - 거부할 수 없는 특권",
@@ -897,143 +916,48 @@
                     {
                         icon: "🛡️",
                         title: "예배하기 - 하나님을 만나는 공식 채널",
-                        content: `
-                            <h4>📌 예배는 양방향 소통</h4>
-                            <p>예수님은 우리에게 새로운 생명을 주실 뿐만 아니라, "더 넘치게" 누리며 살게 하기 위해 자기 목숨을 버리겠다고 말씀하셨습니다.</p>
-                            <h4>💡 예배의 의미</h4>
-                            <ul>
-                                <li>하나님이 우리 일상에 얼마나 관심이 많은지 알 수 있는 시간</li>
-                                <li>우리를 얼마나 소중히 여기는지 깨닫는 시간</li>
-                                <li>하나님의 계획에서 우리가 얼마나 중요한 사람인지 발견하는 시간</li>
-                            </ul>
-                            <h4>🎯 실천 방법 - 마음으로 드리는 예배</h4>
-                            <ul>
-                                <li>예배 중에 수첩이나 다이어리에 하나님께 드리는 마음을 기록하기</li>
-                                <li>"오늘은 하나님이 예배에서 어떤 이야기를 해주실까?" 기대하며 참여하기</li>
-                                <li>찬양과 기도로 하나님을 높이고, 설교를 통해 말씀을 듣고 깨달은 후 고백과 다짐으로 마음 표현하기</li>
-                            </ul>
-                            <h4>⚔️ 거짓 위협 vs 진짜 목소리</h4>
-                            <p><strong>거짓 위협:</strong> "너는 왜 그거밖에 안 되냐?", "너 따위는 여기서 실패하면 바로 끝이야"</p>
-                            <p><strong>진짜 목소리 (용특새):</strong></p>
-                            <ul>
-                                <li>그리스도 안에서 당신은 <strong>용납</strong>되었습니다</li>
-                                <li>그리스도 안에서 당신은 <strong>특별한</strong> 존재입니다</li>
-                                <li>그리스도 안에서 당신은 <strong>새로운</strong> 공동체에 속했습니다</li>
-                            </ul>
-                        `
+                        content: `<h4>📌 예배는 양방향 소통</h4><p>예수님은 우리에게 새로운 생명을 주실 뿐만 아니라, "더 넘치게" 누리며 살게 하기 위해 자기 목숨을 버리겠다고 말씀하셨습니다.</p><h4>💡 예배의 의미</h4><ul><li>하나님이 우리 일상에 얼마나 관심이 많은지 알 수 있는 시간</li><li>우리를 얼마나 소중히 여기는지 깨닫는 시간</li><li>하나님의 계획에서 우리가 얼마나 중요한 사람인지 발견하는 시간</li></ul>`
                     },
                     {
                         icon: "⚡",
                         title: "성경읽기 - 푸른바람의 냉장고",
-                        content: `
-                            <h4>🍯 나의 패치, 나의 특권</h4>
-                            <p>성경은 푸른바람의 나라 에너지원이 가득한 냉장고입니다. 아무리 냉장고에 먹을 것이 가득해도 꺼내 먹지 않으면 아무 소용이 없습니다.</p>
-                            <h4>💭 성경 읽기는 특권인가요, 의무인가요?</h4>
-                            <p>성경 읽기는 특권이자 의무이지만, 결국은 특권입니다! 덕질하는 스타와 이야기 나눌 수 있는 채팅방에 초대받은 것과 같습니다.</p>
-                            <h4>🔍 성경을 꺼내 먹는 꿀팁</h4>
-                            <p>성경 읽기 초보자라면 다음 주제를 눈여겨 보세요:</p>
-                            <ul>
-                                <li><strong>하나님은 어떤 분일까?</strong> (하나님의 성품과 말씀과 하신 일)</li>
-                                <li><strong>예수님은 어떤 분일까?</strong> (예수님의 가르침과 삶과 행동)</li>
-                                <li><strong>선배들은 어떻게 살았을까?</strong> (그들의 믿음과 기도, 실수와 회복과 교훈)</li>
-                                <li><strong>그러면 나는 어떻게 살아야 할까?</strong> (내 현실에 적용할 수 있는 성경 원리)</li>
-                            </ul>
-                            <h4>📚 상황별 성경 말씀 가이드</h4>
-                            <ul>
-                                <li><strong>욕이라도 실컷 하고 싶을 때:</strong> 시편 (분노의 시가 많습니다)</li>
-                                <li><strong>믿음의 모험이 망설여질 때:</strong> 역사서들 (역사상 가장 큰 모험은 하나님의 모험)</li>
-                                <li><strong>스스로 형편없다고 느껴질 때:</strong> 사사기, 요나서</li>
-                                <li><strong>사랑이 무언지 알고 싶을 때:</strong> 룻기, 아가서, 요한복음</li>
-                                <li><strong>더 나은 삶을 살고 싶을 때:</strong> 시편, 잠언, 전도서, 신약의 편지들</li>
-                            </ul>
-                        `
+                        content: `<h4>🍯 나의 패치, 나의 특권</h4><p>성경은 푸른바람의 나라 에너지원이 가득한 냉장고입니다. 아무리 냉장고에 먹을 것이 가득해도 꺼내 먹지 않으면 아무 소용이 없습니다.</p><h4>🔍 성경을 꺼내 먹는 꿀팁</h4><ul><li>하나님은 어떤 분일까? (하나님의 성품과 말씀과 하신 일)</li><li>예수님은 어떤 분일까? (예수님의 가르침과 삶과 행동)</li><li>선배들은 어떻게 살았을까? (그들의 믿음과 기도, 실수와 회복과 교훈)</li><li>그러면 나는 어떻게 살아야 할까? (내 현실에 적용할 수 있는 성경 원리)</li></ul>`
                     },
                     {
                         icon: "🔌",
                         title: "기도하기 - 신에게 빨대 꽂기",
-                        content: `
-                            <h4>🌳 포도나무와 가지의 관계</h4>
-                            <p>예수님은 우리를 "가지"라고 부르시며, 자신에게 딱 붙어 있으라고 하십니다. 나뭇가지의 최고 특권은 농부(하나님)가 땀 흘려 일하고 나무(예수님)가 열심히 공급한 양분을 그냥 받아 누리는 것입니다.</p>
-                            <h4>🕐 10-10-10 기도법</h4>
-                            <p><strong>아침에 10분:</strong></p>
-                            <ul>
-                                <li>"주님, 오늘도 당신 안에 머물게요"</li>
-                                <li>하루를 시작하면서 예수님에게 말을 걸어보세요</li>
-                            </ul>
-                            <p><strong>점심에 10분:</strong></p>
-                            <ul>
-                                <li>10분이라도 그분 목소리에 귀를 기울여보세요</li>
-                                <li>너무 힘든 순간에는 "하나님, 도와주세요"라고 마음속으로 크게 비명을 질러도 괜찮습니다</li>
-                            </ul>
-                            <p><strong>저녁에 10분:</strong></p>
-                            <ul>
-                                <li>잠들기 전 마지막 10분을 나무에 붙어서 에너지를 충분히 채우는 시간으로 활용</li>
-                                <li>짧은 기도문으로 일기를 써도 좋고, 낮에 부른 찬양 가사를 적어도 좋습니다</li>
-                            </ul>
-                            <h4>🎯 기도의 핵심</h4>
-                            <p>기독교 신앙은 하나님의 열망이 우리를 살렸고, 하나님의 그 열심이 오늘도 우리를 살게 한다는 사실을 믿는 것입니다. 편하게 능동적으로 빨대를 꽂고 그분께 말을 거세요!</p>
-                        `
+                        content: `<h4>🌳 포도나무와 가지의 관계</h4><p>예수님은 우리를 "가지"라고 부르시며, 자신에게 딱 붙어 있으라고 하십니다. 나뭇가지의 최고 특권은 농부(하나님)가 땀 흘려 일하고 나무(예수님)가 열심히 공급한 양분을 그냥 받아 누리는 것입니다.</p><h4>🕐 10-10-10 기도법</h4><p>아침, 점심, 저녁 10분씩 예수님과 대화하는 시간을 가져보세요. 부담 없이, 그저 말을 거는 것부터 시작하면 됩니다.</p>`
                     }
+                ],
+                discussionQuestions: [
+                    "예배, 성경 읽기, 기도 중에서 요즘 나에게 가장 가깝게 느껴지는 것과 가장 멀게 느껴지는 것은 무엇인가요? 그 이유는 무엇일까요?",
+                    "나를 향한 하나님의 '진짜 목소리'(용납, 특별함, 새로운 공동체)를 의심하게 만드는 '거짓 위협'에는 어떤 것들이 있었나요?",
+                    "오늘 배운 '10-10-10 기도법'을 내일부터 당장 실천해본다면, 어떤 점이 기대되고 어떤 점이 걱정되나요?"
                 ]
             },
             2: {
                 title: "2강: 길드 시스템 - 우리, 같이 해볼까요",
                 lessons: [
-                    {
+                     {
                         icon: "🎯",
                         title: "세례받기 - 길드 가입하기",
-                        content: `
-                            <h4>🏰 길드 가입의 의미</h4>
-                            <p>하나님 나라 사람이 되는 것과 그 나라 방식대로 사는 것 사이에 '세례'가 있습니다. 기독교는 자신만의 전인격적 고백이 필요한 종교이며, 절대 남에게 묻어갈 수 없습니다.</p>
-                            <h4>💍 비밀 연애에서 공식 발표로</h4>
-                            <p>세례를 좀 더 설레는 버전으로 설명하면, 비밀 연애를 하는 연인이 사귄다고 공식적으로 밝히는 것과 같습니다. 이 사람이라고 확신하기 때문입니다.</p>
-                            <h4>💫 마음에서 입으로</h4>
-                            <p>"사람은 마음으로 믿어서 의에 이르고, 입으로 고백해서 구원에 이르게 됩니다" (로마서 10:10)</p>
-                            <ul>
-                                <li>세례식에는 짧더라도 공동체 앞에서 자기 신앙을 고백하고 기도하는 시간이 있습니다</li>
-                                <li>세례 간증문이나 기도문을 작성해 간직하는 것을 추천합니다</li>
-                            </ul>
-                            <h4>🆕 입에서 행동으로</h4>
-                            <p>세례 후의 삶이 중요합니다. 결혼식보다 그 후의 삶이 더 중요한 것과 같습니다. 하나님 나라 사람은 더 이상 자기중심성의 노예로 살지 않기 때문에 자유롭습니다.</p>
-                        `
+                        content: `<h4>🏰 길드 가입의 의미</h4><p>하나님 나라 사람이 되는 것과 그 나라 방식대로 사는 것 사이에 '세례'가 있습니다. 기독교는 자신만의 전인격적 고백이 필요한 종교이며, 절대 남에게 묻어갈 수 없습니다.</p><h4>💍 비밀 연애에서 공식 발표로</h4><p>세례를 좀 더 설레는 버전으로 설명하면, 비밀 연애를 하는 연인이 사귄다고 공식적으로 밝히는 것과 같습니다. 이 사람이라고 확신하기 때문입니다.</p>`
                     },
                     {
                         icon: "👥",
                         title: "공동체 속하기 - 병아리 공동체",
-                        content: `
-                            <h4>🐣 병아리가 살아남는 법</h4>
-                            <p>학교 앞에서 산 병아리 중에서 유일하게 끝까지 자라서 튼튼한 닭이 된 병아리의 비밀은 '공동체'였습니다. 새로운 공동체를 만나서 무엇은 먹고 무엇은 먹지 말아야 하는지, 물은 어떻게 마시고 바람은 어떻게 쐬는지를 선배와 어른들에게 배우며 점점 더 건강해졌습니다.</p>
-                            <h4>🎮 길드 버프 받는 방법</h4>
-                            <p><strong>1. 듣고 배우는 버프</strong></p>
-                            <ul>
-                                <li>예배 때 드리는 찬양과 기도, 선포되는 설교를 귀 기울여 듣기</li>
-                                <li>친구·선배들과 소그룹으로 모여서 하나님이 설교를 통해 하신 말씀을 나누기</li>
-                            </ul>
-                            <p><strong>2. 보고 배우는 버프</strong></p>
-                            <ul>
-                                <li>공동체의 누군가가 듣고 배운 바를 실제로 살아내는 모습을 보면서 서로 배우기</li>
-                                <li>실패담도 매우 소중합니다 - 결단하고 실천했을 때 일어나는 일이기 때문입니다</li>
-                            </ul>
-                            <h4>🚫 적당한 거리의 함정</h4>
-                            <p>적당한 거리를 유지하는 공동체는 답이 아닙니다. 거리를 적당하게 유지하면 상처도 덜 받고 불편하지 않지만, 성장을 서로 격려하고 도모할 수는 없습니다. '길드 버프'가 생기지 않습니다.</p>
-                        `
+                        content: `<h4>🐣 병아리가 살아남는 법</h4><p>학교 앞에서 산 병아리가 살아남는 비결은 '공동체'였습니다. 공동체를 통해 무엇을 먹고, 어떻게 살아야 하는지 배우며 건강해집니다.</p><h4>🎮 길드 버프 받는 방법</h4><p>공동체 안에서 말씀을 듣고 배우는 버프, 다른 사람의 삶을 보고 배우는 버프를 통해 함께 성장할 수 있습니다.</p>`
                     },
                     {
                         icon: "🕊️",
                         title: "성령 따르기 - 우리 힘만으로는 어려워",
-                        content: `
-                            <h4>🤝 늘 함께하는 참 좋은 스승</h4>
-                            <p>우리 힘만으로는 어렵습니다. 억지로는 No, 인격적으로 Yes! 성령님은 우리와 인격적인 관계를 원하십니다.</p>
-                            <h4>📖➕🕊️ 성경과 성령의 콤보</h4>
-                            <p>성경과 성령님은 따로 떼어놓고 생각할 수 없습니다. 성경은 성령님이 감동하여 기록하게 하신 하나님의 말씀이고, 성령님은 그 말씀을 우리가 깨닫고 순종할 수 있도록 도우시는 분이십니다.</p>
-                            <h4>🎯 이제 실전으로</h4>
-                            <ul>
-                                <li>성령님께 의존하되 인격적으로 소통하세요</li>
-                                <li>일상에서 성령님의 인도하심을 구하세요</li>
-                                <li>성령님의 열매: 사랑, 기쁨, 평화, 오래 참음, 친절, 선함, 신실함, 온유, 절제</li>
-                            </ul>
-                        `
+                        content: `<h4>🤝 늘 함께하는 참 좋은 스승</h4><p>우리 힘만으로는 어렵습니다. 성령님은 우리와 인격적인 관계를 원하시며, 우리가 자발적으로 하나님의 뜻을 선택하도록 도우시는 분입니다.</p><h4>📖➕🕊️ 성경과 성령의 콤보</h4><p>성경과 성령님은 따로 떼어놓고 생각할 수 없습니다. 성령님은 성경 말씀을 깨닫고 순종하도록 도우십니다.</p>`
                     }
+                ],
+                discussionQuestions: [
+                    "나에게 신앙 공동체(길드)는 어떤 의미인가요? 공동체를 통해 '길드 버프'를 받았던 경험이 있다면 나눠주세요.",
+                    "세례를 '비밀 연애에서 공식 발표로' 비유한 것처럼, 나의 신앙을 다른 사람들에게 공개적으로 표현하는 것에 대해 어떻게 생각하나요?",
+                    "성령님을 '늘 함께하는 참 좋은 스승'으로 인격적으로 신뢰하고 따르기 위해, 구체적으로 어떤 노력을 할 수 있을까요?"
                 ]
             },
             3: {
@@ -1042,61 +966,29 @@
                     {
                         icon: "📖→🌍",
                         title: "이론에서 현실로 - 성경은 그림의 떡이 아니다",
-                        content: `
-                            <h4>📚 무책임한 동화에서 책임감 쩌는 현실로</h4>
-                            <p>공주님과 왕자님이 만나서 오래오래 행복하게 살았다는 결말은 무책임하고 비현실적입니다. 그 후에 어떻게 살았는지를 말해주어야 진짜 이야기가 완성됩니다.</p>
-                            <h4>🎯 끝날 때까지 끝난 게 아니다</h4>
-                            <ul>
-                                <li>일상 상황에서 성경 원리 적용해보기</li>
-                                <li>하나님 나라 방식으로 문제 해결하기</li>
-                                <li>실패해도 괜찮습니다 - 계획을 수정해서 다시 도전하세요</li>
-                            </ul>
-                        `
+                        content: `<h4>📚 무책임한 동화에서 책임감 쩌는 현실로</h4><p>신앙은 '오래오래 행복하게 살았답니다'에서 끝나지 않습니다. 그 후의 삶을 하나님 나라 방식으로 살아내는 것이 진짜 이야기입니다.</p><h4>🎯 끝날 때까지 끝난 게 아니다</h4><p>일상에서 성경 원리를 적용하고, 실패를 두려워하지 말고, 계속해서 하나님을 알아가며 신뢰를 쌓아가는 것이 중요합니다.</p>`
                     },
                     {
                         icon: "⏰",
                         title: "매일 그분과 - 루틴! 재밌고 꾸준하게",
-                        content: `
-                            <h4>📅 일대일 만남이라니</h4>
-                            <p>하나님과의 개인적인 만남 시간을 가지세요. 재밌고 꾸준하게 루틴을 만들어보세요. 이것이 바로 큐티(QT, Quiet Time)입니다.</p>
-                            <h4>📖 큐티, 시작해볼까요</h4>
-                            <p><strong>기본 큐티 순서:</strong></p>
-                            <ul>
-                                <li><strong>1단계:</strong> 성경 본문 읽기</li>
-                                <li><strong>2단계:</strong> 하나님이 누구신지, 무엇을 원하시는지 찾아보기</li>
-                                <li><strong>3단계:</strong> 내게 주시는 메시지는 무엇인지 생각해보기</li>
-                                <li><strong>4단계:</strong> 오늘 하루 어떻게 적용할지 결정하기</li>
-                                <li><strong>5단계:</strong> 기도로 마무리하기</li>
-                            </ul>
-                        `
+                        content: `<h4>📅 일대일 만남이라니</h4><p>하나님과의 개인적인 만남 시간, 즉 큐티(QT, Quiet Time)를 꾸준히 가지는 것이 중요합니다. 재밌고 꾸준하게 자신만의 루틴을 만들어보세요.</p><h4>📖 큐티, 시작해볼까요</h4><p>성경 읽기 → 하나님 알기 → 메시지 찾기 → 적용하기 → 기도하기 순서로 큐티를 진행해볼 수 있습니다.</p>`
                     },
                     {
                         icon: "🤗",
                         title: "일생을 함께 - 어, 살아서 움직이네",
-                        content: `
-                            <h4>✨ 찬란했던 그 순간</h4>
-                            <p>인생에는 하나님의 사랑과 은혜를 특별히 느끼는 찬란한 순간들이 있습니다. 이런 순간들을 놓치지 말고 기억해두세요. 힘든 시간이 올 때 큰 위로가 됩니다.</p>
-                            <h4>🌑 어둠 속에 갇혔을 때도</h4>
-                            <p>모든 인생에는 어둠의 시간도 있습니다. 이때야말로 지금까지 쌓아온 신앙의 근육이 필요한 때입니다. 하나님이 함께하신다는 것을 믿음으로 붙들어야 합니다.</p>
-                            <h4>🌈 거룩한 상상</h4>
-                            <ul>
-                                <li>하나님 나라의 완성된 모습을 상상해보세요</li>
-                                <li>모든 눈물이 씻겨지고, 모든 상처가 치유되는 그날을 기대하세요</li>
-                                <li>그 소망이 오늘의 어려움을 견디게 하는 힘이 됩니다</li>
-                            </ul>
-                        `
+                        content: `<h4>✨ 찬란했던 그 순간과 어둠의 시간</h4><p>인생의 좋은 순간과 힘든 순간 모두 하나님과 함께하며 신앙의 근육을 키워나가야 합니다.</p><h4>🌈 거룩한 상상</h4><p>하나님 나라의 완성된 모습을 소망하며 오늘의 어려움을 견디고, 이 땅에서 하나님 나라를 맛보며 살아갈 수 있습니다.</p>`
                     }
+                ],
+                discussionQuestions: [
+                    "성경 말씀을 '그림의 떡'이 아닌, 내 삶의 '책임감 쩌는 현실'로 만들기 위해 어떤 노력을 하고 있나요? 또는 어떤 점이 가장 어렵나요?",
+                    "매일 하나님과 만나는 '큐티' 시간을 꾸준히 갖기 위해 나에게 가장 필요한 것은 무엇일까요? (예: 시간, 장소, 의지, 좋은 교재 등)",
+                    "최근 나의 삶에서 경험한 '찬란했던 순간'과 '어둠의 시간'은 각각 무엇이었나요? 그 시간들을 통해 하나님에 대해 무엇을 배우게 되었나요?"
                 ]
             }
         };
 
         // --- Core App Functions ---
 
-        /**
-         * Switches between the main tabs (Home, Stages, Guild, Profile)
-         * @param {string} tabName - The name of the tab to show
-         * @param {HTMLElement} navElement - The clicked navigation button element
-         */
         function showTab(tabName, navElement) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
@@ -1104,14 +996,9 @@
             document.getElementById(tabName + '-tab').classList.remove('hidden');
             navElement.classList.add('active');
 
-            if (tabName === 'guild') updateGuildUserInfo();
-            if (tabName === 'stages') backToStages(); // Always show stage list first
+            if (tabName === 'stages') backToStages();
         }
 
-        /**
-         * Enters a specific learning stage, showing its detailed content
-         * @param {number} stageNumber - The number of the stage to display
-         */
         function enterStage(stageNumber) {
             currentStage = stageNumber;
             const stageData = stageContents[stageNumber];
@@ -1124,7 +1011,7 @@
             document.getElementById('stage-list').classList.add('hidden');
             document.getElementById('stage-detail').classList.remove('hidden');
             
-            const lessonsHtml = stageData.lessons.map(lesson => `
+            let contentHtml = stageData.lessons.map(lesson => `
                 <div class="lesson-container">
                     <div class="lesson-header">
                         <div class="lesson-icon">${lesson.icon}</div>
@@ -1133,30 +1020,33 @@
                     <div class="lesson-content">${lesson.content}</div>
                 </div>
             `).join('');
+
+            if (stageData.discussionQuestions) {
+                contentHtml += `
+                    <div class="discussion-container">
+                        <h4>🤔 함께 나눌 질문</h4>
+                        <ol>
+                            ${stageData.discussionQuestions.map(q => `<li>${q}</li>`).join('')}
+                        </ol>
+                    </div>
+                `;
+            }
             
             const stageContentElement = document.getElementById('stage-content');
             stageContentElement.innerHTML = `
                 <h3 style="margin-bottom: 20px; color: #4facfe;">${stageData.title}</h3>
-                ${lessonsHtml}
+                ${contentHtml}
             `;
             
             document.querySelector('.content').scrollTop = 0;
         }
 
-        /**
-         * Returns from the stage detail view to the stage list view
-         */
         function backToStages() {
             document.getElementById('stage-detail').classList.add('hidden');
             document.getElementById('stage-list').classList.remove('hidden');
             currentStage = null;
         }
 
-        /**
-         * Completes a daily prayer time slot (morning, noon, evening)
-         * @param {string} timeSlot - The prayer slot being completed
-         * @param {HTMLElement} element - The clicked prayer slot element
-         */
         function completePrayerTime(timeSlot, element) {
             if (prayerTimes[timeSlot]) {
                 showNotification('이미 완료한 기도 시간입니다!');
@@ -1176,6 +1066,7 @@
             }
             
             addExperience(expGain, message);
+            grantBadge('첫 기도');
             
             if (prayerTimes.morning && prayerTimes.noon && prayerTimes.evening) {
                 setTimeout(() => {
@@ -1188,9 +1079,6 @@
             saveProgress();
         }
 
-        /**
-         * Displays a random scripture verse and a button to complete the mission
-         */
         function showScripture() {
             const container = document.getElementById('scripture-container');
             const randomScripture = scriptures[Math.floor(Math.random() * scriptures.length)];
@@ -1200,33 +1088,23 @@
                     <div class="scripture-text">"${randomScripture.text}"</div>
                     <div class="scripture-reference">- ${randomScripture.reference} -</div>
                 </div>
-                <button class="mission-button" onclick="completeMission(this, '말씀 묵상 완료! 영양분을 얻었습니다! 📖', 70)" style="margin-top: 10px;">묵상 완료</button>
+                <button class="mission-button" onclick="completeMission(this, '말씀 묵상 완료! 영양분을 얻었습니다! 📖', 70, '성경 독자')" style="margin-top: 10px;">묵상 완료</button>
             `;
+            document.getElementById('mission-btn-scripture').style.display = 'none';
         }
         
-        /**
-         * Handles the completion of a generic mission
-         * @param {HTMLElement} button - The clicked mission button
-         * @param {string} message - The notification message to show
-         * @param {number} expGain - The amount of experience to award
-         */
-        function completeMission(button, message, expGain = 50) {
+        function completeMission(button, message, expGain = 50, badgeToGrant = null) {
             button.textContent = '완료!';
-            button.style.background = '#28a745';
             button.disabled = true;
             
             addExperience(expGain, message);
+            if (badgeToGrant) grantBadge(badgeToGrant);
             
             completedMissions++;
             updateUI();
             saveProgress();
         }
 
-        /**
-         * Adds experience points and checks for level up
-         * @param {number} amount - The amount of EXP to add
-         * @param {string} [notificationMessage] - An optional message for the notification
-         */
         function addExperience(amount, notificationMessage) {
             userExp += amount;
             
@@ -1234,7 +1112,6 @@
                 showNotification(notificationMessage);
             }
 
-            // Check for level up
             while (userExp >= 1000) {
                 userLevel++;
                 userExp -= 1000;
@@ -1243,12 +1120,22 @@
             updateUI();
         }
 
-        // --- Chat Functions ---
+        // --- Badge Functions ---
+        function grantBadge(badgeName) {
+            if (!userBadges.includes(badgeName)) {
+                userBadges.push(badgeName);
+                showNotification(`🏆 뱃지 획득: ${badgeName}!`);
+                updateUI();
+                saveProgress();
+            }
+        }
 
+        // --- Chat Functions ---
         function openChat() {
             const container = document.getElementById('chat-container');
             container.innerHTML = createChatInterface('chat');
             updateChatMessages('chat');
+            document.getElementById('mission-btn-chat').style.display = 'none';
         }
 
         function showGuildChat() {
@@ -1258,37 +1145,14 @@
         }
         
         function createChatInterface(prefix) {
-            return `
-                <div class="chat-container">
-                    <div class="chat-messages" id="${prefix}Messages"></div>
-                    <div class="chat-input-container">
-                        <input type="text" class="chat-input" id="${prefix}Input" placeholder="길드원들과 대화해보세요..." onkeypress="handleChatKeyPress(event, '${prefix}')">
-                        <button class="chat-send-btn" onclick="sendMessage('${prefix}')">전송</button>
-                    </div>
-                </div>
-            `;
+            return `<div class="chat-container"><div class="chat-messages" id="${prefix}Messages"></div><div class="chat-input-container"><input type="text" class="chat-input" id="${prefix}Input" placeholder="길드원들과 대화해보세요..." onkeypress="handleChatKeyPress(event, '${prefix}')"><button class="chat-send-btn" onclick="sendMessage('${prefix}')">전송</button></div></div>`;
         }
 
         function updateChatMessages(prefix) {
             const messagesContainer = document.getElementById(`${prefix}Messages`);
             if (!messagesContainer) return;
             
-            if (chatMessages.length === 0) {
-                messagesContainer.innerHTML = `<div style="text-align: center; color: #666; padding: 20px;"><p>첫 번째 메시지를 보내보세요! 💬</p></div>`;
-                return;
-            }
-            
-            messagesContainer.innerHTML = chatMessages.map(msg => `
-                <div class="message ${msg.sender === userName ? 'user' : 'other'}">
-                    <div class="message-header">
-                        <div class="message-avatar">${msg.avatar || '👤'}</div>
-                        <div class="message-sender">${msg.sender}</div>
-                        <div class="message-time">${msg.time}</div>
-                    </div>
-                    <div class="message-bubble">${msg.message}</div>
-                </div>
-            `).join('');
-            
+            messagesContainer.innerHTML = chatMessages.length === 0 ? `<div style="text-align: center; color: #666; padding: 20px;"><p>첫 번째 메시지를 보내보세요! 💬</p></div>` : chatMessages.map(msg => `<div class="message ${msg.sender === userName ? 'user' : 'other'}"><div class="message-header"><div class="message-avatar">${msg.avatar || '👤'}</div><div class="message-sender">${msg.sender}</div><div class="message-time">${msg.time}</div></div><div class="message-bubble">${msg.message}</div></div>`).join('');
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
 
@@ -1299,15 +1163,9 @@
                 const now = new Date();
                 const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
                 
-                chatMessages.push({
-                    sender: userName,
-                    avatar: userAvatar,
-                    message: message,
-                    time: timeString
-                });
+                chatMessages.push({ sender: userName, avatar: userAvatar, message: message, time: timeString });
                 input.value = '';
                 
-                // Update both chat views if they exist
                 if (document.getElementById('chatMessages')) updateChatMessages('chat');
                 if (document.getElementById('guildChatMessages')) updateChatMessages('guild');
                 
@@ -1316,13 +1174,10 @@
         }
 
         function handleChatKeyPress(event, prefix) {
-            if (event.key === 'Enter') {
-                sendMessage(prefix);
-            }
+            if (event.key === 'Enter') sendMessage(prefix);
         }
 
         // --- Modal Functions ---
-
         function showNameModal() {
             const modal = document.getElementById('nameModal');
             document.getElementById('nameInput').value = userName;
@@ -1358,17 +1213,17 @@
         function confirmReset() {
             if (document.getElementById('adminPassword').value === '0000') {
                 localStorage.removeItem('blueWindProgress');
-                location.reload(); // Reload to reset state to default
+                setInitialState();
+                updateUI();
+                resetMissionUI();
+                closeResetModal();
+                showNotification('모든 데이터가 초기화되었습니다. 🔄');
             } else {
                 showNotification('비밀번호가 틀렸습니다! ❌');
             }
         }
 
         // --- UI and Utility Functions ---
-
-        /**
-         * Updates all relevant UI elements with current state data
-         */
         function updateUI() {
             // Header
             document.getElementById('userName').textContent = userName;
@@ -1390,36 +1245,44 @@
             document.getElementById('guildUserStreak').textContent = userStreak;
             document.getElementById('guildLevel').textContent = guildLevel;
             document.getElementById('guildExp').textContent = guildExp;
+            // Badges
+            const badgeContainer = document.getElementById('badge-container');
+            if(userBadges.length > 0) {
+                badgeContainer.innerHTML = userBadges.map(b => `<span>${b}</span>`).join('');
+            } else {
+                badgeContainer.innerHTML = `<p style="color: #999; font-size: 14px;">아직 획득한 뱃지가 없습니다.</p>`;
+            }
         }
         
-        function updateGuildUserInfo() {
-            updateUI(); // This now handles all UI updates
+        function resetMissionUI() {
+            // Reset prayer slots
+            document.querySelectorAll('.prayer-time-slot').forEach(slot => slot.classList.remove('completed'));
+            // Reset mission buttons
+            document.querySelectorAll('.mission-button').forEach(btn => {
+                btn.disabled = false;
+                if(btn.id === 'mission-btn-worship') btn.textContent = '참여 완료';
+            });
+            document.getElementById('mission-btn-scripture').style.display = 'inline-block';
+            document.getElementById('scripture-container').innerHTML = '';
+            document.getElementById('mission-btn-chat').style.display = 'inline-block';
+            document.getElementById('chat-container').innerHTML = '';
         }
 
-        /**
-         * Shows a temporary notification message at the top of the screen
-         * @param {string} message - The message to display
-         */
         function showNotification(message) {
             const existingNotif = document.querySelector('.floating-notification');
             if(existingNotif) existingNotif.remove();
-
             const notification = document.createElement('div');
             notification.className = 'floating-notification';
             notification.textContent = message;
             document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
+            setTimeout(() => notification.remove(), 3000);
         }
 
         // --- Data Persistence ---
-
         function saveProgress() {
             const data = {
                 userName, userAvatar, userJob, userLevel, userExp, userStreak,
-                completedMissions, guildLevel, guildExp, chatMessages, prayerTimes,
+                completedMissions, userBadges, guildLevel, guildExp, chatMessages, prayerTimes,
                 lastLogin: new Date().toDateString()
             };
             localStorage.setItem('blueWindProgress', JSON.stringify(data));
@@ -1436,6 +1299,7 @@
                 userStreak = data.userStreak || 1;
                 completedMissions = data.completedMissions || 0;
                 userJob = data.userJob || '새신자';
+                userBadges = data.userBadges || [];
                 guildLevel = data.guildLevel || 1;
                 guildExp = data.guildExp || 0;
                 chatMessages = data.chatMessages || [];
@@ -1451,16 +1315,15 @@
                     
                     if (diffDays === 1) {
                         userStreak++;
+                        grantBadge(`${userStreak}일 연속`);
                     } else if (diffDays > 1) {
-                        userStreak = 1; // Reset streak if more than a day passed
+                        userStreak = 1;
                     }
-                    // Reset daily tasks
                     prayerTimes = { morning: false, noon: false, evening: false };
                 } else {
                     prayerTimes = data.prayerTimes || { morning: false, noon: false, evening: false };
                 }
 
-                // Restore prayer UI state
                 Object.keys(prayerTimes).forEach(timeSlot => {
                     if (prayerTimes[timeSlot]) {
                         const slots = document.querySelectorAll('.prayer-time-slot');
@@ -1469,12 +1332,29 @@
                         if (timeSlot === 'evening' && slots[2]) slots[2].classList.add('completed');
                     }
                 });
+            } else {
+                setInitialState();
             }
             updateUI();
         }
+        
+        function setInitialState() {
+            userLevel = 1;
+            userExp = 0;
+            userStreak = 1;
+            completedMissions = 0;
+            userName = '푸른이';
+            userAvatar = '🌟';
+            userJob = '새신자';
+            userBadges = [];
+            guildLevel = 1;
+            guildExp = 0;
+            chatMessages = [];
+            prayerTimes = { morning: false, noon: false, evening: false };
+            saveProgress();
+        }
 
         // --- App Initialization ---
-
         function initApp() {
             loadProgress();
             
@@ -1482,12 +1362,9 @@
                 showNotification(`${userName}님, 푸른나라학교에 오신 것을 환영합니다! 🌟`);
             }, 1000);
 
-            // Add global event listeners for modals
             document.querySelectorAll('.modal').forEach(modal => {
                 modal.addEventListener('click', (e) => {
-                    if (e.target === modal) {
-                        modal.style.display = 'none';
-                    }
+                    if (e.target === modal) modal.style.display = 'none';
                 });
             });
             document.addEventListener('keydown', (e) => {
@@ -1503,4 +1380,3 @@
     </script>
 </body>
 </html>
-�
