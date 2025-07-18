@@ -1435,6 +1435,14 @@
                     <div id="stage-content"></div>
                     <button style="background: var(--modal-button-secondary-bg); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-top: 20px; width: 100%;" onclick="backToStages()">← 스테이지 목록으로</button>
                 </div>
+
+                <!-- New Icebreaker Records Section -->
+                <div id="icebreaker-records-section" style="margin-top: 30px;">
+                    <h3 style="margin-bottom: 15px; color: var(--text-color);">📝 나의 아이스브레이크 기록</h3>
+                    <div id="icebreaker-records-container">
+                        <!-- Icebreaker records will be displayed here -->
+                    </div>
+                </div>
             </div>
 
             <!-- Guild Tab -->
@@ -1648,7 +1656,7 @@
         let pendingQTAction = null; // { type: 'qtNote' | 'comment', action: 'edit' | 'delete', noteId: ..., commentId: ... (if comment) }
         let currentTheme = 'light-mode'; // Default theme
         let quizCompletedPerStage = {}; // Track quiz completion for each stage
-        let completedIcebreakers = []; // Array of stage numbers for which icebreaker is completed
+        let completedIcebreakers = []; // Array of stage numbers for which icebreaker is completed, now stores answers
         let miniGameCompletedToday = false; // Track if the overall mini-game mission is completed today
         let miniGameProgress = {}; // Tracks completion of individual mini-games for the day
 
@@ -1865,7 +1873,10 @@
             document.getElementById(tabName + '-tab').classList.remove('hidden');
             navElement.classList.add('active');
 
-            if (tabName === 'stages') backToStages();
+            if (tabName === 'stages') {
+                backToStages();
+                updateIcebreakerRecordsDisplay(); // Update records when stages tab is shown
+            }
             if (tabName === 'guild') {
                 updateQTNotes();
                 // Directly show guild chat when guild tab is active
@@ -1893,7 +1904,7 @@
             let contentHtml = `<h3 style="margin-bottom: 20px; color: var(--lesson-title-color);">${stageData.title}</h3>`;
 
             // 1. Icebreaker Section
-            if (stageData.icebreaker && !completedIcebreakers.includes(stageNumber)) {
+            if (stageData.icebreaker && !completedIcebreakers.some(item => item.stage === stageNumber)) { // Check if icebreaker for this stage is completed
                 contentHtml += `
                     <div class="icebreaker-section" id="icebreaker-section-${stageNumber}">
                         <div class="modal-title">아이스브레이크</div>
@@ -1904,31 +1915,9 @@
                 `;
             }
 
-            // 2. Quiz Section (only if stageData.hasQuiz is true and not completed)
-            // Note: Stage 1 now has hasQuiz: false, so this section won't appear for Stage 1.
-            if (stageData.hasQuiz && !quizCompletedPerStage[stageNumber]) {
-                contentHtml += `
-                    <div class="quiz-section" id="quiz-section-${stageNumber}">
-                        <div class="modal-title">신앙 퀴즈 (${currentQuizIndex + 1}/${quizQuestions.length})</div>
-                        <p style="color: var(--scripture-text); margin-bottom: 20px; font-weight: bold;" id="quiz-question-${stageNumber}">${quizQuestions[currentQuizIndex].question}</p>
-                        <div id="quiz-options-${stageNumber}">
-                            ${quizQuestions[currentQuizIndex].options.map(option => `
-                                <button class="quiz-option" onclick="checkAnswer(${stageNumber}, '${option}')">${option}</button>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            } else if (stageData.hasQuiz && quizCompletedPerStage[stageNumber]) {
-                 contentHtml += `<div class="quiz-section" style="background: var(--stage-completed-bg); border-color: var(--stage-completed-border);">
-                                    <div class="modal-title" style="color: var(--stage-completed-color);">퀴즈 완료!</div>
-                                    <p style="color: var(--stage-completed-color);">이 스테이지의 퀴즈를 이미 완료했습니다. 😊</p>
-                                 </div>`;
-            }
-
-            // 3. Lessons and Discussion Questions
-            // Only show lessons and discussion if icebreaker and quiz (if applicable) are completed
-            if ((!stageData.icebreaker || completedIcebreakers.includes(stageNumber)) && 
-                (!stageData.hasQuiz || quizCompletedPerStage[stageNumber])) {
+            // 2. Lessons and Discussion Questions
+            // Only show lessons and discussion if icebreaker is completed
+            if (!stageData.icebreaker || completedIcebreakers.some(item => item.stage === stageNumber)) {
                 contentHtml += stageData.lessons.map(lesson => `
                     <div class="lesson-container">
                         <div class="lesson-header">
@@ -1953,8 +1942,7 @@
 
             if (completedStages.includes(stageNumber)) {
                 contentHtml += `<div class="stage-completed-notice">✔️ 이 스테이지를 완료했습니다!</div>`;
-            } else if ((!stageData.icebreaker || completedIcebreakers.includes(stageNumber)) && 
-                       (!stageData.hasQuiz || quizCompletedPerStage[stageNumber])) {
+            } else if (!stageData.icebreaker || completedIcebreakers.some(item => item.stage === stageNumber)) { // Only show complete button if icebreaker is done
                 contentHtml += `<button id="complete-stage-btn" class="modal-button primary" style="width:100%; margin-top:20px; background-color: #28a745;" onclick="completeStage(${stageNumber})">스테이지 완료 및 보상 받기 🏆</button>`;
             }
             
@@ -1965,34 +1953,13 @@
         }
 
         // Internal function to render just the main content (lessons, discussion, complete button)
-        // This is called after icebreaker/quiz are handled
+        // This is called after icebreaker is handled
         function _renderStageMainContent(stageNumber) {
             const stageData = stageContents[stageNumber];
             let contentHtml = `<h3 style="margin-bottom: 20px; color: var(--lesson-title-color);">${stageData.title}</h3>`;
 
-            // If quiz is present and not completed, render quiz
-            if (stageData.hasQuiz && !quizCompletedPerStage[stageNumber]) {
-                contentHtml += `
-                    <div class="quiz-section" id="quiz-section-${stageNumber}">
-                        <div class="modal-title">신앙 퀴즈 (${currentQuizIndex + 1}/${quizQuestions.length})</div>
-                        <p style="color: var(--scripture-text); margin-bottom: 20px; font-weight: bold;" id="quiz-question-${stageNumber}">${quizQuestions[currentQuizIndex].question}</p>
-                        <div id="quiz-options-${stageNumber}">
-                            ${quizQuestions[currentQuizIndex].options.map(option => `
-                                <button class="quiz-option" onclick="checkAnswer(${stageNumber}, '${option}')">${option}</button>
-                            `).join('')}
-                        </div>
-                    </div>
-                `;
-            } else if (stageData.hasQuiz && quizCompletedPerStage[stageNumber]) {
-                 contentHtml += `<div class="quiz-section" style="background: var(--stage-completed-bg); border-color: var(--stage-completed-border);">
-                                    <div class="modal-title" style="color: var(--stage-completed-color);">퀴즈 완료!</div>
-                                    <p style="color: var(--stage-completed-color);">이 스테이지의 퀴즈를 이미 완료했습니다. 😊</p>
-                                 </div>`;
-            }
-
-
-            // Render lessons and discussion only if quiz (if applicable) is completed
-            if (!stageData.hasQuiz || quizCompletedPerStage[stageNumber]) {
+            // Render lessons and discussion only if icebreaker is completed
+            if (!stageData.icebreaker || completedIcebreakers.some(item => item.stage === stageNumber)) {
                 contentHtml += stageData.lessons.map(lesson => `
                     <div class="lesson-container">
                         <div class="lesson-header">
@@ -2017,7 +1984,7 @@
 
             if (completedStages.includes(stageNumber)) {
                 contentHtml += `<div class="stage-completed-notice">✔️ 이 스테이지를 완료했습니다!</div>`;
-            } else if (!stageData.hasQuiz || quizCompletedPerStage[stageNumber]) { // Only show complete button if quiz is done
+            } else if (!stageData.icebreaker || completedIcebreakers.some(item => item.stage === stageNumber)) { // Only show complete button if icebreaker is done
                 contentHtml += `<button id="complete-stage-btn" class="modal-button primary" style="width:100%; margin-top:20px; background-color: #28a745;" onclick="completeStage(${stageNumber})">스테이지 완료 및 보상 받기 🏆</button>`;
             }
 
@@ -2031,6 +1998,7 @@
             document.getElementById('stage-detail').classList.add('hidden');
             document.getElementById('stage-list').classList.remove('hidden');
             currentStage = null;
+            updateIcebreakerRecordsDisplay(); // Update records when going back to stage list
         }
 
         function completeStage(stageNumber) {
@@ -2265,17 +2233,17 @@
                         }
                         prayerTimes = { morning: false, noon: false, evening: false };
                         miniGameCompletedToday = false; // Reset daily mini-game mission
-                        miniGameProgress = {}; // Reset individual mini-game progress
+                        miniGameProgress = { bibleVerseFill: false, characterGuess: false, trueFalse: false, wordOrder: false, bibleNumber: false }; // Reset individual mini-game progress
                     } else {
                         prayerTimes = data.prayerTimes || { morning: false, noon: false, evening: false };
                         // Ensure miniGameProgress is initialized if it was missing in old saves
                         if (Object.keys(miniGameProgress).length === 0 && miniGameCompletedToday) {
                              // If miniGameCompletedToday is true but progress is empty, it means it was completed
                              // before individual game tracking was added. Assume all are complete.
-                             miniGameProgress = { bibleVerse: true, characterGuess: true, trueFalse: true, wordOrder: true, bibleNumber: true };
+                             miniGameProgress = { bibleVerseFill: true, characterGuess: true, trueFalse: true, wordOrder: true, bibleNumber: true };
                         } else if (Object.keys(miniGameProgress).length === 0) {
                             // If it's a new day or new user, initialize to all false
-                            miniGameProgress = { bibleVerse: false, characterGuess: false, trueFalse: false, wordOrder: false, bibleNumber: false };
+                            miniGameProgress = { bibleVerseFill: false, characterGuess: false, trueFalse: false, wordOrder: false, bibleNumber: false };
                         }
                     }
 
@@ -2324,7 +2292,7 @@
             quizCompletedPerStage = {}; // Initialize as empty object
             completedIcebreakers = [];
             miniGameCompletedToday = false;
-            miniGameProgress = { bibleVerse: false, characterGuess: false, trueFalse: false, wordOrder: false, bibleNumber: false }; // Initialize all to false
+            miniGameProgress = { bibleVerseFill: false, characterGuess: false, trueFalse: false, wordOrder: false, bibleNumber: false }; // Initialize all to false
             
             // 초기 상태 저장 시도
             try {
@@ -2887,15 +2855,49 @@
                 return;
             }
 
-            if (!completedIcebreakers.includes(stageNumber)) {
-                completedIcebreakers.push(stageNumber);
-                showNotification(`아이스브레이크 완료! 스테이지 ${stageNumber}의 문이 열렸습니다!`);
-                saveProgress();
+            // Update completedIcebreakers array
+            const today = new Date().toLocaleDateString('ko-KR');
+            let existingEntry = completedIcebreakers.find(item => item.stage === stageNumber);
+            if (existingEntry) {
+                existingEntry.answer = answer;
+                existingEntry.date = today;
+            } else {
+                completedIcebreakers.push({ stage: stageNumber, answer: answer, date: today });
             }
+            // Sort to ensure order in display
+            completedIcebreakers.sort((a, b) => a.stage - b.stage);
+
+            showNotification(`아이스브레이크 완료! 스테이지 ${stageNumber}의 문이 열렸습니다!`);
+            saveProgress();
             
-            // After icebreaker, proceed to render main content (which includes quiz if applicable)
+            // After icebreaker, proceed to render main content
             _renderStageMainContent(stageNumber); 
+            updateIcebreakerRecordsDisplay(); // Update records display immediately
         }
+
+        // Function to display icebreaker records
+        function updateIcebreakerRecordsDisplay() {
+            const container = document.getElementById('icebreaker-records-container');
+            if (!container) return;
+
+            if (completedIcebreakers.length === 0) {
+                container.innerHTML = `<div style="text-align: center; color: var(--text-color); padding: 20px; background: var(--mission-card-bg); border-radius: 10px;">
+                                            <p>아직 작성된 아이스브레이크 기록이 없습니다.</p>
+                                            <p>학습 스테이지를 시작하여 첫 기록을 남겨보세요! ✨</p>
+                                        </div>`;
+            } else {
+                container.innerHTML = completedIcebreakers.map(record => `
+                    <div class="qt-note-card" style="margin-bottom: 10px;">
+                        <div class="qt-note-header">
+                            <div class="qt-note-title">스테이지 ${record.stage} 아이스브레이크</div>
+                            <div class="qt-note-date">${record.date}</div>
+                        </div>
+                        <div class="qt-note-content">${record.answer}</div>
+                    </div>
+                `).join('');
+            }
+        }
+
 
         // --- Mini-game Functions (for home tab) ---
         const miniGames = {
@@ -2970,11 +2972,11 @@
                 <div class="minigame-selection-card">
                     <h4>어떤 미니게임을 하시겠어요?</h4>
                     <div class="minigame-selection-grid">
-                        <button class="minigame-button" onclick="startMiniGame('bibleVerseFill')">성경 구절 빈칸 채우기</button>
-                        <button class="minigame-button" onclick="startMiniGame('characterGuess')">성경 인물 맞추기</button>
-                        <button class="minigame-button" onclick="startMiniGame('trueFalse')">참/거짓 퀴즈</button>
-                        <button class="minigame-button" onclick="startMiniGame('wordOrder')">단어 순서 맞추기</button>
-                        <button class="minigame-button" onclick="startMiniGame('bibleNumber')">성경 숫자 퀴즈</button>
+                        <button class="minigame-button" ${miniGameProgress.bibleVerseFill ? 'disabled' : ''} onclick="startMiniGame('bibleVerseFill')">성경 구절 빈칸 채우기</button>
+                        <button class="minigame-button" ${miniGameProgress.characterGuess ? 'disabled' : ''} onclick="startMiniGame('characterGuess')">성경 인물 맞추기</button>
+                        <button class="minigame-button" ${miniGameProgress.trueFalse ? 'disabled' : ''} onclick="startMiniGame('trueFalse')">참/거짓 퀴즈</button>
+                        <button class="minigame-button" ${miniGameProgress.wordOrder ? 'disabled' : ''} onclick="startMiniGame('wordOrder')">단어 순서 맞추기</button>
+                        <button class="minigame-button" ${miniGameProgress.bibleNumber ? 'disabled' : ''} onclick="startMiniGame('bibleNumber')">성경 숫자 퀴즈</button>
                     </div>
                     <button class="modal-button secondary" style="width:100%; margin-top:15px;" onclick="cancelMinigameSelection()">취소</button>
                 </div>
@@ -3007,6 +3009,8 @@
                 // Otherwise, go back to selection or show a message.
                 if (Object.values(miniGameProgress).every(status => status === true)) {
                     document.getElementById('minigame-selection-container').innerHTML = ''; // Clear game area
+                    document.getElementById('mission-btn-minigame').textContent = '완료!';
+                    document.getElementById('mission-btn-minigame').disabled = true;
                     document.getElementById('mission-btn-minigame').style.display = 'inline-block'; // Show main button again
                 } else {
                     // If not all games are done, go back to selection screen
