@@ -666,6 +666,17 @@
         #minigame-content .quiz-option:hover {
             background: #e3f2fd;
         }
+        
+        .stage-completed-notice {
+            text-align: center;
+            padding: 20px;
+            margin-top: 20px;
+            background: #e8f5e9;
+            color: #2e7d32;
+            font-weight: bold;
+            border-radius: 10px;
+            border: 2px dashed #a5d6a7;
+        }
 
     </style>
 </head>
@@ -720,7 +731,7 @@
 
                 <div class="mission-card">
                     <div class="mission-header">
-                        <div class="mission-title">� 성경 말씀 읽기</div>
+                        <div class="mission-title">📖 성경 말씀 읽기</div>
                         <div class="mission-reward">+70 EXP</div>
                     </div>
                     <div class="mission-description">푸른바람의 냉장고에서 오늘의 영양분을 섭취하세요</div>
@@ -923,7 +934,7 @@
     
     <script>
         // --- Global State Variables ---
-        let userLevel, userExp, userStreak, completedMissions, userName, userAvatar, userJob, userBadges;
+        let userLevel, userExp, userStreak, completedMissions, userName, userAvatar, userJob, userBadges, completedStages;
         let guildLevel, guildExp;
         let currentStage = null;
         let chatMessages = [];
@@ -970,7 +981,7 @@
                 title: "2강: 길드 시스템 - 우리, 같이 해볼까요",
                 lessons: [
                      {
-                        icon: "🎯",
+                        icon: "�",
                         title: "세례받기 - 길드 가입하기",
                         content: `<h4>🏰 길드 가입의 의미</h4><p>하나님 나라 사람이 되는 것과 그 나라 방식대로 사는 것 사이에 '세례'가 있습니다. 기독교는 자신만의 전인격적 고백이 필요한 종교이며, 절대 남에게 묻어갈 수 없습니다.</p><h4>💍 비밀 연애에서 공식 발표로</h4><p>세례를 좀 더 설레는 버전으로 설명하면, 비밀 연애를 하는 연인이 사귄다고 공식적으로 밝히는 것과 같습니다. 이 사람이라고 확신하기 때문입니다.</p>`
                     },
@@ -1062,6 +1073,12 @@
                     </div>
                 `;
             }
+
+            if (completedStages.includes(stageNumber)) {
+                contentHtml += `<div class="stage-completed-notice">✔️ 이 스테이지를 완료했습니다!</div>`;
+            } else {
+                contentHtml += `<button id="complete-stage-btn" class="modal-button primary" style="width:100%; margin-top:20px; background-color: #28a745;" onclick="completeStage(${stageNumber})">스테이지 완료 및 보상 받기 🏆</button>`;
+            }
             
             const stageContentElement = document.getElementById('stage-content');
             stageContentElement.innerHTML = `
@@ -1076,6 +1093,49 @@
             document.getElementById('stage-detail').classList.add('hidden');
             document.getElementById('stage-list').classList.remove('hidden');
             currentStage = null;
+        }
+
+        function completeStage(stageNumber) {
+            if (completedStages.includes(stageNumber)) return;
+
+            let badgeName = '';
+            let levelGain = 0;
+            let itemName = '';
+
+            switch (stageNumber) {
+                case 1:
+                    badgeName = '용특새';
+                    itemName = '용특새 아이템';
+                    levelGain = 10;
+                    break;
+                case 2:
+                    badgeName = '길드 버프';
+                    itemName = '길드 버프';
+                    levelGain = 30;
+                    break;
+                case 3:
+                    badgeName = '성령의 열매';
+                    itemName = '성령의 열매';
+                    levelGain = 50;
+                    break;
+            }
+
+            if (badgeName) {
+                grantBadge(badgeName);
+                userLevel += levelGain;
+                completedStages.push(stageNumber);
+                
+                showNotification(`🎉 스테이지 ${stageNumber} 완료! ${itemName} 획득! 레벨 +${levelGain}!`);
+                
+                const button = document.getElementById('complete-stage-btn');
+                if (button) {
+                    button.remove();
+                    enterStageContent(stageNumber); // Re-render content to show completion notice
+                }
+
+                updateUI();
+                saveProgress();
+            }
         }
 
         function completePrayerTime(timeSlot, element) {
@@ -1143,9 +1203,9 @@
                 showNotification(notificationMessage);
             }
 
-            while (userExp >= 1000) {
+            while (userExp >= 100) {
                 userLevel++;
-                userExp -= 1000;
+                userExp -= 100;
                 setTimeout(() => showNotification(`🎉 레벨업! Lv.${userLevel} 달성!`), 500);
             }
             updateUI();
@@ -1544,7 +1604,7 @@
         function saveProgress() {
             const data = {
                 userName, userAvatar, userJob, userLevel, userExp, userStreak,
-                completedMissions, userBadges, guildLevel, guildExp, chatMessages, prayerTimes,
+                completedMissions, userBadges, completedStages, guildLevel, guildExp, chatMessages, prayerTimes,
                 lastLogin: new Date().toDateString()
             };
             localStorage.setItem('blueWindProgress', JSON.stringify(data));
@@ -1562,6 +1622,7 @@
                 completedMissions = data.completedMissions || 0;
                 userJob = data.userJob || '새신자';
                 userBadges = data.userBadges || [];
+                completedStages = data.completedStages || [];
                 guildLevel = data.guildLevel || 1;
                 guildExp = data.guildExp || 0;
                 chatMessages = data.chatMessages || [];
@@ -1609,6 +1670,7 @@
             userAvatar = '🌟';
             userJob = '새신자';
             userBadges = [];
+            completedStages = [];
             guildLevel = 1;
             guildExp = 0;
             chatMessages = [];
