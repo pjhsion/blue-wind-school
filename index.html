@@ -626,6 +626,7 @@
         .chat-input-container {
             display: flex;
             gap: 10px;
+            align-items: center; /* Align items vertically in the center */
         }
 
         .chat-input {
@@ -652,6 +653,7 @@
             border-radius: 20px;
             cursor: pointer;
             transition: background 0.3s ease;
+            white-space: nowrap; /* Prevent text wrapping */
         }
 
         .chat-send-btn:hover {
@@ -1151,20 +1153,27 @@
         .comment-action-btn.delete { background: var(--note-btn-delete-bg); }
 
         /* Icebreaker Modal Specific Styles */
-        #icebreakerModal .modal-content {
-            padding: 25px;
+        /* These styles will now apply to the inline icebreaker content */
+        .icebreaker-section {
+            background: var(--prayer-card-bg-start);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid var(--prayer-card-title);
         }
-        #icebreakerModal .modal-title {
+        .icebreaker-section .modal-title { /* Reusing modal-title style */
             font-size: 20px;
             margin-bottom: 15px;
+            color: var(--prayer-card-title);
         }
-        #icebreakerModal .icebreaker-prompt {
+        .icebreaker-section .icebreaker-prompt {
             font-size: 16px;
             line-height: 1.6;
             margin-bottom: 20px;
-            color: var(--text-color);
+            color: var(--prayer-card-title);
         }
-        #icebreakerModal .icebreaker-input {
+        .icebreaker-section .icebreaker-input {
             width: 100%;
             min-height: 100px;
             padding: 12px;
@@ -1176,6 +1185,122 @@
             font-family: inherit;
             background: var(--app-bg);
             color: var(--text-color);
+        }
+        .icebreaker-section .modal-button.primary {
+            background: var(--modal-button-primary-bg);
+            color: white;
+            width: auto;
+            padding: 10px 20px;
+        }
+
+        /* Quiz Section Styles (inline) */
+        .quiz-section {
+            background: var(--scripture-card-bg-start);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+            border: 1px solid var(--scripture-card-border);
+        }
+        .quiz-section .modal-title { /* Reusing modal-title style */
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: var(--scripture-text);
+        }
+        .quiz-section p {
+            color: var(--scripture-text);
+            margin-bottom: 20px;
+            font-weight: bold;
+        }
+        .quiz-section .quiz-option {
+            display: block;
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            font-size: 16px;
+            border-radius: 10px;
+            border: 2px solid var(--quiz-option-border);
+            background: var(--quiz-option-bg);
+            color: var(--quiz-option-color);
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .quiz-section .quiz-option:hover {
+            background: var(--quiz-option-hover-bg);
+        }
+
+        /* Minigame Selection Styles */
+        .minigame-selection-card {
+            background: var(--mission-card-bg);
+            border: 1px solid var(--mission-card-border);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            text-align: center;
+        }
+        .minigame-selection-card h4 {
+            color: var(--text-color);
+            margin-bottom: 15px;
+        }
+        .minigame-selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 10px;
+        }
+        .minigame-button {
+            background: var(--mission-button-bg);
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.3s ease;
+        }
+        .minigame-button:hover {
+            background: var(--mission-button-hover-bg);
+        }
+        .minigame-button:disabled {
+            background: var(--mission-button-disabled-bg);
+            cursor: not-allowed;
+        }
+        .minigame-content-area {
+            background: var(--chat-messages-bg);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 15px;
+            min-height: 150px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--text-color);
+        }
+        .minigame-content-area input {
+            width: 80%;
+            padding: 10px;
+            margin-top: 10px;
+            border: 1px solid var(--chat-input-border);
+            border-radius: 8px;
+            font-size: 16px;
+            text-align: center;
+            background: var(--app-bg);
+            color: var(--text-color);
+        }
+        .minigame-content-area button {
+            margin-top: 10px;
+            padding: 8px 15px;
+            background: var(--chat-send-btn-bg);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+        .minigame-content-area button:hover {
+            background: var(--chat-send-btn-hover-bg);
         }
     </style>
 </head>
@@ -1224,15 +1349,15 @@
                 <div class="prayer-time-card">
                     <div class="prayer-time-title">⏰ 10-10-10 기도법</div>
                     <div class="prayer-time-grid">
-                        <div class="prayer-time-slot" onclick="completePrayerTime('morning', this)">
+                        <div class="prayer-time-slot" data-slot="morning" onclick="togglePrayerTime('morning', this)">
                             <div>🌅 아침</div>
                             <div style="font-size: 12px;">10분</div>
                         </div>
-                        <div class="prayer-time-slot" onclick="completePrayerTime('noon', this)">
+                        <div class="prayer-time-slot" data-slot="noon" onclick="togglePrayerTime('noon', this)">
                             <div>☀️ 점심</div>
                             <div style="font-size: 12px;">10분</div>
                         </div>
-                        <div class="prayer-time-slot" onclick="completePrayerTime('evening', this)">
+                        <div class="prayer-time-slot" data-slot="evening" onclick="togglePrayerTime('evening', this)">
                             <div>🌙 저녁</div>
                             <div style="font-size: 12px;">10분</div>
                         </div>
@@ -1264,51 +1389,52 @@
                         <div class="mission-reward">+50 EXP</div>
                     </div>
                     <div class="mission-description">신앙 지식을 테스트하고 경험치를 얻으세요!</div>
-                    <button class="mission-button" id="mission-btn-quiz" onclick="showMinigameModal('quiz')">퀴즈 시작</button>
+                    <button class="mission-button" id="mission-btn-quiz" onclick="startQuiz()">퀴즈 시작</button>
                 </div>
 
+                <!-- Mini-game Mission Card -->
                 <div class="mission-card">
                     <div class="mission-header">
-                        <div class="mission-title">👥 길드원과 대화하기</div>
+                        <div class="mission-title">🎮 미니게임 하기</div>
                         <div class="mission-reward">+30 EXP</div>
                     </div>
-                    <div class="mission-description">병아리 공동체에서 길드 버프를 받아보세요</div>
-                    <button class="mission-button" id="mission-btn-chat" onclick="openChat()">채팅 참여</button>
-                    <div id="chat-container"></div>
+                    <div class="mission-description">다양한 미니게임을 즐기고 경험치를 얻으세요!</div>
+                    <button class="mission-button" id="mission-btn-minigame" onclick="showMinigameSelection()">미니게임 시작</button>
+                    <div id="minigame-selection-container"></div>
                 </div>
             </div>
 
             <!-- Stages Tab -->
             <div id="stages-tab" class="tab-content hidden">
-                    <div id="stage-list">
-                        <h3 style="margin-bottom: 20px; color: var(--text-color);">🎯 학습 스테이지</h3>
-                        <p style="text-align: center; color: var(--text-color); margin-bottom: 20px;">
-                            교재 내용 기반 학습 단계입니다
-                        </p>
-                        
-                        <div class="stage-card" onclick="enterStageContent(1)">
-                            <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">1. 패치 시스템</div>
-                            <div style="font-size: 14px; opacity: 0.9;">거부할 수 없는 특권</div>
-                            <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">예배하기 • 성경읽기 • 기도하기</div>
-                        </div>
-
-                        <div class="stage-card" onclick="enterStageContent(2)">
-                            <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">2. 길드 시스템</div>
-                            <div style="font-size: 14px; opacity: 0.9;">우리, 같이 해볼까요</div>
-                            <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">세례받기 • 공동체 속하기 • 성령 따르기</div>
-                        </div>
-
-                        <div class="stage-card" onclick="enterStageContent(3)">
-                            <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">3. 실전 시스템</div>
-                            <div style="font-size: 14px; opacity: 0.9;">인생은 장난이 아니니까</div>
-                            <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">이론에서 현실로 • 매일 그분과 • 일생을 함께</div>
-                        </div>
-                    </div>
+                <div id="stage-list">
+                    <h3 style="margin-bottom: 20px; color: var(--text-color);">🎯 학습 스테이지</h3>
+                    <p style="text-align: center; color: var(--text-color); margin-bottom: 20px;">
+                        교재 내용 기반 학습 단계입니다
+                    </p>
                     
-                    <div id="stage-detail" class="hidden">
-                        <div id="stage-content"></div>
-                        <button style="background: var(--modal-button-secondary-bg); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-top: 20px; width: 100%;" onclick="backToStages()">← 스테이지 목록으로</button>
+                    <div class="stage-card" onclick="enterStageContent(1)">
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">1. 패치 시스템</div>
+                        <div style="font-size: 14px; opacity: 0.9;">거부할 수 없는 특권</div>
+                        <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">예배하기 • 성경읽기 • 기도하기</div>
                     </div>
+
+                    <div class="stage-card" onclick="enterStageContent(2)">
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">2. 길드 시스템</div>
+                        <div style="font-size: 14px; opacity: 0.9;">우리, 같이 해볼까요</div>
+                        <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">세례받기 • 공동체 속하기 • 성령 따르기</div>
+                    </div>
+
+                    <div class="stage-card" onclick="enterStageContent(3)">
+                        <div style="font-size: 18px; font-weight: bold; margin-bottom: 5px;">3. 실전 시스템</div>
+                        <div style="font-size: 14px; opacity: 0.9;">인생은 장난이 아니니까</div>
+                        <div style="font-size: 12px; margin-top: 5px; opacity: 0.8;">이론에서 현실로 • 매일 그분과 • 일생을 함께</div>
+                    </div>
+                </div>
+                    
+                <div id="stage-detail" class="hidden">
+                    <div id="stage-content"></div>
+                    <button style="background: var(--modal-button-secondary-bg); color: white; border: none; padding: 12px 24px; border-radius: 8px; cursor: pointer; margin-top: 20px; width: 100%;" onclick="backToStages()">← 스테이지 목록으로</button>
+                </div>
             </div>
 
             <!-- Guild Tab -->
@@ -1346,9 +1472,7 @@
                 </div>
 
                 <div style="margin-top: 20px;">
-                    <button style="width: 100%; padding: 15px; background: #28a745; color: white; border: none; border-radius: 10px; font-weight: bold;" onclick="showGuildChat()">
-                        💬 길드 채팅 참여하기
-                    </button>
+                    <!-- Guild chat is now always visible on this tab -->
                     <div id="guild-chat-container" style="margin-top: 15px;"></div>
                 </div>
             </div>
@@ -1504,22 +1628,10 @@
         </div>
     </div>
 
-    <!-- Minigame Modal -->
+    <!-- Minigame Modal (now used for image view and general quiz/minigame logic) -->
     <div id="minigameModal" class="modal">
         <div class="modal-content" id="minigame-content">
             <!-- Minigame content will be injected here -->
-        </div>
-    </div>
-
-    <!-- Icebreaker Modal -->
-    <div id="icebreakerModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-title">아이스브레이크</div>
-            <p class="icebreaker-prompt" id="icebreakerPrompt"></p>
-            <textarea id="icebreakerInput" class="icebreaker-input" placeholder="당신의 생각을 자유롭게 적어보세요..."></textarea>
-            <div class="modal-buttons">
-                <button class="modal-button primary" id="icebreakerSubmitBtn" onclick="completeIcebreaker()">제출하고 강의 보기</button>
-            </div>
         </div>
     </div>
     
@@ -1534,10 +1646,11 @@
         let qtNotes = [];
         let editingQTNote = null;
         let pendingQTAction = null; // { type: 'qtNote' | 'comment', action: 'edit' | 'delete', noteId: ..., commentId: ... (if comment) }
-        let activeGame = { id: null, interval: null, stage: 0 };
         let currentTheme = 'light-mode'; // Default theme
-        let quizCompletedToday = false; // To track daily quiz completion
+        let quizCompletedPerStage = {}; // Track quiz completion for each stage
         let completedIcebreakers = []; // Array of stage numbers for which icebreaker is completed
+        let miniGameCompletedToday = false; // Track if the overall mini-game mission is completed today
+        let miniGameProgress = {}; // Tracks completion of individual mini-games for the day
 
         // 메모리 기반 저장소 (localStorage 대체)
         let memoryStorage = {};
@@ -1603,31 +1716,32 @@
             { text: "사람은 마음으로 믿어서 의에 이르고, 입으로 고백해서 구원에 이르게 됩니다.", reference: "로마서 10:10" }
         ];
 
+        // New Quiz Questions (Church-themed)
         const quizQuestions = [
             {
-                question: "성경에서 예수님을 '참 포도나무'로, 하나님 아버지를 '농부'로 비유하며, 우리가 예수님 안에 '머물러' 있어야 열매를 맺을 수 있다고 말씀하신 성경 구절은 어디인가요?",
-                options: ["마태복음 5:1-2", "요한복음 15:1-5", "로마서 8:28", "빌립보서 4:13"],
-                answer: "요한복음 15:1-5"
+                question: "교회의 머리는 누구신가요?",
+                options: ["베드로", "바울", "예수 그리스도", "교황"],
+                answer: "예수 그리스도"
             },
             {
-                question: "예수님께서 우리에게 새로운 생명을 주시고 '더 넘치게' 누리게 하시려고 자기 목숨을 버리겠다고 말씀하신 성경 구절은 어디인가요?",
-                options: ["창세기 1:1", "시편 23:1", "요한복음 10:10-11", "고린도전서 13:4-7"],
-                answer: "요한복음 10:10-11"
+                question: "교회의 세 가지 주요 사명 중 하나가 아닌 것은 무엇인가요?",
+                options: ["예배", "교육", "사업", "봉사 및 선교"],
+                answer: "사업"
             },
             {
-                question: "'그리스도 안에서 당신은 용납되었습니다', '그리스도 안에서 당신은 특별한 존재입니다', '그리스도 안에서 당신은 새로운 공동체에 속했습니다' 이 세 가지를 줄여서 무엇이라고 부르나요?",
-                options: ["용기백배", "용특새", "새로운 시작", "믿음의 3단계"],
-                answer: "용특새"
+                question: "사도행전에 나오는 초대교회의 특징이 아닌 것은?",
+                options: ["서로 물건을 통용함", "매일 마음을 같이하여 성전에 모이기를 힘씀", "개인주의적인 신앙생활", "떡을 떼며 기쁨과 순전한 마음으로 음식을 먹음"],
+                answer: "개인주의적인 신앙생활"
             },
             {
-                question: "성경은 푸른바람의 나라 에너지원이 가득한 무엇에 비유되나요?",
-                options: ["보물상자", "냉장고", "도서관", "놀이터"],
-                answer: "냉장고"
+                question: "교회가 세상의 빛과 소금의 역할을 해야 한다고 말씀하신 성경은 무엇인가요?",
+                options: ["요한복음", "마태복음", "로마서", "히브리서"],
+                answer: "마태복음"
             },
             {
-                question: "예수님께서 부활하신 후 제자들을 찾아가 차려 주신 아침 식사 장소는 어디였나요?",
-                options: ["갈릴리 호숫가", "예루살렘 성전", "감람산", "베다니"],
-                answer: "갈릴리 호숫가"
+                question: "교회의 가장 중요한 공동체적 모임은 무엇인가요?",
+                options: ["친목회", "운동회", "예배", "바자회"],
+                answer: "예배"
             }
         ];
 
@@ -1638,6 +1752,7 @@
                 icebreaker: {
                     prompt: "1강을 시작하기 전에, '패치'라는 단어를 들으면 어떤 생각이 드나요? 신앙생활에서 '패치'가 필요하다고 느낀 적이 있나요?"
                 },
+                hasQuiz: false, // Quiz removed from Stage 1
                 lessons: [
                     {
                         icon: "🛡️",
@@ -1677,6 +1792,7 @@
                 icebreaker: {
                     prompt: "2강을 시작하기 전에, '길드'라는 단어를 들으면 어떤 생각이 드나요? 신앙 공동체가 '길드'처럼 느껴진 적이 있나요?"
                 },
+                hasQuiz: false, // This stage does not have a quiz
                 lessons: [
                     {
                         icon: "🎯",
@@ -1706,6 +1822,7 @@
                 icebreaker: {
                     prompt: "3강을 시작하기 전에, '실전'이라는 단어를 들으면 어떤 생각이 드나요? 나의 신앙이 '실전'에 강하다고 생각하나요?"
                 },
+                hasQuiz: false, // This stage does not have a quiz
                 lessons: [
                     {
                         icon: "📖→🌍",
@@ -1749,7 +1866,15 @@
             navElement.classList.add('active');
 
             if (tabName === 'stages') backToStages();
-            if (tabName === 'guild') updateQTNotes();
+            if (tabName === 'guild') {
+                updateQTNotes();
+                // Directly show guild chat when guild tab is active
+                const guildChatContainer = document.getElementById('guild-chat-container');
+                if (guildChatContainer) {
+                    guildChatContainer.innerHTML = createChatInterface('guild');
+                    updateChatMessages('guild');
+                }
+            }
             if (tabName === 'home') updateNotices();
         }
 
@@ -1762,55 +1887,142 @@
                 return;
             }
 
-            // Check if icebreaker needs to be shown
-            if (stageData.icebreaker && !completedIcebreakers.includes(stageNumber)) {
-                showIcebreakerModal(stageNumber, stageData.icebreaker.prompt);
-            } else {
-                // If no icebreaker or already completed, proceed to show stage details
-                _showStageContentDetails(stageNumber);
-            }
-        }
-
-        // Internal function to show stage content details after icebreaker
-        function _showStageContentDetails(stageNumber) {
-            const stageData = stageContents[stageNumber];
-            
             document.getElementById('stage-list').classList.add('hidden');
             document.getElementById('stage-detail').classList.remove('hidden');
             
-            let contentHtml = stageData.lessons.map(lesson => `
-                <div class="lesson-container">
-                    <div class="lesson-header">
-                        <div class="lesson-icon">${lesson.icon}</div>
-                        <div class="lesson-title">${lesson.title}</div>
-                    </div>
-                    <div class="lesson-content">${lesson.content}</div>
-                </div>
-            `).join('');
+            let contentHtml = `<h3 style="margin-bottom: 20px; color: var(--lesson-title-color);">${stageData.title}</h3>`;
 
-            if (stageData.discussionQuestions) {
+            // 1. Icebreaker Section
+            if (stageData.icebreaker && !completedIcebreakers.includes(stageNumber)) {
                 contentHtml += `
-                    <div class="discussion-container">
-                        <h4>🤔 함께 나눌 질문</h4>
-                        <ol>
-                            ${stageData.discussionQuestions.map(q => `<li>${q}</li>`).join('')}
-                        </ol>
+                    <div class="icebreaker-section" id="icebreaker-section-${stageNumber}">
+                        <div class="modal-title">아이스브레이크</div>
+                        <p class="icebreaker-prompt">${stageData.icebreaker.prompt}</p>
+                        <textarea id="icebreakerInput-${stageNumber}" class="icebreaker-input" placeholder="당신의 생각을 자유롭게 적어보세요..."></textarea>
+                        <button class="modal-button primary" onclick="completeIcebreaker(${stageNumber})">제출하고 강의 보기</button>
                     </div>
                 `;
             }
 
+            // 2. Quiz Section (only if stageData.hasQuiz is true and not completed)
+            // Note: Stage 1 now has hasQuiz: false, so this section won't appear for Stage 1.
+            if (stageData.hasQuiz && !quizCompletedPerStage[stageNumber]) {
+                contentHtml += `
+                    <div class="quiz-section" id="quiz-section-${stageNumber}">
+                        <div class="modal-title">신앙 퀴즈 (${currentQuizIndex + 1}/${quizQuestions.length})</div>
+                        <p style="color: var(--scripture-text); margin-bottom: 20px; font-weight: bold;" id="quiz-question-${stageNumber}">${quizQuestions[currentQuizIndex].question}</p>
+                        <div id="quiz-options-${stageNumber}">
+                            ${quizQuestions[currentQuizIndex].options.map(option => `
+                                <button class="quiz-option" onclick="checkAnswer(${stageNumber}, '${option}')">${option}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (stageData.hasQuiz && quizCompletedPerStage[stageNumber]) {
+                 contentHtml += `<div class="quiz-section" style="background: var(--stage-completed-bg); border-color: var(--stage-completed-border);">
+                                    <div class="modal-title" style="color: var(--stage-completed-color);">퀴즈 완료!</div>
+                                    <p style="color: var(--stage-completed-color);">이 스테이지의 퀴즈를 이미 완료했습니다. 😊</p>
+                                 </div>`;
+            }
+
+            // 3. Lessons and Discussion Questions
+            // Only show lessons and discussion if icebreaker and quiz (if applicable) are completed
+            if ((!stageData.icebreaker || completedIcebreakers.includes(stageNumber)) && 
+                (!stageData.hasQuiz || quizCompletedPerStage[stageNumber])) {
+                contentHtml += stageData.lessons.map(lesson => `
+                    <div class="lesson-container">
+                        <div class="lesson-header">
+                            <div class="lesson-icon">${lesson.icon}</div>
+                            <div class="lesson-title">${lesson.title}</div>
+                        </div>
+                        <div class="lesson-content">${lesson.content}</div>
+                    </div>
+                `).join('');
+
+                if (stageData.discussionQuestions) {
+                    contentHtml += `
+                        <div class="discussion-container">
+                            <h4>🤔 함께 나눌 질문</h4>
+                            <ol>
+                                ${stageData.discussionQuestions.map(q => `<li>${q}</li>`).join('')}
+                            </ol>
+                        </div>
+                    `;
+                }
+            }
+
             if (completedStages.includes(stageNumber)) {
                 contentHtml += `<div class="stage-completed-notice">✔️ 이 스테이지를 완료했습니다!</div>`;
-            } else {
+            } else if ((!stageData.icebreaker || completedIcebreakers.includes(stageNumber)) && 
+                       (!stageData.hasQuiz || quizCompletedPerStage[stageNumber])) {
                 contentHtml += `<button id="complete-stage-btn" class="modal-button primary" style="width:100%; margin-top:20px; background-color: #28a745;" onclick="completeStage(${stageNumber})">스테이지 완료 및 보상 받기 🏆</button>`;
             }
             
             const stageContentElement = document.getElementById('stage-content');
-            stageContentElement.innerHTML = `
-                <h3 style="margin-bottom: 20px; color: var(--lesson-title-color);">${stageData.title}</h3>
-                ${contentHtml}
-            `;
+            stageContentElement.innerHTML = contentHtml;
             
+            document.querySelector('.content').scrollTop = 0;
+        }
+
+        // Internal function to render just the main content (lessons, discussion, complete button)
+        // This is called after icebreaker/quiz are handled
+        function _renderStageMainContent(stageNumber) {
+            const stageData = stageContents[stageNumber];
+            let contentHtml = `<h3 style="margin-bottom: 20px; color: var(--lesson-title-color);">${stageData.title}</h3>`;
+
+            // If quiz is present and not completed, render quiz
+            if (stageData.hasQuiz && !quizCompletedPerStage[stageNumber]) {
+                contentHtml += `
+                    <div class="quiz-section" id="quiz-section-${stageNumber}">
+                        <div class="modal-title">신앙 퀴즈 (${currentQuizIndex + 1}/${quizQuestions.length})</div>
+                        <p style="color: var(--scripture-text); margin-bottom: 20px; font-weight: bold;" id="quiz-question-${stageNumber}">${quizQuestions[currentQuizIndex].question}</p>
+                        <div id="quiz-options-${stageNumber}">
+                            ${quizQuestions[currentQuizIndex].options.map(option => `
+                                <button class="quiz-option" onclick="checkAnswer(${stageNumber}, '${option}')">${option}</button>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            } else if (stageData.hasQuiz && quizCompletedPerStage[stageNumber]) {
+                 contentHtml += `<div class="quiz-section" style="background: var(--stage-completed-bg); border-color: var(--stage-completed-border);">
+                                    <div class="modal-title" style="color: var(--stage-completed-color);">퀴즈 완료!</div>
+                                    <p style="color: var(--stage-completed-color);">이 스테이지의 퀴즈를 이미 완료했습니다. 😊</p>
+                                 </div>`;
+            }
+
+
+            // Render lessons and discussion only if quiz (if applicable) is completed
+            if (!stageData.hasQuiz || quizCompletedPerStage[stageNumber]) {
+                contentHtml += stageData.lessons.map(lesson => `
+                    <div class="lesson-container">
+                        <div class="lesson-header">
+                            <div class="lesson-icon">${lesson.icon}</div>
+                            <div class="lesson-title">${lesson.title}</div>
+                        </div>
+                        <div class="lesson-content">${lesson.content}</div>
+                    </div>
+                `).join('');
+
+                if (stageData.discussionQuestions) {
+                    contentHtml += `
+                        <div class="discussion-container">
+                            <h4>🤔 함께 나눌 질문</h4>
+                            <ol>
+                                ${stageData.discussionQuestions.map(q => `<li>${q}</li>`).join('')}
+                            </ol>
+                        </div>
+                    `;
+                }
+            }
+
+            if (completedStages.includes(stageNumber)) {
+                contentHtml += `<div class="stage-completed-notice">✔️ 이 스테이지를 완료했습니다!</div>`;
+            } else if (!stageData.hasQuiz || quizCompletedPerStage[stageNumber]) { // Only show complete button if quiz is done
+                contentHtml += `<button id="complete-stage-btn" class="modal-button primary" style="width:100%; margin-top:20px; background-color: #28a745;" onclick="completeStage(${stageNumber})">스테이지 완료 및 보상 받기 🏆</button>`;
+            }
+
+            const stageContentElement = document.getElementById('stage-content');
+            stageContentElement.innerHTML = contentHtml;
             document.querySelector('.content').scrollTop = 0;
         }
 
@@ -1836,42 +2048,47 @@
             if (button) {
                 button.remove();
                 // 스테이지 완료 후 다시 콘텐츠를 로드하여 완료 메시지 표시
-                _showStageContentDetails(stageNumber); 
+                _renderStageMainContent(stageNumber); 
             }
 
             updateUI();
             saveProgress();
         }
 
-        function completePrayerTime(timeSlot, element) {
+        // Modified togglePrayerTime function
+        function togglePrayerTime(timeSlot, element) {
             if (prayerTimes[timeSlot]) {
-                showNotification('이미 완료한 기도 시간입니다!');
-                return;
+                // Already completed, un-complete it
+                prayerTimes[timeSlot] = false;
+                element.classList.remove('completed');
+                showNotification(`${timeSlot} 기도 취소! 🙏`);
+                // Optionally, deduct EXP or revert badge if desired. For now, just UI.
+            } else {
+                // Not completed, complete it
+                prayerTimes[timeSlot] = true;
+                element.classList.add('completed');
+                
+                let message = '';
+                let expGain = 30;
+                
+                switch(timeSlot) {
+                    case 'morning': message = '🌅 아침 기도 완료! 하루를 주님과 함께 시작하세요!'; break;
+                    case 'noon': message = '☀️ 점심 기도 완료! 하루 중반, 주님께 감사드려요!'; break;
+                    case 'evening': message = '🌙 저녁 기도 완료! 하루를 주님께 맡겨드려요!'; break;
+                }
+                
+                addExperience(expGain, message);
+                grantBadge('첫 기도');
+                
+                if (prayerTimes.morning && prayerTimes.noon && prayerTimes.evening) { // Fixed typo: prayerTimes.timeslot -> prayerTimes.evening
+                    setTimeout(() => {
+                        addExperience(50, '🎉 10-10-10 기도법 완주! 보너스 경험치 +50!');
+                        grantBadge('10-10-10 마스터');
+                    }, 1000);
+                }
+                
+                completedMissions++;
             }
-            
-            prayerTimes[timeSlot] = true;
-            element.classList.add('completed');
-            
-            let message = '';
-            let expGain = 30;
-            
-            switch(timeSlot) {
-                case 'morning': message = '🌅 아침 기도 완료! 하루를 주님과 함께 시작하세요!'; break;
-                case 'noon': message = '☀️ 점심 기도 완료! 하루 중반, 주님께 감사드려요!'; break;
-                case 'evening': message = '🌙 저녁 기도 완료! 하루를 주님께 맡겨드려요!'; break;
-            }
-            
-            addExperience(expGain, message);
-            grantBadge('첫 기도');
-            
-            if (prayerTimes.morning && prayerTimes.noon && prayerTimes.evening) {
-                setTimeout(() => {
-                    addExperience(50, '🎉 10-10-10 기도법 완주! 보너스 경험치 +50!');
-                    grantBadge('10-10-10 마스터');
-                }, 1000);
-            }
-            
-            completedMissions++;
             updateUI();
             saveProgress();
         }
@@ -1963,12 +2180,12 @@
                 btn.disabled = false;
                 if(btn.id === 'mission-btn-worship') btn.textContent = '참여 완료';
                 if(btn.id === 'mission-btn-quiz') btn.textContent = '퀴즈 시작';
+                if(btn.id === 'mission-btn-minigame') btn.textContent = '미니게임 시작';
             });
             document.getElementById('mission-btn-scripture').style.display = 'inline-block';
             document.getElementById('scripture-container').innerHTML = '';
-            document.getElementById('mission-btn-chat').style.display = 'inline-block';
-            document.getElementById('chat-container').innerHTML = '';
-            document.getElementById('guild-chat-container').innerHTML = '';
+            document.getElementById('minigame-selection-container').innerHTML = ''; // Clear mini-game selection
+            document.getElementById('guild-chat-container').innerHTML = ''; // Clear guild tab chat
         }
 
         function showNotification(message) {
@@ -1988,7 +2205,7 @@
                     userName, userAvatar, userJob, userLevel, userExp, userStreak,
                     completedMissions, userBadges, completedStages, guildLevel, guildExp, 
                     chatMessages, prayerTimes, notices, qtNotes, currentTheme,
-                    quizCompletedToday, completedIcebreakers, // Save new states
+                    quizCompletedPerStage, completedIcebreakers, miniGameCompletedToday, miniGameProgress, // Save new states
                     lastLogin: new Date().toDateString()
                 };
                 
@@ -2026,8 +2243,10 @@
                     notices = data.notices || [];
                     qtNotes = data.qtNotes || [];
                     currentTheme = data.currentTheme || 'light-mode'; // Load theme
-                    quizCompletedToday = data.quizCompletedToday || false; // Load quiz completion
+                    quizCompletedPerStage = data.quizCompletedPerStage || {}; // Load quiz completion per stage
                     completedIcebreakers = data.completedIcebreakers || []; // Load icebreaker completion
+                    miniGameCompletedToday = data.miniGameCompletedToday || false; // Load mini-game completion
+                    miniGameProgress = data.miniGameProgress || {}; // Load individual mini-game progress
 
                     const today = new Date().toDateString();
                     const lastLogin = data.lastLogin || today;
@@ -2045,19 +2264,27 @@
                             userStreak = 1;
                         }
                         prayerTimes = { morning: false, noon: false, evening: false };
-                        quizCompletedToday = false; // Reset daily quiz completion
+                        miniGameCompletedToday = false; // Reset daily mini-game mission
+                        miniGameProgress = {}; // Reset individual mini-game progress
                     } else {
                         prayerTimes = data.prayerTimes || { morning: false, noon: false, evening: false };
+                        // Ensure miniGameProgress is initialized if it was missing in old saves
+                        if (Object.keys(miniGameProgress).length === 0 && miniGameCompletedToday) {
+                             // If miniGameCompletedToday is true but progress is empty, it means it was completed
+                             // before individual game tracking was added. Assume all are complete.
+                             miniGameProgress = { bibleVerse: true, characterGuess: true, trueFalse: true, wordOrder: true, bibleNumber: true };
+                        } else if (Object.keys(miniGameProgress).length === 0) {
+                            // If it's a new day or new user, initialize to all false
+                            miniGameProgress = { bibleVerse: false, characterGuess: false, trueFalse: false, wordOrder: false, bibleNumber: false };
+                        }
                     }
 
                     // DOM이 로드된 후에 기도 시간 상태 업데이트
                     setTimeout(() => {
                         Object.keys(prayerTimes).forEach(timeSlot => {
                             if (prayerTimes[timeSlot]) {
-                                const slots = document.querySelectorAll('.prayer-time-slot');
-                                if (timeSlot === 'morning' && slots[0]) slots[0].classList.add('completed');
-                                if (timeSlot === 'noon' && slots[1]) slots[1].classList.add('completed');
-                                if (timeSlot === 'evening' && slots[2]) slots[2].classList.add('completed');
+                                const slotElement = document.querySelector(`.prayer-time-slot[data-slot="${timeSlot}"]`);
+                                if (slotElement) slotElement.classList.add('completed');
                             }
                         });
                     }, 100);
@@ -2094,8 +2321,10 @@
             notices = [];
             qtNotes = [];
             currentTheme = 'light-mode';
-            quizCompletedToday = false;
+            quizCompletedPerStage = {}; // Initialize as empty object
             completedIcebreakers = [];
+            miniGameCompletedToday = false;
+            miniGameProgress = { bibleVerse: false, characterGuess: false, trueFalse: false, wordOrder: false, bibleNumber: false }; // Initialize all to false
             
             // 초기 상태 저장 시도
             try {
@@ -2378,6 +2607,7 @@
 
             if (!targetItem || targetItem.password !== password) {
                 showNotification('비밀번호가 틀렸습니다! ❌');
+                document.getElementById('qtActionPassword').value = ''; // Clear password on wrong attempt
                 return;
             }
 
@@ -2417,6 +2647,13 @@
             }
 
             closeQTPasswordModal();
+            document.getElementById('qtActionPassword').value = ''; // Clear password after successful action
+        }
+
+        function closeQTPasswordModal() {
+            document.getElementById('qtPasswordModal').style.display = 'none';
+            document.getElementById('qtActionPassword').value = '';
+            pendingQTAction = null;
         }
 
         // --- Badge Functions ---
@@ -2430,21 +2667,11 @@
         }
 
         // --- Chat Functions ---
-        function openChat() {
-            const container = document.getElementById('chat-container');
-            container.innerHTML = createChatInterface('chat');
-            updateChatMessages('chat');
-            document.getElementById('mission-btn-chat').style.display = 'none';
-            // 채팅 참여 완료 시 미션 완료 처리 (한 번만)
-            if (!document.getElementById('mission-btn-chat').disabled) {
-                completeMission(document.getElementById('mission-btn-chat'), '길드원과 대화 완료! 공동체 버프를 받았습니다! 💬', 30, '대화의 시작');
-            }
-        }
-
+        // showGuildChat is now implicitly handled by showTab('guild', ...)
+        // and its content is directly injected.
         function showGuildChat() {
-            const container = document.getElementById('guild-chat-container');
-            container.innerHTML = createChatInterface('guild');
-            updateChatMessages('guild');
+            // This function is no longer needed as chat is direct on guild tab
+            showTab('guild', document.querySelector('.nav-item:nth-child(3)')); // Activate guild tab
         }
         
         function createChatInterface(prefix) {
@@ -2512,7 +2739,7 @@
                 });
                 
                 if (document.getElementById('chatMessages')) updateChatMessages('chat');
-                if (document.getElementById('guildChatMessages')) updateChatMessages('guild');
+                if (document.getElementById('guildMessages')) updateChatMessages('guild'); // Changed to guildMessages for guild chat
                 
                 showNotification('사진이 업로드되었습니다! 📷');
                 saveProgress();
@@ -2566,7 +2793,7 @@
                 input.value = '';
                 
                 if (document.getElementById('chatMessages')) updateChatMessages('chat');
-                if (document.getElementById('guildChatMessages')) updateChatMessages('guild');
+                if (document.getElementById('guildMessages')) updateChatMessages('guild'); // Changed to guildMessages for guild chat
                 
                 saveProgress();
             }
@@ -2576,37 +2803,21 @@
             if (event.key === 'Enter') sendMessage(prefix);
         }
 
-        // --- Minigame (Quiz) Functions ---
+        // --- Quiz Functions (for home tab quiz mission) ---
         let currentQuizIndex = 0;
 
-        function showMinigameModal(gameType) {
-            const minigameContent = document.getElementById('minigame-content');
-            minigameContent.innerHTML = ''; // Clear previous content
-
-            if (gameType === 'quiz') {
-                if (quizCompletedToday) {
-                    minigameContent.innerHTML = `
-                        <div class="modal-title">오늘의 퀴즈</div>
-                        <p style="color: var(--text-color); margin-bottom: 20px;">오늘은 이미 퀴즈를 완료했습니다! 내일 다시 도전해주세요. 😊</p>
-                        <div class="modal-buttons">
-                            <button class="modal-button secondary" onclick="closeMinigameModal()">닫기</button>
-                        </div>
-                    `;
-                    document.getElementById('minigameModal').style.display = 'flex';
-                    return;
-                }
-                startQuiz();
-            }
-        }
-
-        function closeMinigameModal() {
-            document.getElementById('minigameModal').style.display = 'none';
-        }
-
         function startQuiz() {
+            const lastQuizMissionDate = safeGetItem('lastQuizMissionDate');
+            const today = new Date().toDateString();
+
+            if (lastQuizMissionDate === today) {
+                showNotification('오늘은 이미 퀴즈 미션을 완료했습니다! 내일 다시 도전해주세요. 😊');
+                return;
+            }
+
             currentQuizIndex = 0;
             displayQuizQuestion();
-            document.getElementById('minigameModal').style.display = 'flex';
+            document.getElementById('minigameModal').style.display = 'flex'; // Use minigameModal for quiz
         }
 
         function displayQuizQuestion() {
@@ -2627,7 +2838,7 @@
             }
 
             let optionsHtml = questionData.options.map(option => `
-                <button class="quiz-option" onclick="checkAnswer('${option}')">${option}</button>
+                <button class="quiz-option" onclick="checkQuizAnswer('${option}')">${option}</button>
             `).join('');
 
             minigameContent.innerHTML = `
@@ -2637,7 +2848,7 @@
             `;
         }
 
-        function checkAnswer(selectedOption) {
+        function checkQuizAnswer(selectedOption) {
             const questionData = quizQuestions[currentQuizIndex];
             if (selectedOption === questionData.answer) {
                 showNotification('정답입니다! 🥳');
@@ -2651,44 +2862,283 @@
         function completeQuizMission() {
             addExperience(50, '퀴즈 미션 완료! 지혜가 +50 증가했습니다! 🧠');
             grantBadge('퀴즈 마스터');
-            quizCompletedToday = true; // Mark quiz as completed for the day
-            document.getElementById('mission-btn-quiz').textContent = '완료!';
-            document.getElementById('mission-btn-quiz').disabled = true;
+            safeSetItem('lastQuizMissionDate', new Date().toDateString()); // Mark daily quiz mission complete
+            
+            const quizButton = document.getElementById('mission-btn-quiz');
+            if (quizButton) {
+                quizButton.textContent = '완료!';
+                quizButton.disabled = true;
+            }
             closeMinigameModal();
             saveProgress();
+        }
+
+        function closeMinigameModal() {
+            document.getElementById('minigameModal').style.display = 'none';
         }
 
         // --- Icebreaker Functions ---
         let currentIcebreakerStage = null;
 
-        function showIcebreakerModal(stageNumber, promptText) {
-            currentIcebreakerStage = stageNumber;
-            document.getElementById('icebreakerPrompt').textContent = promptText;
-            document.getElementById('icebreakerInput').value = ''; // Clear previous input
-            document.getElementById('icebreakerModal').style.display = 'flex';
-        }
-
-        function closeIcebreakerModal() {
-            document.getElementById('icebreakerModal').style.display = 'none';
-            currentIcebreakerStage = null;
-        }
-
-        function completeIcebreaker() {
-            const answer = document.getElementById('icebreakerInput').value.trim();
+        function completeIcebreaker(stageNumber) {
+            const answer = document.getElementById(`icebreakerInput-${stageNumber}`).value.trim();
             if (!answer) {
                 showNotification('답변을 입력해주세요!');
                 return;
             }
 
-            if (!completedIcebreakers.includes(currentIcebreakerStage)) {
-                completedIcebreakers.push(currentIcebreakerStage);
-                showNotification(`아이스브레이크 완료! 스테이지 ${currentIcebreakerStage}의 문이 열렸습니다!`);
+            if (!completedIcebreakers.includes(stageNumber)) {
+                completedIcebreakers.push(stageNumber);
+                showNotification(`아이스브레이크 완료! 스테이지 ${stageNumber}의 문이 열렸습니다!`);
                 saveProgress();
             }
             
-            closeIcebreakerModal();
-            _showStageContentDetails(currentIcebreakerStage); // Proceed to show stage content
+            // After icebreaker, proceed to render main content (which includes quiz if applicable)
+            _renderStageMainContent(stageNumber); 
         }
+
+        // --- Mini-game Functions (for home tab) ---
+        const miniGames = {
+            'bibleVerseFill': {
+                name: '성경 구절 빈칸 채우기',
+                prompt: '다음 성경 구절의 빈칸을 채우세요.',
+                data: [
+                    { verse: "하나님이 세상을 이처럼 사랑하사 독생자를 주셨으니 이는 그를 믿는 자마다 멸망하지 않고 [ ]을 얻게 하려 하심이라.", blankWord: "영생", hint: "영원한 삶" },
+                    { verse: "여호와는 나의 [ ]시니 내게 부족함이 없으리로다.", blankWord: "목자", hint: "양을 돌보는 사람" },
+                    { verse: "내게 능력 주시는 자 안에서 내가 모든 것을 [ ] 수 있느니라.", blankWord: "할", hint: "능력" }
+                ],
+                exp: 10
+            },
+            'characterGuess': {
+                name: '성경 인물 맞추기',
+                prompt: '설명을 듣고 성경 인물을 맞춰보세요.',
+                data: [
+                    { description: "이스라엘의 첫 번째 왕", answer: "사울" },
+                    { description: "골리앗을 물리친 소년 목동", answer: "다윗" },
+                    { description: "홍해를 가른 선지자", answer: "모세" }
+                ],
+                exp: 10
+            },
+            'trueFalse': {
+                name: '참/거짓 퀴즈',
+                prompt: '다음 문장이 참인지 거짓인지 맞춰보세요.',
+                data: [
+                    { question: "노아는 방주를 100년 동안 지었다.", answer: "참" },
+                    { question: "예수님은 십자가에서 3일 만에 부활하셨다.", answer: "참" },
+                    { question: "요나 선지자는 물고기 뱃속에서 3일 밤낮을 보냈다.", answer: "참" }
+                ],
+                exp: 10
+            },
+            'wordOrder': {
+                name: '단어 순서 맞추기',
+                prompt: '단어를 올바른 순서로 배열하여 문장을 만드세요.',
+                data: [
+                    { scrambled: ["오래", "사랑은", "참고"], answer: "사랑은 오래 참고" },
+                    { scrambled: ["나의", "목자시니", "여호와는"], answer: "여호와는 나의 목자시니" },
+                    { scrambled: ["세상을", "하나님이", "이처럼", "사랑하사"], answer: "하나님이 세상을 이처럼 사랑하사" }
+                ],
+                exp: 10
+            },
+            'bibleNumber': {
+                name: '성경 숫자 퀴즈',
+                prompt: '다음 질문에 해당하는 숫자를 맞춰보세요.',
+                data: [
+                    { question: "예수님이 오병이어 기적을 일으키실 때 물고기는 몇 마리였을까요?", answer: "두 마리" },
+                    { question: "노아의 방주에 들어간 정결한 짐승은 암수 몇 쌍이었을까요?", answer: "일곱 쌍" },
+                    { question: "예수님의 12제자 중 한 명은 예수님을 은 30에 팔았습니다. 그 제자의 이름은?", answer: "유다" }
+                ],
+                exp: 10
+            }
+        };
+
+        let currentMiniGameType = null; // Stores the type of the currently active mini-game
+        let currentMiniGameData = null; // Stores the specific data for the current mini-game instance
+        let miniGameRound = 0; // Tracks which data item is being used for games with multiple data points
+
+        function showMinigameSelection() {
+            const container = document.getElementById('minigame-selection-container');
+            const minigameButton = document.getElementById('mission-btn-minigame');
+
+            if (miniGameCompletedToday) {
+                showNotification('오늘은 이미 미니게임을 완료했습니다! 내일 다시 도전해주세요. 😊');
+                return;
+            }
+
+            minigameButton.style.display = 'none'; // Hide the main button
+
+            let selectionHtml = `
+                <div class="minigame-selection-card">
+                    <h4>어떤 미니게임을 하시겠어요?</h4>
+                    <div class="minigame-selection-grid">
+                        <button class="minigame-button" onclick="startMiniGame('bibleVerseFill')">성경 구절 빈칸 채우기</button>
+                        <button class="minigame-button" onclick="startMiniGame('characterGuess')">성경 인물 맞추기</button>
+                        <button class="minigame-button" onclick="startMiniGame('trueFalse')">참/거짓 퀴즈</button>
+                        <button class="minigame-button" onclick="startMiniGame('wordOrder')">단어 순서 맞추기</button>
+                        <button class="minigame-button" onclick="startMiniGame('bibleNumber')">성경 숫자 퀴즈</button>
+                    </div>
+                    <button class="modal-button secondary" style="width:100%; margin-top:15px;" onclick="cancelMinigameSelection()">취소</button>
+                </div>
+            `;
+            container.innerHTML = selectionHtml;
+        }
+
+        function cancelMinigameSelection() {
+            document.getElementById('minigame-selection-container').innerHTML = '';
+            document.getElementById('mission-btn-minigame').style.display = 'inline-block';
+        }
+
+        function startMiniGame(gameType) {
+            currentMiniGameType = gameType;
+            miniGameRound = 0; // Reset round for new game
+            displayMiniGame();
+        }
+
+        function displayMiniGame() {
+            const container = document.getElementById('minigame-selection-container');
+            const gameInfo = miniGames[currentMiniGameType];
+
+            if (!gameInfo || miniGameRound >= gameInfo.data.length) {
+                // All rounds for this game completed or no data
+                miniGameProgress[currentMiniGameType] = true; // Mark this game as completed
+                checkOverallMiniGameCompletion(); // Check if all 5 games are done
+                showNotification(`${gameInfo.name} 게임 완료!`);
+                
+                // If all games are done, the mission button will be updated.
+                // Otherwise, go back to selection or show a message.
+                if (Object.values(miniGameProgress).every(status => status === true)) {
+                    document.getElementById('minigame-selection-container').innerHTML = ''; // Clear game area
+                    document.getElementById('mission-btn-minigame').style.display = 'inline-block'; // Show main button again
+                } else {
+                    // If not all games are done, go back to selection screen
+                    showMinigameSelection();
+                }
+                saveProgress();
+                return;
+            }
+
+            currentMiniGameData = gameInfo.data[miniGameRound];
+            let gameHtml = `<div class="minigame-content-area" id="active-minigame-area">`;
+
+            switch (currentMiniGameType) {
+                case 'bibleVerseFill':
+                    const verseParts = currentMiniGameData.verse.split('[ ]');
+                    gameHtml += `
+                        <p>${gameInfo.prompt}</p>
+                        <p style="font-style: italic; margin: 10px 0;">${verseParts[0]}<input type="text" id="gameInput" placeholder="${currentMiniGameData.hint}" onkeypress="handleGameInputKeyPress(event)">${verseParts[1]}</p>
+                        <button onclick="checkGameAnswer('bibleVerseFill')">확인</button>
+                    `;
+                    break;
+                case 'characterGuess':
+                    gameHtml += `
+                        <p>${gameInfo.prompt}</p>
+                        <p style="font-style: italic; margin: 10px 0;">"${currentMiniGameData.description}"</p>
+                        <input type="text" id="gameInput" placeholder="인물 이름" onkeypress="handleGameInputKeyPress(event)">
+                        <button onclick="checkGameAnswer('characterGuess')">확인</button>
+                    `;
+                    break;
+                case 'trueFalse':
+                    gameHtml += `
+                        <p>${gameInfo.prompt}</p>
+                        <p style="font-weight: bold; margin: 10px 0;">"${currentMiniGameData.question}"</p>
+                        <button class="quiz-option" onclick="checkGameAnswer('trueFalse', '참')">참</button>
+                        <button class="quiz-option" onclick="checkGameAnswer('trueFalse', '거짓')">거짓</button>
+                    `;
+                    break;
+                case 'wordOrder':
+                    function shuffleArray(array) {
+                        for (let i = array.length - 1; i > 0; i--) {
+                            const j = Math.floor(Math.random() * (i + 1));
+                            [array[i], array[j]] = [array[j], array[i]];
+                        }
+                        return array;
+                    }
+                    const shuffledWords = shuffleArray([...currentMiniGameData.scrambled]);
+                    gameHtml += `
+                        <p>${gameInfo.prompt}</p>
+                        <p style="font-size: 20px; font-weight: bold; margin: 10px 0;">${shuffledWords.join(' ')}</p>
+                        <input type="text" id="gameInput" placeholder="정답 문장 입력" onkeypress="handleGameInputKeyPress(event)">
+                        <button onclick="checkGameAnswer('wordOrder')">확인</button>
+                    `;
+                    break;
+                case 'bibleNumber':
+                    gameHtml += `
+                        <p>${gameInfo.prompt}</p>
+                        <p style="font-weight: bold; margin: 10px 0;">"${currentMiniGameData.question}"</p>
+                        <input type="text" id="gameInput" placeholder="숫자 또는 이름" onkeypress="handleGameInputKeyPress(event)">
+                        <button onclick="checkGameAnswer('bibleNumber')">확인</button>
+                    `;
+                    break;
+            }
+            gameHtml += `
+                <button class="modal-button secondary" style="margin-top: 20px;" onclick="resetMiniGameSelection()">다른 게임 선택</button>
+                </div>
+            `;
+            container.innerHTML = gameHtml;
+            if (document.getElementById('gameInput')) {
+                document.getElementById('gameInput').focus();
+            }
+        }
+
+        function handleGameInputKeyPress(event) {
+            if (event.key === 'Enter') {
+                checkGameAnswer(currentMiniGameType);
+            }
+        }
+
+        function checkGameAnswer(gameType, selectedOption = null) {
+            let isCorrect = false;
+            const inputElement = document.getElementById('gameInput');
+            const inputValue = inputElement ? inputElement.value.trim() : '';
+
+            switch (gameType) {
+                case 'bibleVerseFill':
+                    isCorrect = (inputValue.toLowerCase() === currentMiniGameData.blankWord.toLowerCase());
+                    break;
+                case 'characterGuess':
+                    isCorrect = (inputValue.toLowerCase() === currentMiniGameData.answer.toLowerCase());
+                    break;
+                case 'trueFalse':
+                    isCorrect = (selectedOption.toLowerCase() === currentMiniGameData.answer.toLowerCase());
+                    break;
+                case 'wordOrder':
+                    isCorrect = (inputValue.toLowerCase() === currentMiniGameData.answer.toLowerCase());
+                    break;
+                case 'bibleNumber':
+                    isCorrect = (inputValue.toLowerCase() === currentMiniGameData.answer.toLowerCase());
+                    break;
+            }
+
+            if (isCorrect) {
+                showNotification('정답입니다! 🎉');
+                addExperience(miniGames[gameType].exp, `${miniGames[gameType].name} 완료! 경험치 +${miniGames[gameType].exp}!`);
+                miniGameRound++;
+                setTimeout(displayMiniGame, 500); // Go to next round or complete game
+            } else {
+                showNotification('틀렸습니다. 다시 시도해보세요. 😔');
+                if (inputElement) inputElement.value = ''; // Clear input for another try
+            }
+            saveProgress();
+        }
+
+        function resetMiniGameSelection() {
+            currentMiniGameType = null;
+            currentMiniGameData = null;
+            miniGameRound = 0;
+            showMinigameSelection(); // Go back to the game selection screen
+        }
+
+        function checkOverallMiniGameCompletion() {
+            const allGamesCompleted = Object.values(miniGameProgress).every(status => status === true);
+            if (allGamesCompleted && !miniGameCompletedToday) {
+                miniGameCompletedToday = true;
+                addExperience(30, '🎉 오늘의 미니게임 미션 완료! 보너스 경험치 +30!');
+                grantBadge('미니게임 마스터');
+                document.getElementById('mission-btn-minigame').textContent = '완료!';
+                document.getElementById('mission-btn-minigame').disabled = true;
+                saveProgress();
+            }
+        }
+
 
         // --- Modal Functions ---
         function showNameModal() {
@@ -2768,24 +3218,37 @@
                     showNotification(`${userName}님, 푸른나라학교에 오신 것을 환영합니다! 🌟`);
                 }, 1000);
 
-                // Check if quiz was completed today
-                const lastQuizDate = safeGetItem('lastQuizDate');
+                // Update home tab quiz button state
+                const lastQuizMissionDate = safeGetItem('lastQuizMissionDate');
                 const today = new Date().toDateString();
-                if (lastQuizDate === today) {
-                    quizCompletedToday = true;
-                    const quizButton = document.getElementById('mission-btn-quiz');
+                const quizButton = document.getElementById('mission-btn-quiz');
+
+                if (lastQuizMissionDate === today) {
                     if (quizButton) {
                         quizButton.textContent = '완료!';
                         quizButton.disabled = true;
                     }
                 } else {
-                    quizCompletedToday = false;
-                    const quizButton = document.getElementById('mission-btn-quiz');
                     if (quizButton) {
                         quizButton.textContent = '퀴즈 시작';
                         quizButton.disabled = false;
                     }
                 }
+
+                // Update home tab mini-game button state
+                const minigameButton = document.getElementById('mission-btn-minigame');
+                if (miniGameCompletedToday) {
+                    if (minigameButton) {
+                        minigameButton.textContent = '완료!';
+                        minigameButton.disabled = true;
+                    }
+                } else {
+                    if (minigameButton) {
+                        minigameButton.textContent = '미니게임 시작';
+                        minigameButton.disabled = false;
+                    }
+                }
+
 
                 // Modal close events
                 document.querySelectorAll('.modal').forEach(modal => {
@@ -2808,8 +3271,6 @@
                         const noticeModal = document.getElementById('noticeModal');
                         const qtNoteModal = document.getElementById('qtNoteModal');
                         const qtPasswordModal = document.getElementById('qtPasswordModal');
-                        const minigameModal = document.getElementById('minigameModal');
-                        const icebreakerModal = document.getElementById('icebreakerModal');
                         
                         if (nameModal.style.display === 'flex') {
                             e.preventDefault();
@@ -2826,14 +3287,8 @@
                         } else if (qtPasswordModal.style.display === 'flex') {
                             e.preventDefault();
                             confirmQTAction();
-                        } else if (minigameModal.style.display === 'flex' && document.getElementById('minigame-content').querySelector('.quiz-option')) {
-                            // Prevent default Enter key behavior in quiz modal if an option is focused
-                            // This part needs more sophisticated handling if quiz options are focusable
-                            // For now, it will just close the modal if no specific action is tied to Enter
-                        } else if (icebreakerModal.style.display === 'flex') {
-                            e.preventDefault();
-                            completeIcebreaker();
                         }
+                        // Inline minigame/icebreaker enter handling is within their specific functions
                     }
                 });
             } catch (error) {
