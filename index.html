@@ -2483,12 +2483,39 @@
             }
 
             if (editingQTNote) {
+                // 수정 모드
                 editingQTNote.title = title;
                 editingQTNote.content = content;
                 editingQTNote.password = password;
                 editingQTNote.date = new Date().toLocaleDateString('ko-KR');
-                showNotification('QT 노트가 수정되었습니다! ✏️');
+                
+                if (isFirebaseEnabled) {
+                    // Firebase에서 해당 QT 노트 업데이트
+                    database.ref('qtNotes').once('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data) {
+                            const qtNoteKey = Object.keys(data).find(key => data[key].id === editingQTNote.id);
+                            if (qtNoteKey) {
+                                database.ref(`qtNotes/${qtNoteKey}`).update(editingQTNote)
+                                    .then(() => {
+                                        showNotification('QT 노트가 실시간으로 수정되었습니다! ✏️🔥');
+                                    })
+                                    .catch((error) => {
+                                        console.error('Firebase 수정 실패:', error);
+                                        showNotification('QT 노트 수정에 실패했습니다. 로컬에만 저장됩니다.');
+                                        updateQTNotes();
+                                        saveProgress();
+                                    });
+                            }
+                        }
+                    });
+                } else {
+                    updateQTNotes();
+                    showNotification('QT 노트가 수정되었습니다! ✏️');
+                    saveProgress();
+                }
             } else {
+                // 새 작성 모드
                 const qtNote = {
                     id: Date.now(),
                     title: title,
@@ -2500,13 +2527,29 @@
                     likedBy: [],
                     comments: []
                 };
-                qtNotes.unshift(qtNote);
-                showNotification('QT 노트가 작성되었습니다! 📝');
+
+                if (isFirebaseEnabled) {
+                    // Firebase에 QT 노트 저장 (실시간 공유)
+                    database.ref('qtNotes').push(qtNote)
+                        .then(() => {
+                            showNotification('QT 노트가 모든 사용자에게 실시간으로 공유되었습니다! 📝🔥');
+                        })
+                        .catch((error) => {
+                            console.error('Firebase 저장 실패:', error);
+                            showNotification('QT 노트 저장에 실패했습니다. 로컬에만 저장됩니다.');
+                            qtNotes.unshift(qtNote);
+                            updateQTNotes();
+                            saveProgress();
+                        });
+                } else {
+                    qtNotes.unshift(qtNote);
+                    updateQTNotes();
+                    showNotification('QT 노트가 작성되었습니다! 📝 (로컬 모드)');
+                    saveProgress();
+                }
             }
 
-            updateQTNotes();
             closeQTNoteModal();
-            saveProgress();
         }
 
         function updateQTNotes() {
