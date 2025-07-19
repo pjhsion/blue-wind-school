@@ -1337,7 +1337,7 @@
 
                 <!-- New Icebreaker Records Section -->
                 <div id="icebreaker-records-section" style="margin-top: 30px;">
-                    <h3 style="margin-bottom: 15px; color: var(--text-color);">📝 나의 아이스브레이크 기록</h3>
+                    <h3 style="margin-bottom: 15px; color: var(--text-color);">📝 아이스브레이크 기록</h3>
                     <div id="icebreaker-records-container">
                         <!-- Icebreaker records will be displayed here -->
                     </div>
@@ -1563,8 +1563,8 @@
 
         function initFirebase() {
             try {
-                // 실제 Firebase 설정이 있는지 확인
-                if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "AIzaSy...placeholder") {
+                // 실제 Firebase 설정이 있는지 확인 (더 견고한 확인)
+                if (firebaseConfig && firebaseConfig.apiKey && firebaseConfig.projectId) {
                     firebase.initializeApp(firebaseConfig);
                     database = firebase.database();
                     isFirebaseEnabled = true;
@@ -1575,7 +1575,7 @@
                     showNotification("🔥 실시간 공유 기능이 활성화되었습니다!");
                     updateFirebaseStatus();
                 } else {
-                    console.log("Firebase 설정이 필요합니다. 로컬 모드로 실행됩니다.");
+                    console.log("Firebase 설정이 올바르지 않습니다. 로컬 모드로 실행됩니다.");
                     showNotification("📱 로컬 모드로 실행됩니다. Firebase 설정 시 실시간 공유가 가능합니다.");
                     updateFirebaseStatus();
                 }
@@ -1593,56 +1593,40 @@
             // 공지사항 실시간 리스너
             database.ref('notices').on('value', (snapshot) => {
                 const data = snapshot.val();
-                if (data) {
-                    notices = Object.values(data).sort((a, b) => b.id - a.id); // 최신순 정렬
-                    updateNotices();
-                } else {
-                    notices = [];
-                    updateNotices();
-                }
+                notices = data ? Object.values(data).sort((a, b) => b.id - a.id) : [];
+                updateNotices();
             });
 
             // 채팅 메시지 실시간 리스너
             database.ref('chatMessages').on('value', (snapshot) => {
                 const data = snapshot.val();
-                if (data) {
-                    chatMessages = Object.values(data).sort((a, b) => a.timestamp - b.timestamp); // 시간순 정렬
-                } else {
-                    chatMessages = [];
-                }
+                chatMessages = data ? Object.values(data).sort((a, b) => a.timestamp - b.timestamp) : [];
                 
-                // 길드 탭이 활성화되어 있을 때만 채팅 업데이트
                 const activeTab = document.querySelector('.nav-item.active');
                 if (activeTab && activeTab.textContent.includes('길드')) {
-                    const guildMessagesContainer = document.getElementById('guildMessages');
-                    if (guildMessagesContainer) {
-                        updateChatMessages('guild');
-                    }
+                    updateChatMessages('guild');
                 }
             });
 
             // QT 노트 실시간 리스너
             database.ref('qtNotes').on('value', (snapshot) => {
                 const data = snapshot.val();
-                if (data) {
-                    qtNotes = Object.values(data).sort((a, b) => b.id - a.id); // 최신순 정렬
-                } else {
-                    qtNotes = [];
-                }
-                // 항상 QT노트 UI 업데이트 (탭과 상관없이)
+                qtNotes = data ? Object.values(data).sort((a, b) => b.id - a.id) : [];
                 updateQTNotes();
             });
 
+            // 아이스브레이크 기록 실시간 리스너
+            database.ref('icebreakerRecords').on('value', (snapshot) => {
+                const data = snapshot.val();
+                completedIcebreakers = data ? Object.values(data).sort((a, b) => a.stage - b.stage) : [];
+                updateIcebreakerRecordsDisplay();
+            });
+
+
             // 온라인 사용자 실시간 리스너
             database.ref('onlineUsers').on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    onlineUsers = data;
-                    updateOnlineUsers();
-                } else {
-                    onlineUsers = {};
-                    updateOnlineUsers();
-                }
+                onlineUsers = snapshot.val() || {};
+                updateOnlineUsers();
             });
 
             // 현재 사용자를 온라인 상태로 등록
@@ -1662,20 +1646,12 @@
             // 5초마다 온라인 상태 업데이트
             setInterval(() => {
                 if (isFirebaseEnabled) {
-                    userOnlineRef.update({
-                        name: userName,
-                        avatar: userAvatar,
-                        level: userLevel,
-                        job: userJob,
-                        streak: userStreak,
-                        lastSeen: Date.now()
-                    });
+                    userOnlineRef.update({ lastSeen: Date.now() });
                 }
             }, 5000);
         }
 
         function updateFirebaseStatus() {
-            // Firebase 상태 정보를 콘솔에만 출력 (UI 요소 제거됨)
             if (isFirebaseEnabled) {
                 console.log('🔥 Firebase 연결됨: 실시간 공유 기능이 활성화되어 있습니다.');
             } else {
@@ -1696,14 +1672,13 @@
         let currentTheme = 'light-mode';
         let quizCompletedPerStage = {};
         let completedIcebreakers = [];
-        let onlineUsers = {}; // 온라인 사용자 추적
-        let dailyQuiz = []; // 오늘의 퀴즈
+        let onlineUsers = {};
+        let dailyQuiz = [];
         let currentQuizIndex = 0;
 
         // 메모리 기반 저장소 (localStorage 대체)
         let memoryStorage = {};
         
-        // localStorage 체크 및 대체 함수
         function isLocalStorageAvailable() {
             try {
                 const test = '__localStorage_test__';
@@ -1724,7 +1699,6 @@
                     console.warn('localStorage setItem 실패, 메모리 저장소 사용:', error);
                 }
             }
-            // localStorage 사용 불가 시 메모리에 저장
             memoryStorage[key] = value;
             return false;
         }
@@ -1737,7 +1711,6 @@
                     console.warn('localStorage getItem 실패, 메모리 저장소 사용:', error);
                 }
             }
-            // localStorage 사용 불가 시 메모리에서 가져오기
             return memoryStorage[key] || null;
         }
 
@@ -1750,7 +1723,6 @@
                     console.warn('localStorage removeItem 실패, 메모리 저장소 사용:', error);
                 }
             }
-            // localStorage 사용 불가 시 메모리에서 삭제
             delete memoryStorage[key];
         }
 
@@ -1763,7 +1735,6 @@
             { text: "사람은 마음으로 믿어서 의에 이르고, 입으로 고백해서 구원에 이르게 됩니다.", reference: "로마서 10:10" }
         ];
 
-        // Quiz Questions
         const allQuizQuestions = [
             { question: "교회의 머리는 누구신가요?", options: ["베드로", "바울", "예수 그리스도", "교황"], answer: "예수 그리스도" },
             { question: "교회의 세 가지 주요 사명 중 하나가 아닌 것은 무엇인가요?", options: ["예배", "교육", "사업", "봉사 및 선교"], answer: "사업" },
@@ -1784,13 +1755,11 @@
                 icebreaker: {
                     prompt: "1강을 시작하기 전에, '패치'라는 단어를 들으면 어떤 생각이 드나요? 신앙생활에서 '패치'가 필요하다고 느낀 적이 있나요?"
                 },
-                hasQuiz: false,
                 lessons: [
                     {
                         icon: "🛡️",
                         title: "예배하기 - 하나님을 만나는 공식 채널",
                         content: `<h4>📌 예배는 양방향 소통</h4><p>예수님은 우리에게 새로운 생명을 주실 뿐만 아니라, "더 넘치게" 누리며 살게 하기 위해 자기 목숨을 버리겠다고 말씀하셨습니다.</p><h4>💡 예배의 의미</h4><ul><li>하나님이 우리 일상에 얼마나 관심이 많은지 알 수 있는 시간</li><li>우리를 얼마나 소중히 여기는지 깨닫는 시간</li><li>하나님의 계획에서 우리가 얼마나 중요한 사람인지 발견하는 시간</li></ul>
-                        
                         <h4>⚔️ 거짓 위협 vs 진짜 목소리 (용특새)</h4>
                         <p><strong>거짓 위협:</strong> "너는 왜 그거밖에 안 되냐?", "너 따위는 여기서 실패하면 바로 끝이야"</p>
                         <p><strong>진짜 목소리 (용특새):</strong></p>
@@ -1824,7 +1793,6 @@
                 icebreaker: {
                     prompt: "2강을 시작하기 전에, '길드'라는 단어를 들으면 어떤 생각이 드나요? 신앙 공동체가 '길드'처럼 느껴진 적이 있나요?"
                 },
-                hasQuiz: false,
                 lessons: [
                     {
                         icon: "🎯",
@@ -1854,7 +1822,6 @@
                 icebreaker: {
                     prompt: "3강을 시작하기 전에, '실전'이라는 단어를 들으면 어떤 생각이 드나요? 나의 신앙이 '실전'에 강하다고 생각하나요?"
                 },
-                hasQuiz: false,
                 lessons: [
                     {
                         icon: "📖→🌍",
@@ -1898,19 +1865,14 @@
 
             if (tabName === 'stages') {
                 backToStages();
-                updateIcebreakerRecordsDisplay();
             }
             if (tabName === 'guild') {
                 const guildChatContainer = document.getElementById('guild-chat-container');
                 if (guildChatContainer) {
-                    // 길드 탭을 누를 때마다 채팅 UI를 새로 생성하고 메시지를 업데이트합니다.
                     guildChatContainer.innerHTML = createChatInterface('guild');
                     updateChatMessages('guild');
                 }
-                updateQTNotes();
-                updateOnlineUsers();
             }
-            if (tabName === 'home') updateNotices();
         }
 
         function enterStageContent(stageNumber) {
@@ -1927,8 +1889,7 @@
             
             let contentHtml = `<h3 style="margin-bottom: 20px; color: var(--lesson-title-color);">${stageData.title}</h3>`;
 
-            // 1. Icebreaker Section
-            if (stageData.icebreaker && !completedIcebreakers.some(item => item.stage === stageNumber)) {
+            if (stageData.icebreaker && !completedIcebreakers.some(item => item.stage === stageNumber && item.author === userName)) {
                 contentHtml += `
                     <div class="icebreaker-section" id="icebreaker-section-${stageNumber}">
                         <div class="modal-title">아이스브레이크</div>
@@ -1938,7 +1899,6 @@
                     </div>
                 `;
             } else {
-                 // 2. Lessons and Discussion Questions (아이스브레이커를 완료했거나 없는 경우에만 표시)
                 contentHtml += stageData.lessons.map(lesson => `
                     <div class="lesson-container">
                         <div class="lesson-header">
@@ -1959,7 +1919,6 @@
                         </div>
                     `;
                 }
-                 // 3. Completion Button or Notice
                 if (completedStages.includes(stageNumber)) {
                     contentHtml += `<div class="stage-completed-notice">✔️ 이 스테이지를 완료했습니다!</div>`;
                 } else {
@@ -1967,9 +1926,7 @@
                 }
             }
 
-            const stageContentElement = document.getElementById('stage-content');
-            stageContentElement.innerHTML = contentHtml;
-            
+            document.getElementById('stage-content').innerHTML = contentHtml;
             document.querySelector('.content').scrollTop = 0;
         }
 
@@ -2003,7 +1960,6 @@
             saveProgress();
             updateUI();
             
-            // UI를 즉시 업데이트하여 완료 상태를 반영
             enterStageContent(stageNumber); 
         }
 
@@ -2114,7 +2070,6 @@
                 badgeContainer.innerHTML = `<p style="color: var(--text-color); font-size: 14px;">아직 획득한 뱃지가 없습니다.</p>`;
             }
 
-            // Firebase에서 사용자 정보 업데이트
             if (isFirebaseEnabled) {
                 const userOnlineRef = database.ref(`onlineUsers/${userName}`);
                 userOnlineRef.update({
@@ -2122,8 +2077,7 @@
                     avatar: userAvatar,
                     level: userLevel,
                     job: userJob,
-                    streak: userStreak,
-                    lastSeen: Date.now()
+                    streak: userStreak
                 }).catch(error => console.log('사용자 정보 업데이트 실패:', error));
             }
         }
@@ -2133,52 +2087,34 @@
             if (!guildMembersContainer) return;
 
             const now = Date.now();
-            const activeUsers = Object.values(onlineUsers).filter(user => (now - user.lastSeen) < 30000); // 30초 이내
+            const activeUsers = Object.values(onlineUsers).filter(user => (now - user.lastSeen) < 30000);
 
             let membersHtml = '';
             
-            const currentUser = activeUsers.find(user => user.name === userName);
-            if (currentUser) {
-                 membersHtml += `
-                    <div style="display: flex; align-items: center; padding: 10px; margin-bottom: 8px; background: var(--chat-messages-bg); border-radius: 10px;">
-                        <div style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid var(--modal-button-primary-bg); background: var(--modal-button-primary-bg); color: white;">${userAvatar}</div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: bold; margin-bottom: 2px; color: var(--text-color);">${userName} (나)</div>
-                            <div style="font-size: 12px; color: var(--text-color);">레벨 ${userLevel} ${userJob} • ${userStreak}일 연속 접속</div>
-                        </div>
-                    </div>
-                `;
+            const currentUserInList = activeUsers.find(user => user.name === userName);
+            if (!currentUserInList) {
+                 activeUsers.push({ name: userName, avatar: userAvatar, level: userLevel, job: userJob, streak: userStreak });
             }
 
-            const otherUsers = activeUsers.filter(user => user.name !== userName);
-            otherUsers.forEach(user => {
+            activeUsers.forEach(user => {
+                const isCurrentUser = user.name === userName;
                 membersHtml += `
                     <div style="display: flex; align-items: center; padding: 10px; margin-bottom: 8px; background: var(--chat-messages-bg); border-radius: 10px;">
-                        <div style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid #28a745; background: #28a745; color: white;">${user.avatar}</div>
+                        <div style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid ${isCurrentUser ? 'var(--modal-button-primary-bg)' : '#28a745'}; background: ${isCurrentUser ? 'var(--modal-button-primary-bg)' : '#28a745'}; color: white;">${user.avatar}</div>
                         <div style="flex: 1;">
-                            <div style="font-weight: bold; margin-bottom: 2px; color: var(--text-color);">${user.name}</div>
+                            <div style="font-weight: bold; margin-bottom: 2px; color: var(--text-color);">${user.name} ${isCurrentUser ? '(나)' : ''}</div>
                             <div style="font-size: 12px; color: var(--text-color);">레벨 ${user.level} ${user.job} • ${user.streak}일 연속 접속</div>
                         </div>
-                        <div style="background: #28a745; color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px;">온라인</div>
+                        ${!isCurrentUser ? `<div style="background: #28a745; color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px;">온라인</div>` : ''}
                     </div>
                 `;
             });
 
             if (activeUsers.length === 0) {
-                 membersHtml = `
-                    <div style="text-align: center; color: var(--text-color); padding: 20px;">
-                        <p>현재 접속 중인 사용자가 없습니다.</p>
-                    </div>
-                `;
-            } else if (otherUsers.length === 0 && currentUser) {
-                 membersHtml += `
-                    <div style="text-align: center; color: var(--text-color); padding: 20px;">
-                        <p>다른 길드원들이 접속하면 여기에 표시됩니다</p>
-                        <p>친구들을 초대해보세요! 🎉</p>
-                    </div>
-                `;
+                 membersHtml = `<div style="text-align: center; color: var(--text-color); padding: 20px;"><p>현재 접속 중인 사용자가 없습니다.</p></div>`;
+            } else if (activeUsers.length === 1 && activeUsers[0].name === userName) {
+                 membersHtml += `<div style="text-align: center; color: var(--text-color); padding: 20px;"><p>다른 길드원들이 접속하면 여기에 표시됩니다</p><p>친구들을 초대해보세요! 🎉</p></div>`;
             }
-
 
             guildMembersContainer.innerHTML = membersHtml;
         }
@@ -2211,22 +2147,22 @@
                 const data = {
                     userName, userAvatar, userJob, userLevel, userExp, userStreak,
                     completedMissions, userBadges, completedStages, guildLevel, guildExp, 
-                    chatMessages, prayerTimes, notices, qtNotes, currentTheme,
-                    quizCompletedPerStage, completedIcebreakers,
+                    prayerTimes, currentTheme,
                     lastLogin: new Date().toDateString(),
-                    lastQuizMissionDate: safeGetItem('lastQuizMissionDate') // 퀴즈 완료 날짜도 저장
+                    lastQuizMissionDate: safeGetItem('lastQuizMissionDate')
                 };
                 
-                const success = safeSetItem('blueWindProgress', JSON.stringify(data));
-                if (!success && !isLocalStorageAvailable()) {
-                    if (!memoryStorage._warningShown) {
-                        showNotification('브라우저 설정으로 인해 데이터가 세션 동안만 유지됩니다. 📝');
-                        memoryStorage._warningShown = true;
-                    }
+                // Firebase-managed data is not saved to localStorage
+                if (!isFirebaseEnabled) {
+                    data.chatMessages = chatMessages;
+                    data.notices = notices;
+                    data.qtNotes = qtNotes;
+                    data.completedIcebreakers = completedIcebreakers;
                 }
+                
+                safeSetItem('blueWindProgress', JSON.stringify(data));
             } catch (error) {
                 console.error('데이터 저장 실패:', error);
-                showNotification('데이터 저장에 실패했습니다.');
             }
         }
 
@@ -2246,24 +2182,14 @@
                     completedStages = data.completedStages || [];
                     guildLevel = data.guildLevel || 1;
                     guildExp = data.guildExp || 0;
-                    chatMessages = data.chatMessages || [];
-                    notices = data.notices || [];
-                    qtNotes = data.qtNotes || [];
                     currentTheme = data.currentTheme || 'light-mode';
-                    quizCompletedPerStage = data.quizCompletedPerStage || {};
-                    completedIcebreakers = data.completedIcebreakers || [];
-                    
-                    // 기존 아이스브레이크 데이터 형식 변환 (question과 author 정보 추가)
-                    completedIcebreakers = completedIcebreakers.map(item => {
-                        if (typeof item.question === 'undefined') {
-                            const stageData = stageContents[item.stage];
-                            item.question = stageData && stageData.icebreaker ? stageData.icebreaker.prompt : '질문 정보가 없습니다.';
-                        }
-                        if (typeof item.author === 'undefined') {
-                            item.author = userName; // 기존 데이터는 현재 사용자가 작성한 것으로 간주
-                        }
-                        return item;
-                    });
+
+                    if (!isFirebaseEnabled) {
+                        chatMessages = data.chatMessages || [];
+                        notices = data.notices || [];
+                        qtNotes = data.qtNotes || [];
+                        completedIcebreakers = data.completedIcebreakers || [];
+                    }
 
                     const today = new Date().toDateString();
                     const lastLogin = data.lastLogin || today;
@@ -2281,16 +2207,13 @@
                             userStreak = 1;
                         }
                         prayerTimes = { morning: false, noon: false, evening: false };
-                        // 퀴즈 완료 날짜는 초기화하지 않음
                     } else {
                         prayerTimes = data.prayerTimes || { morning: false, noon: false, evening: false };
                     }
                     
-                    // 퀴즈 완료 날짜 로드
                     if (data.lastQuizMissionDate) {
                         safeSetItem('lastQuizMissionDate', data.lastQuizMissionDate);
                     }
-
 
                     setTimeout(() => {
                         Object.keys(prayerTimes).forEach(timeSlot => {
@@ -2311,8 +2234,11 @@
             
             document.body.className = currentTheme;
             updateUI();
-            updateNotices();
-            updateQTNotes();
+            if (!isFirebaseEnabled) {
+                updateNotices();
+                updateQTNotes();
+                updateIcebreakerRecordsDisplay();
+            }
         }
         
         function setInitialState() {
@@ -2332,14 +2258,9 @@
             notices = [];
             qtNotes = [];
             currentTheme = 'light-mode';
-            quizCompletedPerStage = {};
             completedIcebreakers = [];
             
-            try {
-                saveProgress();
-            } catch (error) {
-                console.error('초기 데이터 저장 실패:', error);
-            }
+            saveProgress();
         }
 
         // --- Notice Functions ---
@@ -2380,16 +2301,8 @@
 
             if (isFirebaseEnabled) {
                 database.ref('notices').push(notice)
-                    .then(() => {
-                        showNotification('공지사항이 모든 사용자에게 실시간으로 공유되었습니다! 📢🔥');
-                    })
-                    .catch((error) => {
-                        console.error('Firebase 저장 실패:', error);
-                        showNotification('공지사항 저장에 실패했습니다. 로컬에만 저장됩니다.');
-                        notices.unshift(notice);
-                        updateNotices();
-                        saveProgress();
-                    });
+                    .then(() => showNotification('공지사항이 모든 사용자에게 실시간으로 공유되었습니다! 📢🔥'))
+                    .catch((error) => showNotification('공지사항 저장에 실패했습니다.'));
             } else {
                 notices.unshift(notice);
                 updateNotices();
@@ -2403,11 +2316,7 @@
         function updateNotices() {
             const container = document.getElementById('notices-container');
             if (notices.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; color: var(--text-color); padding: 20px; background: var(--mission-card-bg); border-radius: 10px;">
-                        <p>등록된 공지사항이 없습니다.</p>
-                    </div>
-                `;
+                container.innerHTML = `<div style="text-align: center; color: var(--text-color); padding: 20px; background: var(--mission-card-bg); border-radius: 10px;"><p>등록된 공지사항이 없습니다.</p></div>`;
             } else {
                 const notice = notices[0];
                 container.innerHTML = `
@@ -2432,18 +2341,11 @@
             document.getElementById('qtNoteContent').value = '';
             document.getElementById('qtNotePassword').value = '';
             document.getElementById('qtNoteModal').style.display = 'flex';
-            
-            setTimeout(() => {
-                document.getElementById('qtNoteTitle').focus();
-            }, 100);
+            setTimeout(() => document.getElementById('qtNoteTitle').focus(), 100);
         }
 
         function closeQTNoteModal() {
             document.getElementById('qtNoteModal').style.display = 'none';
-            editingQTNote = null;
-            document.getElementById('qtNoteTitle').value = '';
-            document.getElementById('qtNoteContent').value = '';
-            document.getElementById('qtNotePassword').value = '';
         }
 
         function createQTNote() {
@@ -2457,72 +2359,40 @@
             }
 
             if (editingQTNote) {
-                // 수정 모드
-                editingQTNote.title = title;
-                editingQTNote.content = content;
-                editingQTNote.password = password;
-                editingQTNote.date = new Date().toLocaleDateString('ko-KR');
-                
+                const updatedNote = { ...editingQTNote, title, content, password, date: new Date().toLocaleDateString('ko-KR') };
                 if (isFirebaseEnabled) {
                     database.ref('qtNotes').once('value', (snapshot) => {
                         const data = snapshot.val();
                         if (data) {
-                            const qtNoteKey = Object.keys(data).find(key => data[key].id === editingQTNote.id);
-                            if (qtNoteKey) {
-                                database.ref(`qtNotes/${qtNoteKey}`).update(editingQTNote)
-                                    .then(() => {
-                                        showNotification('QT 노트가 실시간으로 수정되었습니다! ✏️🔥');
-                                        closeQTNoteModal();
-                                    })
-                                    .catch((error) => {
-                                        console.error('Firebase 수정 실패:', error);
-                                        showNotification('QT 노트 수정에 실패했습니다.');
-                                    });
+                            const key = Object.keys(data).find(k => data[k].id === editingQTNote.id);
+                            if (key) {
+                                database.ref(`qtNotes/${key}`).update(updatedNote)
+                                    .then(() => showNotification('QT 노트가 수정되었습니다! ✏️🔥'))
+                                    .catch(() => showNotification('QT 노트 수정에 실패했습니다.'));
                             }
                         }
                     });
                 } else {
+                    const index = qtNotes.findIndex(n => n.id === editingQTNote.id);
+                    if (index > -1) qtNotes[index] = updatedNote;
                     updateQTNotes();
-                    showNotification('QT 노트가 수정되었습니다! ✏️');
                     saveProgress();
-                    closeQTNoteModal();
+                    showNotification('QT 노트가 수정되었습니다! ✏️');
                 }
             } else {
-                // 새 작성 모드
-                const qtNote = {
-                    id: Date.now(),
-                    title: title,
-                    content: content,
-                    password: password,
-                    author: userName,
-                    date: new Date().toLocaleDateString('ko-KR'),
-                    likes: 0,
-                    likedBy: [],
-                    comments: []
-                };
-
+                const newNote = { id: Date.now(), title, content, password, author: userName, date: new Date().toLocaleDateString('ko-KR'), likes: 0, likedBy: [], comments: [] };
                 if (isFirebaseEnabled) {
-                    database.ref('qtNotes').push(qtNote)
-                        .then(() => {
-                            showNotification('QT 노트가 모든 사용자에게 실시간으로 공유되었습니다! 📝🔥');
-                            closeQTNoteModal();
-                        })
-                        .catch((error) => {
-                            console.error('Firebase 저장 실패:', error);
-                            showNotification('QT 노트 저장에 실패했습니다. 로컬에만 저장됩니다.');
-                            qtNotes.unshift(qtNote);
-                            updateQTNotes();
-                            saveProgress();
-                            closeQTNoteModal();
-                        });
+                    database.ref('qtNotes').push(newNote)
+                        .then(() => showNotification('QT 노트가 공유되었습니다! 📝🔥'))
+                        .catch(() => showNotification('QT 노트 저장에 실패했습니다.'));
                 } else {
-                    qtNotes.unshift(qtNote);
+                    qtNotes.unshift(newNote);
                     updateQTNotes();
-                    showNotification('QT 노트가 작성되었습니다! 📝 (로컬 모드)');
                     saveProgress();
-                    closeQTNoteModal();
+                    showNotification('QT 노트가 작성되었습니다! 📝');
                 }
             }
+            closeQTNoteModal();
         }
 
         function updateQTNotes() {
@@ -2530,47 +2400,23 @@
             if (!container) return;
             
             if (qtNotes.length === 0) {
-                container.innerHTML = `
-                    <div style="text-align: center; color: var(--text-color); padding: 20px; background: var(--mission-card-bg); border-radius: 10px;">
-                        <p>작성된 QT 노트가 없습니다.</p>
-                        <p>첫 번째 QT 노트를 작성해보세요! 📝</p>
-                    </div>
-                `;
+                container.innerHTML = `<div style="text-align: center; color: var(--text-color); padding: 20px; background: var(--mission-card-bg); border-radius: 10px;"><p>작성된 QT 노트가 없습니다.</p><p>첫 번째 QT 노트를 작성해보세요! 📝</p></div>`;
             } else {
                 container.innerHTML = qtNotes.map(note => {
                     const commentsHtml = (note.comments || []).map(comment => `
                         <div class="comment-item">
-                            <div class="comment-header">
-                                <span class="comment-author">${comment.author}</span>
-                                <span class="comment-time">${comment.time}</span>
-                            </div>
+                            <div class="comment-header"><span class="comment-author">${comment.author}</span><span class="comment-time">${comment.time}</span></div>
                             <div class="comment-content">${comment.content}</div>
-                            ${comment.author === userName ? `
-                                <div class="comment-actions">
-                                    <button class="comment-action-btn edit" onclick="editComment(${note.id}, ${comment.id})">수정</button>
-                                    <button class="comment-action-btn delete" onclick="deleteComment(${note.id}, ${comment.id})">삭제</button>
-                                </div>
-                            ` : ''}
-                        </div>
-                    `).join('');
+                            ${comment.author === userName ? `<div class="comment-actions"><button class="comment-action-btn edit" onclick="editComment(${note.id}, ${comment.id})">수정</button><button class="comment-action-btn delete" onclick="deleteComment(${note.id}, ${comment.id})">삭제</button></div>` : ''}
+                        </div>`).join('');
 
                     return `
                     <div class="qt-note-card">
-                        <div class="qt-note-header">
-                            <div class="qt-note-title">${note.title}</div>
-                            <div class="qt-note-date">${note.date}</div>
-                        </div>
+                        <div class="qt-note-header"><div class="qt-note-title">${note.title}</div><div class="qt-note-date">${note.date}</div></div>
                         <div class="qt-note-content">${note.content}</div>
                         <div class="qt-note-actions">
-                            <button class="like-button" onclick="toggleLike(${note.id})">
-                                ${note.likedBy && note.likedBy.includes(userName) ? '❤️' : '🤍'} ${note.likes || 0}
-                            </button>
-                            ${note.author === userName ? `
-                                <div class="note-buttons">
-                                    <button class="note-btn edit" onclick="editQTNote(${note.id})">수정</button>
-                                    <button class="note-btn delete" onclick="deleteQTNote(${note.id})">삭제</button>
-                                </div>
-                            ` : ''}
+                            <button class="like-button" onclick="toggleLike(${note.id})">${(note.likedBy || []).includes(userName) ? '❤️' : '🤍'} ${note.likes || 0}</button>
+                            ${note.author === userName ? `<div class="note-buttons"><button class="note-btn edit" onclick="editQTNote(${note.id})">수정</button><button class="note-btn delete" onclick="deleteQTNote(${note.id})">삭제</button></div>` : ''}
                         </div>
                         <div class="comments-section">
                             <h5>💬 댓글 (${(note.comments || []).length})</h5>
@@ -2579,46 +2425,40 @@
                                 <input type="password" id="commentPassword-${note.id}" class="comment-password-input" placeholder="비밀번호 (수정/삭제용)" maxlength="10">
                                 <button class="comment-send-btn" onclick="addComment(${note.id})">댓글 작성</button>
                             </div>
-                            <div class="comment-list">
-                                ${(note.comments && note.comments.length > 0) ? commentsHtml : `<p style="color: var(--text-color); text-align: center;">아직 댓글이 없습니다.</p>`}
-                            </div>
+                            <div class="comment-list">${(note.comments && note.comments.length > 0) ? commentsHtml : `<p style="color: var(--text-color); text-align: center;">아직 댓글이 없습니다.</p>`}</div>
                         </div>
-                    </div>
-                `}).join('');
+                    </div>`;
+                }).join('');
             }
         }
 
         function toggleLike(noteId) {
-            const note = qtNotes.find(n => n.id === noteId);
-            if (!note) return;
+            const noteIndex = qtNotes.findIndex(n => n.id === noteId);
+            if (noteIndex === -1) return;
+            const note = { ...qtNotes[noteIndex] };
+            
+            note.likedBy = note.likedBy || [];
+            note.likes = note.likes || 0;
 
-            if (!note.likedBy) note.likedBy = [];
-            if (typeof note.likes !== 'number') note.likes = 0;
-
-            if (note.likedBy.includes(userName)) {
-                note.likedBy = note.likedBy.filter(name => name !== userName);
+            const userIndex = note.likedBy.indexOf(userName);
+            if (userIndex > -1) {
+                note.likedBy.splice(userIndex, 1);
                 note.likes--;
-                showNotification('좋아요를 취소했습니다 💔');
             } else {
                 note.likedBy.push(userName);
                 note.likes++;
-                showNotification('좋아요를 눌렀습니다! ❤️');
             }
 
             if (isFirebaseEnabled) {
                 database.ref('qtNotes').once('value', (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
-                        const qtNoteKey = Object.keys(data).find(key => data[key].id === noteId);
-                        if (qtNoteKey) {
-                            database.ref(`qtNotes/${qtNoteKey}`).update({
-                                likes: note.likes,
-                                likedBy: note.likedBy
-                            }).catch((error) => console.error('Firebase 좋아요 업데이트 실패:', error));
-                        }
+                        const key = Object.keys(data).find(k => data[k].id === noteId);
+                        if (key) database.ref(`qtNotes/${key}`).update({ likes: note.likes, likedBy: note.likedBy });
                     }
                 });
             } else {
+                qtNotes[noteIndex] = note;
                 updateQTNotes();
                 saveProgress();
             }
@@ -2627,7 +2467,6 @@
         function editQTNote(noteId) {
             const note = qtNotes.find(n => n.id === noteId);
             if (!note) return;
-
             pendingQTAction = { type: 'qtNote', action: 'edit', noteId: noteId };
             document.getElementById('passwordModalText').textContent = 'QT 노트를 수정하려면 비밀번호를 입력하세요:';
             document.getElementById('qtPasswordModal').style.display = 'flex';
@@ -2637,7 +2476,6 @@
         function deleteQTNote(noteId) {
             const note = qtNotes.find(n => n.id === noteId);
             if (!note) return;
-
             pendingQTAction = { type: 'qtNote', action: 'delete', noteId: noteId };
             document.getElementById('passwordModalText').textContent = 'QT 노트를 삭제하려면 비밀번호를 입력하세요:';
             document.getElementById('qtPasswordModal').style.display = 'flex';
@@ -2645,8 +2483,8 @@
         }
 
         function addComment(noteId) {
-            const note = qtNotes.find(n => n.id === noteId);
-            if (!note) return;
+            const noteIndex = qtNotes.findIndex(n => n.id === noteId);
+            if (noteIndex === -1) return;
 
             const inputElement = document.getElementById(`commentInput-${noteId}`);
             const passwordElement = document.getElementById(`commentPassword-${noteId}`);
@@ -2657,61 +2495,39 @@
                 showNotification('댓글 내용과 비밀번호를 모두 입력해주세요!');
                 return;
             }
-
+            
+            const note = { ...qtNotes[noteIndex] };
             if (!note.comments) note.comments = [];
 
-            const newComment = {
-                id: Date.now(),
-                author: userName,
-                avatar: userAvatar,
-                content: commentContent,
-                password: commentPassword,
-                time: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })
-            };
-
+            const newComment = { id: Date.now(), author: userName, avatar: userAvatar, content: commentContent, password: commentPassword, time: new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) };
             note.comments.push(newComment);
-            inputElement.value = '';
-            passwordElement.value = '';
-            showNotification('댓글이 작성되었습니다! 💬');
 
             if (isFirebaseEnabled) {
                 database.ref('qtNotes').once('value', (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
-                        const qtNoteKey = Object.keys(data).find(key => data[key].id === noteId);
-                        if (qtNoteKey) {
-                            database.ref(`qtNotes/${qtNoteKey}`).update({
-                                comments: note.comments
-                            }).then(() => console.log('댓글이 실시간으로 공유되었습니다!'))
-                            .catch((error) => console.error('Firebase 댓글 업데이트 실패:', error));
-                        }
+                        const key = Object.keys(data).find(k => data[k].id === noteId);
+                        if (key) database.ref(`qtNotes/${key}`).update({ comments: note.comments });
                     }
                 });
             } else {
+                qtNotes[noteIndex] = note;
                 updateQTNotes();
                 saveProgress();
             }
+            inputElement.value = '';
+            passwordElement.value = '';
         }
 
         function editComment(noteId, commentId) {
-            const note = qtNotes.find(n => n.id === noteId);
-            if (!note || !note.comments) return;
-            const comment = note.comments.find(c => c.id === commentId);
-            if (!comment) return;
-
-            pendingQTAction = { type: 'comment', action: 'edit', noteId: noteId, commentId: commentId };
+            pendingQTAction = { type: 'comment', action: 'edit', noteId, commentId };
             document.getElementById('passwordModalText').textContent = '댓글을 수정하려면 비밀번호를 입력하세요:';
             document.getElementById('qtPasswordModal').style.display = 'flex';
             document.getElementById('qtActionPassword').focus();
         }
 
         function deleteComment(noteId, commentId) {
-            const note = qtNotes.find(n => n.id === noteId);
-            if (!note || !note.comments) return;
-            const comment = note.comments.find(c => c.id === commentId);
-            if (!comment) return;
-
-            pendingQTAction = { type: 'comment', action: 'delete', noteId: noteId, commentId: commentId };
+            pendingQTAction = { type: 'comment', action: 'delete', noteId, commentId };
             document.getElementById('passwordModalText').textContent = '댓글을 삭제하려면 비밀번호를 입력하세요:';
             document.getElementById('qtPasswordModal').style.display = 'flex';
             document.getElementById('qtActionPassword').focus();
@@ -2721,84 +2537,75 @@
             if (!pendingQTAction) return;
 
             const password = document.getElementById('qtActionPassword').value;
-            let targetItem = null;
-            let noteToUpdate = null;
+            let targetItem, note, noteIndex;
 
             if (pendingQTAction.type === 'qtNote') {
                 targetItem = qtNotes.find(n => n.id === pendingQTAction.noteId);
-            } else if (pendingQTAction.type === 'comment') {
-                noteToUpdate = qtNotes.find(n => n.id === pendingQTAction.noteId);
-                if (noteToUpdate && noteToUpdate.comments) {
-                    targetItem = noteToUpdate.comments.find(c => c.id === pendingQTAction.commentId);
+            } else {
+                noteIndex = qtNotes.findIndex(n => n.id === pendingQTAction.noteId);
+                if (noteIndex > -1) {
+                    note = qtNotes[noteIndex];
+                    targetItem = (note.comments || []).find(c => c.id === pendingQTAction.commentId);
                 }
             }
 
             if (!targetItem || targetItem.password !== password) {
                 showNotification('비밀번호가 틀렸습니다! ❌');
-                document.getElementById('qtActionPassword').value = '';
                 return;
             }
 
-            // Action confirmed, proceed
             if (pendingQTAction.type === 'qtNote') {
                 if (pendingQTAction.action === 'edit') {
                     editingQTNote = targetItem;
                     document.getElementById('qtModalTitle').textContent = 'QT 노트 수정';
                     document.getElementById('qtSubmitBtn').textContent = '수정 완료';
-                    document.getElementById('qtSubmitBtn').onclick = createQTNote;
                     document.getElementById('qtNoteTitle').value = targetItem.title;
                     document.getElementById('qtNoteContent').value = targetItem.content;
                     document.getElementById('qtNotePassword').value = targetItem.password;
                     document.getElementById('qtNoteModal').style.display = 'flex';
                 } else if (pendingQTAction.action === 'delete') {
                     if (isFirebaseEnabled) {
-                        database.ref('qtNotes').once('value', (snapshot) => {
+                         database.ref('qtNotes').once('value', (snapshot) => {
                             const data = snapshot.val();
                             if (data) {
-                                const qtNoteKey = Object.keys(data).find(key => data[key].id === pendingQTAction.noteId);
-                                if (qtNoteKey) {
-                                    database.ref(`qtNotes/${qtNoteKey}`).remove()
-                                        .then(() => showNotification('QT 노트가 실시간으로 삭제되었습니다! 🗑️🔥'))
-                                        .catch((error) => showNotification('QT 노트 삭제에 실패했습니다.'));
-                                }
+                                const key = Object.keys(data).find(k => data[k].id === pendingQTAction.noteId);
+                                if (key) database.ref(`qtNotes/${key}`).remove();
                             }
                         });
                     } else {
                         qtNotes = qtNotes.filter(n => n.id !== pendingQTAction.noteId);
                         updateQTNotes();
-                        showNotification('QT 노트가 삭제되었습니다! 🗑️');
                         saveProgress();
                     }
                 }
             } else if (pendingQTAction.type === 'comment') {
+                const commentIndex = note.comments.findIndex(c => c.id === pendingQTAction.commentId);
+                if (commentIndex === -1) return;
+
                 if (pendingQTAction.action === 'edit') {
                     const newContent = prompt('새로운 댓글 내용을 입력하세요:', targetItem.content);
                     if (newContent !== null) {
-                        targetItem.content = newContent.trim();
-                        targetItem.time = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) + ' (수정됨)';
-                        showNotification('댓글이 수정되었습니다! ✏️');
+                        note.comments[commentIndex].content = newContent.trim();
+                        note.comments[commentIndex].time = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) + ' (수정됨)';
                     }
                 } else if (pendingQTAction.action === 'delete') {
-                    noteToUpdate.comments = noteToUpdate.comments.filter(c => c.id !== pendingQTAction.commentId);
-                    showNotification('댓글이 삭제되었습니다! 🗑️');
+                    note.comments.splice(commentIndex, 1);
                 }
 
                 if (isFirebaseEnabled) {
-                    database.ref('qtNotes').once('value', (snapshot) => {
+                     database.ref('qtNotes').once('value', (snapshot) => {
                         const data = snapshot.val();
                         if (data) {
-                            const qtNoteKey = Object.keys(data).find(key => data[key].id === pendingQTAction.noteId);
-                            if (qtNoteKey) {
-                                database.ref(`qtNotes/${qtNoteKey}`).update({ comments: noteToUpdate.comments });
-                            }
+                            const key = Object.keys(data).find(k => data[k].id === pendingQTAction.noteId);
+                            if (key) database.ref(`qtNotes/${key}`).update({ comments: note.comments });
                         }
                     });
                 } else {
+                    qtNotes[noteIndex] = note;
                     updateQTNotes();
                     saveProgress();
                 }
             }
-
             closeQTPasswordModal();
         }
 
@@ -2840,79 +2647,45 @@
             if (chatMessages.length === 0) {
                 messagesContainer.innerHTML = `<div style="text-align: center; color: var(--text-color); padding: 20px;"><p>첫 번째 메시지를 보내보세요! 💬</p></div>`;
             } else {
-                messagesContainer.innerHTML = chatMessages.map(msg => {
-                    let messageContent = `<div class="message-bubble">${msg.message}</div>`;
-                    if (msg.image) {
-                        messageContent += `<img src="${msg.image}" alt="업로드된 이미지" class="message-image" onclick="showImageModal('${msg.image}')">`;
-                    }
-                    
-                    return `
-                        <div class="message ${msg.sender === userName ? 'user' : 'other'}">
-                            <div class="message-header">
-                                <div class="message-avatar">${msg.avatar || '👤'}</div>
-                                <div class="message-sender">${msg.sender}</div>
-                                <div class="message-time">${msg.time}</div>
-                            </div>
-                            ${messageContent}
+                messagesContainer.innerHTML = chatMessages.map(msg => `
+                    <div class="message ${msg.sender === userName ? 'user' : 'other'}">
+                        <div class="message-header">
+                            <div class="message-avatar">${msg.avatar || '👤'}</div>
+                            <div class="message-sender">${msg.sender}</div>
+                            <div class="message-time">${msg.time}</div>
                         </div>
-                    `;
-                }).join('');
+                        <div class="message-bubble">${msg.message}</div>
+                        ${msg.image ? `<img src="${msg.image}" alt="업로드된 이미지" class="message-image" onclick="showImageModal('${msg.image}')">` : ''}
+                    </div>
+                `).join('');
             }
             
-            setTimeout(() => {
-                messagesContainer.scrollTop = messagesContainer.scrollHeight;
-            }, 50);
+            setTimeout(() => { messagesContainer.scrollTop = messagesContainer.scrollHeight; }, 50);
         }
 
-        function handleImageUpload(event, prefix) {
+        function handleImageUpload(event) {
             const file = event.target.files[0];
-            if (!file) return;
-
-            if (file.size > 5 * 1024 * 1024) {
-                showNotification('이미지 크기는 5MB 이하만 업로드 가능합니다! 📷');
+            if (!file || file.size > 5 * 1024 * 1024) {
+                showNotification('이미지 크기는 5MB 이하만 가능합니다! 📷');
                 return;
             }
 
             const reader = new FileReader();
             reader.onload = function(e) {
                 const now = new Date();
-                const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-                
-                const messageData = { 
-                    id: Date.now(),
-                    sender: userName, 
-                    avatar: userAvatar, 
-                    message: '사진을 업로드했습니다 📷', 
-                    image: e.target.result,
-                    time: timeString,
-                    timestamp: now.getTime()
-                };
-
-                if (isFirebaseEnabled) {
-                     database.ref('chatMessages').push(messageData);
-                } else {
-                    chatMessages.push(messageData);
-                    updateChatMessages('guild');
-                    saveProgress();
-                }
-                
-                showNotification('사진이 업로드되었습니다! 📷');
+                const messageData = { id: Date.now(), sender: userName, avatar: userAvatar, message: '사진을 업로드했습니다 📷', image: e.target.result, time: now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }), timestamp: now.getTime() };
+                if (isFirebaseEnabled) database.ref('chatMessages').push(messageData);
+                else { chatMessages.push(messageData); updateChatMessages('guild'); saveProgress(); }
             };
             reader.readAsDataURL(file);
-            
-            event.target.value = '';
         }
 
         function showImageModal(imageSrc) {
-            const modal = document.getElementById('quizModal'); // Re-use quiz modal for simplicity
-            const modalContent = document.getElementById('quiz-modal-content');
-            modalContent.innerHTML = `
+            const modal = document.getElementById('quizModal');
+            document.getElementById('quiz-modal-content').innerHTML = `
                 <div class="modal-title">이미지 보기</div>
                 <img src="${imageSrc}" style="max-width: 100%; max-height: 70vh; border-radius: 10px;">
-                <div class="modal-buttons" style="margin-top: 15px;">
-                    <button class="modal-button secondary" onclick="closeQuizModal()">닫기</button>
-                </div>
-            `;
+                <div class="modal-buttons" style="margin-top: 15px;"><button class="modal-button secondary" onclick="closeQuizModal()">닫기</button></div>`;
             modal.style.display = 'flex';
         }
 
@@ -2921,32 +2694,9 @@
             const message = input.value.trim();
             if (message) {
                 const now = new Date();
-                const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-                
-                const messageData = { 
-                    id: Date.now(),
-                    sender: userName, 
-                    avatar: userAvatar, 
-                    message: message, 
-                    time: timeString,
-                    timestamp: now.getTime()
-                };
-
-                if (isFirebaseEnabled) {
-                    database.ref('chatMessages').push(messageData)
-                        .then(() => console.log('메시지가 실시간으로 공유되었습니다!'))
-                        .catch((error) => {
-                            console.error('Firebase 메시지 저장 실패:', error);
-                            chatMessages.push(messageData);
-                            if (document.getElementById('guildMessages')) updateChatMessages('guild');
-                            saveProgress();
-                        });
-                } else {
-                    chatMessages.push(messageData);
-                    if (document.getElementById('guildMessages')) updateChatMessages('guild');
-                    saveProgress();
-                }
-
+                const messageData = { id: Date.now(), sender: userName, avatar: userAvatar, message: message, time: now.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }), timestamp: now.getTime() };
+                if (isFirebaseEnabled) database.ref('chatMessages').push(messageData);
+                else { chatMessages.push(messageData); updateChatMessages('guild'); saveProgress(); }
                 input.value = '';
             }
         }
@@ -2964,26 +2714,19 @@
         function getDailyQuizQuestions() {
             const today = new Date();
             const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
-            
             let questions = [...allQuizQuestions];
-            
             for (let i = questions.length - 1; i > 0; i--) {
                 const j = Math.floor(seededRandom(seed + i) * (i + 1));
                 [questions[i], questions[j]] = [questions[j], questions[i]];
             }
-            
-            return questions.slice(0, 3); // 매일 3개의 다른 질문을 선택
+            return questions.slice(0, 3);
         }
 
         function startQuiz() {
-            const lastQuizMissionDate = safeGetItem('lastQuizMissionDate');
-            const today = new Date().toDateString();
-
-            if (lastQuizMissionDate === today) {
+            if (safeGetItem('lastQuizMissionDate') === new Date().toDateString()) {
                 showNotification('오늘은 이미 퀴즈 미션을 완료했습니다! 내일 다시 도전해주세요. 😊');
                 return;
             }
-
             dailyQuiz = getDailyQuizQuestions();
             currentQuizIndex = 0;
             displayQuizQuestion();
@@ -2992,33 +2735,17 @@
 
         function displayQuizQuestion() {
             const modalContent = document.getElementById('quiz-modal-content');
-            
             if (currentQuizIndex >= dailyQuiz.length) {
-                modalContent.innerHTML = `
-                    <div class="modal-title">퀴즈 완료!</div>
-                    <p style="color: var(--text-color); margin-bottom: 20px;">모든 퀴즈를 완료했습니다. 대단해요! 🎉</p>
-                    <div class="modal-buttons">
-                        <button class="modal-button primary" onclick="completeQuizMission()">보상 받기</button>
-                    </div>
-                `;
+                modalContent.innerHTML = `<div class="modal-title">퀴즈 완료!</div><p>모든 퀴즈를 완료했습니다. 🎉</p><div class="modal-buttons"><button class="modal-button primary" onclick="completeQuizMission()">보상 받기</button></div>`;
                 return;
             }
-            
             const questionData = dailyQuiz[currentQuizIndex];
-            let optionsHtml = questionData.options.map(option => `
-                <button class="quiz-option" onclick="checkQuizAnswer('${option}')">${option}</button>
-            `).join('');
-
-            modalContent.innerHTML = `
-                <div class="modal-title">신앙 퀴즈 (${currentQuizIndex + 1}/${dailyQuiz.length})</div>
-                <p style="color: var(--text-color); margin-bottom: 20px; font-weight: bold;">${questionData.question}</p>
-                <div>${optionsHtml}</div>
-            `;
+            const optionsHtml = questionData.options.map(option => `<button class="quiz-option" onclick="checkQuizAnswer('${option}')">${option}</button>`).join('');
+            modalContent.innerHTML = `<div class="modal-title">신앙 퀴즈 (${currentQuizIndex + 1}/${dailyQuiz.length})</div><p style="font-weight: bold;">${questionData.question}</p><div>${optionsHtml}</div>`;
         }
 
         function checkQuizAnswer(selectedOption) {
-            const questionData = dailyQuiz[currentQuizIndex];
-            if (selectedOption === questionData.answer) {
+            if (selectedOption === dailyQuiz[currentQuizIndex].answer) {
                 showNotification('정답입니다! 🥳');
                 currentQuizIndex++;
                 setTimeout(displayQuizQuestion, 500);
@@ -3028,6 +2755,9 @@
         }
 
         function completeQuizMission() {
+            const rewardButton = document.querySelector('#quiz-modal-content .modal-button.primary');
+            if (rewardButton) rewardButton.disabled = true;
+
             addExperience(50, '퀴즈 미션 완료! 지혜가 +50 증가했습니다! 🧠');
             grantBadge('퀴즈 마스터');
             safeSetItem('lastQuizMissionDate', new Date().toDateString());
@@ -3037,8 +2767,8 @@
                 quizButton.textContent = '완료!';
                 quizButton.disabled = true;
             }
-            closeQuizModal();
             saveProgress();
+            setTimeout(closeQuizModal, 1000);
         }
 
         function closeQuizModal() {
@@ -3054,31 +2784,26 @@
             }
 
             const stageData = stageContents[stageNumber];
-            const question = stageData.icebreaker ? stageData.icebreaker.prompt : '질문이 없습니다.';
+            const record = {
+                id: Date.now(),
+                stage: stageNumber,
+                question: stageData.icebreaker ? stageData.icebreaker.prompt : '질문 없음',
+                answer: answer,
+                author: userName,
+                date: new Date().toLocaleDateString('ko-KR')
+            };
 
-            const today = new Date().toLocaleDateString('ko-KR');
-            let existingEntry = completedIcebreakers.find(item => item.stage === stageNumber);
-            if (existingEntry) {
-                existingEntry.question = question;
-                existingEntry.answer = answer;
-                existingEntry.author = userName;
-                existingEntry.date = today;
+            if (isFirebaseEnabled) {
+                database.ref('icebreakerRecords').push(record)
+                    .then(() => showNotification(`아이스브레이크 완료! 스테이지 ${stageNumber}의 문이 열렸습니다!`))
+                    .catch(() => showNotification('아이스브레이크 저장에 실패했습니다.'));
             } else {
-                completedIcebreakers.push({ 
-                    stage: stageNumber, 
-                    question: question,
-                    answer: answer, 
-                    author: userName,
-                    date: today 
-                });
+                completedIcebreakers.push(record);
+                updateIcebreakerRecordsDisplay();
+                saveProgress();
+                showNotification(`아이스브레이크 완료! (로컬 모드)`);
             }
-            completedIcebreakers.sort((a, b) => a.stage - b.stage);
-
-            showNotification(`아이스브레이크 완료! 스테이지 ${stageNumber}의 문이 열렸습니다!`);
-            saveProgress();
-            
             enterStageContent(stageNumber);
-            updateIcebreakerRecordsDisplay();
         }
 
         function updateIcebreakerRecordsDisplay() {
@@ -3086,56 +2811,29 @@
             if (!container) return;
 
             if (completedIcebreakers.length === 0) {
-                container.innerHTML = `<div style="text-align: center; color: var(--text-color); padding: 20px; background: var(--mission-card-bg); border-radius: 10px;">
-                                                <p>아직 작성된 아이스브레이크 기록이 없습니다.</p>
-                                                <p>학습 스테이지를 시작하여 첫 기록을 남겨보세요! ✨</p>
-                                            </div>`;
+                container.innerHTML = `<div style="text-align: center; color: var(--text-color); padding: 20px; background: var(--mission-card-bg); border-radius: 10px;"><p>작성된 아이스브레이크 기록이 없습니다.</p><p>학습 스테이지를 시작하여 첫 기록을 남겨보세요! ✨</p></div>`;
             } else {
                 container.innerHTML = completedIcebreakers.map(record => `
                     <div class="qt-note-card" style="margin-bottom: 15px;">
-                        <div class="qt-note-header">
-                            <div class="qt-note-title">스테이지 ${record.stage} 아이스브레이크</div>
-                            <div class="qt-note-date">${record.date} | ${record.author || userName}</div>
-                        </div>
-                        <div style="margin-bottom: 10px;">
-                            <div style="color: var(--lesson-content-h4-color); font-weight: bold; margin-bottom: 8px; font-size: 14px;">💭 질문:</div>
-                            <div style="color: var(--qt-note-content); line-height: 1.5; margin-bottom: 15px; padding: 10px; background: var(--nav-bg); border-radius: 8px; font-style: italic;">${record.question || '질문 정보가 없습니다.'}</div>
-                        </div>
-                        <div>
-                            <div style="color: var(--lesson-content-h4-color); font-weight: bold; margin-bottom: 8px; font-size: 14px;">✍️ 답변:</div>
-                            <div class="qt-note-content" style="padding: 10px; background: var(--app-bg); border-radius: 8px; border-left: 4px solid var(--modal-button-primary-bg);">${record.answer}</div>
-                        </div>
-                    </div>
-                `).join('');
+                        <div class="qt-note-header"><div class="qt-note-title">스테이지 ${record.stage} 아이스브레이크</div><div class="qt-note-date">${record.date} | ${record.author}</div></div>
+                        <div style="margin-bottom: 10px;"><div style="color: var(--lesson-content-h4-color); font-weight: bold; margin-bottom: 8px; font-size: 14px;">💭 질문:</div><div style="color: var(--qt-note-content); line-height: 1.5; padding: 10px; background: var(--nav-bg); border-radius: 8px; font-style: italic;">${record.question}</div></div>
+                        <div><div style="color: var(--lesson-content-h4-color); font-weight: bold; margin-bottom: 8px; font-size: 14px;">✍️ 답변:</div><div class="qt-note-content" style="padding: 10px; background: var(--app-bg); border-radius: 8px; border-left: 4px solid var(--modal-button-primary-bg);">${record.answer}</div></div>
+                    </div>`).join('');
             }
         }
 
         // --- Modal Functions ---
         function showNameModal() {
-            const modal = document.getElementById('nameModal');
             document.getElementById('nameInput').value = userName;
-            modal.style.display = 'flex';
+            document.getElementById('nameModal').style.display = 'flex';
             document.getElementById('nameInput').focus();
         }
         function closeNameModal() { document.getElementById('nameModal').style.display = 'none'; }
         function changeName() {
             const newName = document.getElementById('nameInput').value.trim();
             if (newName && newName.length > 0 && newName.length <= 10) {
-                const oldName = userName;
+                if (isFirebaseEnabled) database.ref(`onlineUsers/${userName}`).remove();
                 userName = newName;
-                
-                if (isFirebaseEnabled) {
-                    database.ref(`onlineUsers/${oldName}`).remove();
-                    database.ref(`onlineUsers/${userName}`).set({
-                        name: userName,
-                        avatar: userAvatar,
-                        level: userLevel,
-                        job: userJob,
-                        streak: userStreak,
-                        lastSeen: Date.now()
-                    }).catch(error => console.log('사용자 정보 업데이트 실패:', error));
-                }
-                
                 updateUI();
                 closeNameModal();
                 showNotification('닉네임이 변경되었습니다! 🎉');
@@ -3149,14 +2847,6 @@
         function closeAvatarModal() { document.getElementById('avatarModal').style.display = 'none'; }
         function selectAvatar(emoji) {
             userAvatar = emoji;
-            
-            if (isFirebaseEnabled) {
-                database.ref(`onlineUsers/${userName}`).update({
-                    avatar: userAvatar,
-                    lastSeen: Date.now()
-                }).catch(error => console.log('아바타 정보 업데이트 실패:', error));
-            }
-            
             updateUI();
             closeAvatarModal();
             showNotification('프로필 사진이 변경되었습니다! ✨');
@@ -3168,34 +2858,23 @@
         function confirmReset() {
             if (document.getElementById('adminPassword').value === '0000') {
                 if (isFirebaseEnabled) {
-                    database.ref('notices').remove().catch(error => console.error('Firebase 공지사항 삭제 실패:', error));
-                    database.ref('chatMessages').remove().catch(error => console.error('Firebase 채팅 삭제 실패:', error));
-                    database.ref('qtNotes').remove().catch(error => console.error('Firebase QT노트 삭제 실패:', error));
-                    database.ref('onlineUsers').remove().catch(error => console.error('Firebase 온라인 사용자 삭제 실패:', error));
-                    showNotification('🔥 Firebase 데이터도 함께 초기화되었습니다!');
+                    database.ref().remove()
+                        .then(() => showNotification('🔥 Firebase 데이터가 초기화되었습니다!'));
                 }
-                
-                try {
-                    safeRemoveItem('blueWindProgress');
-                    safeRemoveItem('lastQuizMissionDate');
-                } catch (error) {
-                    console.error('데이터 삭제 실패:', error);
-                }
+                safeRemoveItem('blueWindProgress');
+                safeRemoveItem('lastQuizMissionDate');
                 memoryStorage = {};
-                onlineUsers = {};
                 
                 setInitialState();
                 updateUI();
                 resetMissionUI();
-                
-                const guildChatContainer = document.getElementById('guild-chat-container');
-                if (guildChatContainer) guildChatContainer.innerHTML = '';
                 updateQTNotes();
                 updateNotices();
                 updateOnlineUsers();
+                updateIcebreakerRecordsDisplay();
                 
                 closeResetModal();
-                showNotification('모든 데이터가 완전히 초기화되었습니다. 🔄');
+                showNotification('모든 데이터가 초기화되었습니다. 🔄');
             } else {
                 showNotification('비밀번호가 틀렸습니다! ❌');
             }
@@ -3203,97 +2882,41 @@
 
         // --- Theme Toggle Function ---
         function toggleTheme() {
-            if (document.body.classList.contains('light-mode')) {
-                document.body.classList.remove('light-mode');
-                document.body.classList.add('dark-mode');
-                currentTheme = 'dark-mode';
-                showNotification('다크 모드로 전환되었습니다 🌙');
-            } else {
-                document.body.classList.remove('dark-mode');
-                document.body.classList.add('light-mode');
-                currentTheme = 'light-mode';
-                showNotification('라이트 모드로 전환되었습니다 ☀️');
-            }
+            currentTheme = document.body.classList.contains('light-mode') ? 'dark-mode' : 'light-mode';
+            document.body.className = currentTheme;
+            showNotification(currentTheme === 'dark-mode' ? '다크 모드로 전환되었습니다 🌙' : '라이트 모드로 전환되었습니다 ☀️');
             saveProgress();
         }
 
         // --- App Initialization ---
         function initApp() {
-            try {
-                initFirebase();
-                loadProgress();
-                
-                setTimeout(() => {
-                    showNotification(`${userName}님, 푸른나라학교에 오신 것을 환영합니다! 🌟`);
-                }, 1000);
+            loadProgress();
+            initFirebase();
+            
+            setTimeout(() => showNotification(`${userName}님, 푸른나라학교에 오신 것을 환영합니다! 🌟`), 1000);
 
-                const lastQuizMissionDate = safeGetItem('lastQuizMissionDate');
-                const today = new Date().toDateString();
-                const quizButton = document.getElementById('mission-btn-quiz');
+            const lastQuizMissionDate = safeGetItem('lastQuizMissionDate');
+            const today = new Date().toDateString();
+            const quizButton = document.getElementById('mission-btn-quiz');
 
-                if (lastQuizMissionDate === today) {
-                    if (quizButton) {
-                        quizButton.textContent = '완료!';
-                        quizButton.disabled = true;
-                    }
-                } else {
-                    if (quizButton) {
-                        quizButton.textContent = '퀴즈 시작';
-                        quizButton.disabled = false;
-                    }
-                }
-
-                document.querySelectorAll('.modal').forEach(modal => {
-                    modal.addEventListener('click', (e) => {
-                        if (e.target === modal) {
-                            modal.style.display = 'none';
-                        }
-                    });
-                });
-
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') {
-                        document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
-                    }
-                    if (e.key === 'Enter') {
-                        const activeModal = Array.from(document.querySelectorAll('.modal')).find(m => m.style.display === 'flex');
-                        if (!activeModal) return;
-
-                        e.preventDefault();
-                        if (activeModal.id === 'nameModal') changeName();
-                        else if (activeModal.id === 'resetModal') confirmReset();
-                        else if (activeModal.id === 'noticeModal') createNotice();
-                        else if (activeModal.id === 'qtNoteModal') createQTNote();
-                        else if (activeModal.id === 'qtPasswordModal') confirmQTAction();
-                    }
-                });
-                
-            } catch (error) {
-                console.error('앱 초기화 중 오류 발생:', error);
-                try {
-                    setInitialState();
-                    updateUI();
-                    showNotification('일부 기능에 제한이 있을 수 있지만 앱이 시작되었습니다. 📱');
-                } catch (fallbackError) {
-                    console.error('대체 초기화도 실패:', fallbackError);
-                    showNotification('앱 초기화에 실패했습니다. 페이지를 새로고침해주세요.');
+            if (lastQuizMissionDate === today) {
+                if (quizButton) {
+                    quizButton.textContent = '완료!';
+                    quizButton.disabled = true;
                 }
             }
+
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.addEventListener('click', (e) => { if (e.target === modal) modal.style.display = 'none'; });
+            });
+
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
+            });
         }
 
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initApp);
-        } else {
-            initApp();
-        }
-
-        window.addEventListener('beforeunload', () => {
-            try {
-                saveProgress();
-            } catch (error) {
-                console.error('종료 시 데이터 저장 실패:', error);
-            }
-        });
+        document.addEventListener('DOMContentLoaded', initApp);
+        window.addEventListener('beforeunload', saveProgress);
 
     </script>
 </body>
