@@ -1706,7 +1706,15 @@
                 const data = snapshot.val();
                 if (data) {
                     chatMessages = Object.values(data).sort((a, b) => a.timestamp - b.timestamp); // 시간순 정렬
-                    if (document.getElementById('guildMessages')) {
+                } else {
+                    chatMessages = [];
+                }
+                
+                // 길드 탭이 활성화되어 있을 때만 채팅 업데이트
+                const activeTab = document.querySelector('.nav-item.active');
+                if (activeTab && activeTab.textContent.includes('길드')) {
+                    const guildMessagesContainer = document.getElementById('guildMessages');
+                    if (guildMessagesContainer) {
                         updateChatMessages('guild');
                     }
                 }
@@ -2007,19 +2015,19 @@
                 updateIcebreakerRecordsDisplay();
             }
             if (tabName === 'guild') {
-                // 길드 탭 활성화 시 QT노트, 채팅, 온라인 사용자 업데이트
-                setTimeout(() => {
-                    updateQTNotes();
-                    updateOnlineUsers();
-                    
-                    const guildChatContainer = document.getElementById('guild-chat-container');
-                    if (guildChatContainer) {
-                        guildChatContainer.innerHTML = createChatInterface('guild');
-                        setTimeout(() => {
-                            updateChatMessages('guild');
-                        }, 100);
-                    }
-                }, 100);
+                // 길드 탭 활성화 시 즉시 모든 컴포넌트 업데이트
+                updateQTNotes();
+                updateOnlineUsers();
+                
+                // 채팅 인터페이스 생성 및 업데이트
+                const guildChatContainer = document.getElementById('guild-chat-container');
+                if (guildChatContainer) {
+                    guildChatContainer.innerHTML = createChatInterface('guild');
+                    // 약간의 딜레이 후 메시지 업데이트
+                    setTimeout(() => {
+                        updateChatMessages('guild');
+                    }, 50);
+                }
             }
             if (tabName === 'home') updateNotices();
         }
@@ -2132,24 +2140,36 @@
         }
 
         function completeStage(stageNumber) {
-            if (completedStages.includes(stageNumber)) return;
+            // 이미 완료된 스테이지인지 확인
+            if (completedStages.includes(stageNumber)) {
+                showNotification('이미 완료된 스테이지입니다!');
+                return;
+            }
+
+            // 버튼 즉시 비활성화로 중복 클릭 방지
+            const button = document.getElementById('complete-stage-btn');
+            if (button) {
+                button.disabled = true;
+                button.textContent = '완료 처리 중...';
+            }
 
             const stageData = stageContents[stageNumber];
             let levelGain = 3000;
             let itemName = stageData.item || '특별한 아이템';
 
+            // 스테이지 완료 처리
             grantBadge(`${itemName} 획득`);
             addExperience(levelGain, `🎉 스테이지 ${stageNumber} 완료! ${itemName} 획득! 레벨 +${levelGain}!`);
             completedStages.push(stageNumber);
             
-            const button = document.getElementById('complete-stage-btn');
-            if (button) {
-                button.remove();
-                _renderStageMainContent(stageNumber); 
-            }
-
             updateUI();
             saveProgress();
+
+            // 1초 후 스테이지 목록으로 자동 이동
+            setTimeout(() => {
+                backToStages();
+                showNotification(`스테이지 ${stageNumber} 완료! 🏆`);
+            }, 1000);
         }
 
         function togglePrayerTime(timeSlot, element) {
@@ -2393,6 +2413,18 @@
                     currentTheme = data.currentTheme || 'light-mode';
                     quizCompletedPerStage = data.quizCompletedPerStage || {};
                     completedIcebreakers = data.completedIcebreakers || [];
+                    
+                    // 기존 아이스브레이크 데이터 형식 변환 (question과 author 정보 추가)
+                    completedIcebreakers = completedIcebreakers.map(item => {
+                        if (typeof item.question === 'undefined') {
+                            const stageData = stageContents[item.stage];
+                            item.question = stageData && stageData.icebreaker ? stageData.icebreaker.prompt : '질문 정보가 없습니다.';
+                        }
+                        if (typeof item.author === 'undefined') {
+                            item.author = userName; // 기존 데이터는 현재 사용자가 작성한 것으로 간주
+                        }
+                        return item;
+                    });
                     miniGameCompletedToday = data.miniGameCompletedToday || false;
                     miniGameProgress = data.miniGameProgress || {};
 
@@ -2558,7 +2590,7 @@
 
         // --- QT Note Functions ---
         function showQTNoteModal() {
-            editingQTNote = null;
+            editingQTNote = null; // 편집 상태 초기화
             document.getElementById('qtModalTitle').textContent = 'QT 노트 작성';
             document.getElementById('qtSubmitBtn').textContent = '작성 완료';
             document.getElementById('qtSubmitBtn').onclick = createQTNote;
@@ -2566,10 +2598,20 @@
             document.getElementById('qtNoteContent').value = '';
             document.getElementById('qtNotePassword').value = '';
             document.getElementById('qtNoteModal').style.display = 'flex';
+            
+            // 첫 번째 입력 필드에 포커스
+            setTimeout(() => {
+                document.getElementById('qtNoteTitle').focus();
+            }, 100);
         }
 
         function closeQTNoteModal() {
             document.getElementById('qtNoteModal').style.display = 'none';
+            editingQTNote = null; // 편집 상태 초기화
+            // 입력 필드 초기화
+            document.getElementById('qtNoteTitle').value = '';
+            document.getElementById('qtNoteContent').value = '';
+            document.getElementById('qtNotePassword').value = '';
         }
 
         function createQTNote() {
@@ -2599,13 +2641,18 @@
                                 database.ref(`qtNotes/${qtNoteKey}`).update(editingQTNote)
                                     .then(() => {
                                         showNotification('QT 노트가 실시간으로 수정되었습니다! ✏️🔥');
+                                        closeQTNoteModal();
                                     })
                                     .catch((error) => {
                                         console.error('Firebase 수정 실패:', error);
                                         showNotification('QT 노트 수정에 실패했습니다. 로컬에만 저장됩니다.');
                                         updateQTNotes();
                                         saveProgress();
+                                        closeQTNoteModal();
                                     });
+                            } else {
+                                showNotification('수정할 QT 노트를 찾을 수 없습니다.');
+                                closeQTNoteModal();
                             }
                         }
                     });
@@ -2613,6 +2660,7 @@
                     updateQTNotes();
                     showNotification('QT 노트가 수정되었습니다! ✏️');
                     saveProgress();
+                    closeQTNoteModal();
                 }
             } else {
                 // 새 작성 모드
@@ -2633,6 +2681,7 @@
                     database.ref('qtNotes').push(qtNote)
                         .then(() => {
                             showNotification('QT 노트가 모든 사용자에게 실시간으로 공유되었습니다! 📝🔥');
+                            closeQTNoteModal();
                             // Firebase 저장 성공 시에는 리스너가 자동으로 UI 업데이트
                         })
                         .catch((error) => {
@@ -2641,16 +2690,16 @@
                             qtNotes.unshift(qtNote);
                             updateQTNotes();
                             saveProgress();
+                            closeQTNoteModal();
                         });
                 } else {
                     qtNotes.unshift(qtNote);
                     updateQTNotes();
                     showNotification('QT 노트가 작성되었습니다! 📝 (로컬 모드)');
                     saveProgress();
+                    closeQTNoteModal();
                 }
             }
-
-            closeQTNoteModal();
         }
 
         function updateQTNotes() {
@@ -2992,7 +3041,10 @@
 
         function updateChatMessages(prefix) {
             const messagesContainer = document.getElementById(`${prefix}Messages`);
-            if (!messagesContainer) return;
+            if (!messagesContainer) {
+                console.log(`채팅 컨테이너를 찾을 수 없습니다: ${prefix}Messages`);
+                return;
+            }
             
             if (chatMessages.length === 0) {
                 messagesContainer.innerHTML = `<div style="text-align: center; color: var(--text-color); padding: 20px;"><p>첫 번째 메시지를 보내보세요! 💬</p></div>`;
@@ -3015,7 +3067,11 @@
                     `;
                 }).join('');
             }
-            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            
+            // 스크롤을 아래로 이동
+            setTimeout(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 50);
         }
 
         function handleImageUpload(event, prefix) {
@@ -3203,21 +3259,35 @@
                 return;
             }
 
+            const stageData = stageContents[stageNumber];
+            const question = stageData.icebreaker ? stageData.icebreaker.prompt : '질문이 없습니다.';
+
+            // Update completedIcebreakers array with question and author info
             const today = new Date().toLocaleDateString('ko-KR');
             let existingEntry = completedIcebreakers.find(item => item.stage === stageNumber);
             if (existingEntry) {
+                existingEntry.question = question;
                 existingEntry.answer = answer;
+                existingEntry.author = userName;
                 existingEntry.date = today;
             } else {
-                completedIcebreakers.push({ stage: stageNumber, answer: answer, date: today });
+                completedIcebreakers.push({ 
+                    stage: stageNumber, 
+                    question: question,
+                    answer: answer, 
+                    author: userName,
+                    date: today 
+                });
             }
+            // Sort to ensure order in display
             completedIcebreakers.sort((a, b) => a.stage - b.stage);
 
             showNotification(`아이스브레이크 완료! 스테이지 ${stageNumber}의 문이 열렸습니다!`);
             saveProgress();
             
+            // After icebreaker, proceed to render main content
             _renderStageMainContent(stageNumber); 
-            updateIcebreakerRecordsDisplay();
+            updateIcebreakerRecordsDisplay(); // Update records display immediately
         }
 
         function updateIcebreakerRecordsDisplay() {
@@ -3231,12 +3301,19 @@
                                         </div>`;
             } else {
                 container.innerHTML = completedIcebreakers.map(record => `
-                    <div class="qt-note-card" style="margin-bottom: 10px;">
+                    <div class="qt-note-card" style="margin-bottom: 15px;">
                         <div class="qt-note-header">
                             <div class="qt-note-title">스테이지 ${record.stage} 아이스브레이크</div>
-                            <div class="qt-note-date">${record.date}</div>
+                            <div class="qt-note-date">${record.date} | ${record.author || userName}</div>
                         </div>
-                        <div class="qt-note-content">${record.answer}</div>
+                        <div style="margin-bottom: 10px;">
+                            <div style="color: var(--lesson-content-h4-color); font-weight: bold; margin-bottom: 8px; font-size: 14px;">💭 질문:</div>
+                            <div style="color: var(--qt-note-content); line-height: 1.5; margin-bottom: 15px; padding: 10px; background: var(--nav-bg); border-radius: 8px; font-style: italic;">${record.question || '질문 정보가 없습니다.'}</div>
+                        </div>
+                        <div>
+                            <div style="color: var(--lesson-content-h4-color); font-weight: bold; margin-bottom: 8px; font-size: 14px;">✍️ 답변:</div>
+                            <div class="qt-note-content" style="padding: 10px; background: var(--app-bg); border-radius: 8px; border-left: 4px solid var(--modal-button-primary-bg);">${record.answer}</div>
+                        </div>
                     </div>
                 `).join('');
             }
@@ -3685,6 +3762,18 @@
                 });
                 
                 console.log('앱 초기화 완료!');
+                
+                // 초기화 완료 후 길드 탭이 활성화되어 있다면 채팅 인터페이스 생성
+                setTimeout(() => {
+                    const activeTab = document.querySelector('.nav-item.active');
+                    if (activeTab && activeTab.textContent.includes('길드')) {
+                        const guildChatContainer = document.getElementById('guild-chat-container');
+                        if (guildChatContainer && !guildChatContainer.innerHTML.trim()) {
+                            guildChatContainer.innerHTML = createChatInterface('guild');
+                            updateChatMessages('guild');
+                        }
+                    }
+                }, 500);
             } catch (error) {
                 console.error('앱 초기화 중 오류 발생:', error);
                 // 오류가 발생해도 기본 기능은 작동하도록 함
