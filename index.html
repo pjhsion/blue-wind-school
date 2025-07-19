@@ -1510,26 +1510,6 @@
                 </div>
                 
                 <div style="background: var(--mission-card-bg); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
-                    <h4 style="margin-bottom: 15px; color: var(--text-color);">🔥 실시간 공유 설정</h4>
-                    <div style="background: var(--chat-messages-bg); padding: 15px; border-radius: 10px;">
-                        <p style="color: var(--text-color); margin-bottom: 15px; font-size: 14px;">
-                            <strong id="firebaseStatus">🔧 설정 필요:</strong> 
-                            <span id="firebaseStatusText">Firebase 설정을 완료하면 공지사항, 채팅, QT노트를 다른 사용자와 실시간으로 공유할 수 있습니다.</span>
-                        </p>
-                        <details style="color: var(--text-color); font-size: 12px;">
-                            <summary style="cursor: pointer; margin-bottom: 10px;">Firebase 설정 방법 보기</summary>
-                            <ol style="padding-left: 20px; line-height: 1.6;">
-                                <li>Firebase 콘솔(console.firebase.google.com)에서 새 프로젝트 생성</li>
-                                <li>Realtime Database 활성화</li>
-                                <li>프로젝트 설정에서 웹 앱 추가</li>
-                                <li>생성된 config 객체를 JavaScript 코드의 firebaseConfig에 복사</li>
-                                <li>페이지 새로고침하면 실시간 공유 기능 활성화!</li>
-                            </ol>
-                        </details>
-                    </div>
-                </div>
-                
-                <div style="background: var(--mission-card-bg); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
                     <h4 style="margin-bottom: 15px; color: var(--text-color);">🎨 테마 설정</h4>
                     <div class="theme-toggle-container">
                         <button class="theme-toggle-button" onclick="toggleTheme()">테마 전환</button>
@@ -1710,7 +1690,10 @@
             database.ref('notices').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
-                    notices = Object.values(data);
+                    notices = Object.values(data).sort((a, b) => b.id - a.id); // 최신순 정렬
+                    updateNotices();
+                } else {
+                    notices = [];
                     updateNotices();
                 }
             });
@@ -1719,7 +1702,7 @@
             database.ref('chatMessages').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
-                    chatMessages = Object.values(data);
+                    chatMessages = Object.values(data).sort((a, b) => a.timestamp - b.timestamp); // 시간순 정렬
                     if (document.getElementById('guildMessages')) {
                         updateChatMessages('guild');
                     }
@@ -1730,22 +1713,27 @@
             database.ref('qtNotes').on('value', (snapshot) => {
                 const data = snapshot.val();
                 if (data) {
-                    qtNotes = Object.values(data);
-                    updateQTNotes();
+                    qtNotes = Object.values(data).sort((a, b) => b.id - a.id); // 최신순 정렬
+                    // QT노트가 업데이트되면 현재 길드 탭이 활성화되어 있을 때만 업데이트
+                    const activeTab = document.querySelector('.nav-item.active');
+                    if (activeTab && activeTab.textContent.includes('길드')) {
+                        updateQTNotes();
+                    }
+                } else {
+                    qtNotes = [];
+                    if (document.querySelector('.nav-item.active')?.textContent.includes('길드')) {
+                        updateQTNotes();
+                    }
                 }
             });
         }
 
         function updateFirebaseStatus() {
-            const statusElement = document.getElementById('firebaseStatus');
-            const statusTextElement = document.getElementById('firebaseStatusText');
-            
+            // Firebase 상태 정보를 콘솔에만 출력 (UI 요소 제거됨)
             if (isFirebaseEnabled) {
-                if (statusElement) statusElement.textContent = '🔥 연결됨:';
-                if (statusTextElement) statusTextElement.textContent = '실시간 공유 기능이 활성화되어 있습니다. 공지사항, 채팅, QT노트가 모든 사용자와 실시간으로 동기화됩니다!';
+                console.log('🔥 Firebase 연결됨: 실시간 공유 기능이 활성화되어 있습니다.');
             } else {
-                if (statusElement) statusElement.textContent = '🔧 설정 필요:';
-                if (statusTextElement) statusTextElement.textContent = 'Firebase 설정을 완료하면 공지사항, 채팅, QT노트를 다른 사용자와 실시간으로 공유할 수 있습니다.';
+                console.log('🔧 Firebase 설정 필요: Firebase 설정을 완료하면 실시간 공유 기능을 사용할 수 있습니다.');
             }
         }
 
@@ -1981,12 +1969,15 @@
                 updateIcebreakerRecordsDisplay();
             }
             if (tabName === 'guild') {
-                updateQTNotes();
-                const guildChatContainer = document.getElementById('guild-chat-container');
-                if (guildChatContainer) {
-                    guildChatContainer.innerHTML = createChatInterface('guild');
-                    updateChatMessages('guild');
-                }
+                // 길드 탭 활성화 시 QT노트와 채팅 업데이트
+                setTimeout(() => {
+                    updateQTNotes();
+                    const guildChatContainer = document.getElementById('guild-chat-container');
+                    if (guildChatContainer) {
+                        guildChatContainer.innerHTML = createChatInterface('guild');
+                        updateChatMessages('guild');
+                    }
+                }, 100);
             }
             if (tabName === 'home') updateNotices();
         }
@@ -2387,6 +2378,10 @@
 
         function closeNoticeModal() {
             document.getElementById('noticeModal').style.display = 'none';
+            // 입력 필드 초기화
+            document.getElementById('noticePassword').value = '';
+            document.getElementById('noticeTitle').value = '';
+            document.getElementById('noticeContent').value = '';
         }
 
         function createNotice() {
@@ -2425,7 +2420,7 @@
                         saveProgress();
                     });
             } else {
-                notices = [notice];
+                notices.unshift(notice); // 기존 배열에 추가
                 updateNotices();
                 showNotification('공지사항이 등록되었습니다! 📢 (로컬 모드)');
                 saveProgress();
@@ -2533,6 +2528,7 @@
                     database.ref('qtNotes').push(qtNote)
                         .then(() => {
                             showNotification('QT 노트가 모든 사용자에게 실시간으로 공유되었습니다! 📝🔥');
+                            // Firebase 저장 성공 시에는 리스너가 자동으로 UI 업데이트
                         })
                         .catch((error) => {
                             console.error('Firebase 저장 실패:', error);
@@ -2624,8 +2620,26 @@
                 showNotification('좋아요를 눌렀습니다! ❤️');
             }
 
-            updateQTNotes();
-            saveProgress();
+            if (isFirebaseEnabled) {
+                // Firebase에서 해당 QT 노트의 좋아요 정보 업데이트
+                database.ref('qtNotes').once('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        const qtNoteKey = Object.keys(data).find(key => data[key].id === noteId);
+                        if (qtNoteKey) {
+                            database.ref(`qtNotes/${qtNoteKey}`).update({
+                                likes: note.likes,
+                                likedBy: note.likedBy
+                            }).catch((error) => {
+                                console.error('Firebase 좋아요 업데이트 실패:', error);
+                            });
+                        }
+                    }
+                });
+            } else {
+                updateQTNotes();
+                saveProgress();
+            }
         }
 
         function editQTNote(noteId) {
@@ -2675,8 +2689,28 @@
             inputElement.value = '';
             passwordElement.value = '';
             showNotification('댓글이 작성되었습니다! 💬');
-            updateQTNotes();
-            saveProgress();
+
+            if (isFirebaseEnabled) {
+                // Firebase에서 해당 QT 노트의 댓글 정보 업데이트
+                database.ref('qtNotes').once('value', (snapshot) => {
+                    const data = snapshot.val();
+                    if (data) {
+                        const qtNoteKey = Object.keys(data).find(key => data[key].id === noteId);
+                        if (qtNoteKey) {
+                            database.ref(`qtNotes/${qtNoteKey}`).update({
+                                comments: note.comments
+                            }).then(() => {
+                                console.log('댓글이 실시간으로 공유되었습니다!');
+                            }).catch((error) => {
+                                console.error('Firebase 댓글 업데이트 실패:', error);
+                            });
+                        }
+                    }
+                });
+            } else {
+                updateQTNotes();
+                saveProgress();
+            }
         }
 
         function editComment(noteId, commentId) {
@@ -2735,10 +2769,30 @@
                     document.getElementById('qtNotePassword').value = targetItem.password;
                     document.getElementById('qtNoteModal').style.display = 'flex';
                 } else if (pendingQTAction.action === 'delete') {
-                    qtNotes = qtNotes.filter(n => n.id !== pendingQTAction.noteId);
-                    updateQTNotes();
-                    showNotification('QT 노트가 삭제되었습니다! 🗑️');
-                    saveProgress();
+                    if (isFirebaseEnabled) {
+                        // Firebase에서 QT 노트 삭제
+                        database.ref('qtNotes').once('value', (snapshot) => {
+                            const data = snapshot.val();
+                            if (data) {
+                                const qtNoteKey = Object.keys(data).find(key => data[key].id === pendingQTAction.noteId);
+                                if (qtNoteKey) {
+                                    database.ref(`qtNotes/${qtNoteKey}`).remove()
+                                        .then(() => {
+                                            showNotification('QT 노트가 실시간으로 삭제되었습니다! 🗑️🔥');
+                                        })
+                                        .catch((error) => {
+                                            console.error('Firebase 삭제 실패:', error);
+                                            showNotification('QT 노트 삭제에 실패했습니다.');
+                                        });
+                                }
+                            }
+                        });
+                    } else {
+                        qtNotes = qtNotes.filter(n => n.id !== pendingQTAction.noteId);
+                        updateQTNotes();
+                        showNotification('QT 노트가 삭제되었습니다! 🗑️');
+                        saveProgress();
+                    }
                 }
             } else if (pendingQTAction.type === 'comment') {
                 const note = qtNotes.find(n => n.id === pendingQTAction.noteId);
@@ -2750,13 +2804,50 @@
                         targetItem.content = newContent.trim();
                         targetItem.time = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) + ' (수정됨)';
                         showNotification('댓글이 수정되었습니다! ✏️');
+                        
+                        if (isFirebaseEnabled) {
+                            // Firebase에서 해당 QT 노트의 댓글 정보 업데이트
+                            database.ref('qtNotes').once('value', (snapshot) => {
+                                const data = snapshot.val();
+                                if (data) {
+                                    const qtNoteKey = Object.keys(data).find(key => data[key].id === pendingQTAction.noteId);
+                                    if (qtNoteKey) {
+                                        database.ref(`qtNotes/${qtNoteKey}`).update({
+                                            comments: note.comments
+                                        }).catch((error) => {
+                                            console.error('Firebase 댓글 수정 실패:', error);
+                                        });
+                                    }
+                                }
+                            });
+                        }
                     }
                 } else if (pendingQTAction.action === 'delete') {
                     note.comments = note.comments.filter(c => c.id !== pendingQTAction.commentId);
                     showNotification('댓글이 삭제되었습니다! 🗑️');
+                    
+                    if (isFirebaseEnabled) {
+                        // Firebase에서 해당 QT 노트의 댓글 정보 업데이트
+                        database.ref('qtNotes').once('value', (snapshot) => {
+                            const data = snapshot.val();
+                            if (data) {
+                                const qtNoteKey = Object.keys(data).find(key => data[key].id === pendingQTAction.noteId);
+                                if (qtNoteKey) {
+                                    database.ref(`qtNotes/${qtNoteKey}`).update({
+                                        comments: note.comments
+                                    }).catch((error) => {
+                                        console.error('Firebase 댓글 삭제 실패:', error);
+                                    });
+                                }
+                            }
+                        });
+                    }
                 }
-                updateQTNotes();
-                saveProgress();
+                
+                if (!isFirebaseEnabled) {
+                    updateQTNotes();
+                    saveProgress();
+                }
             }
 
             closeQTPasswordModal();
@@ -3321,18 +3412,36 @@
         function closeResetModal() { document.getElementById('resetModal').style.display = 'none'; }
         function confirmReset() {
             if (document.getElementById('adminPassword').value === '0000') {
+                // Firebase 데이터 모두 삭제 (관리자만 가능)
+                if (isFirebaseEnabled) {
+                    database.ref('notices').remove().catch(error => console.error('Firebase 공지사항 삭제 실패:', error));
+                    database.ref('chatMessages').remove().catch(error => console.error('Firebase 채팅 삭제 실패:', error));
+                    database.ref('qtNotes').remove().catch(error => console.error('Firebase QT노트 삭제 실패:', error));
+                    showNotification('🔥 Firebase 데이터도 함께 초기화되었습니다!');
+                }
+                
                 try {
                     safeRemoveItem('blueWindProgress');
                 } catch (error) {
                     console.error('데이터 삭제 실패:', error);
                 }
+                // 메모리 저장소도 초기화
                 memoryStorage = {};
                 
                 setInitialState();
                 updateUI();
                 resetMissionUI();
+                
+                // 길드 탭 채팅과 QT노트도 초기화
+                const guildChatContainer = document.getElementById('guild-chat-container');
+                if (guildChatContainer) {
+                    guildChatContainer.innerHTML = '';
+                }
+                updateQTNotes();
+                updateNotices();
+                
                 closeResetModal();
-                showNotification('모든 데이터가 초기화되었습니다. 🔄');
+                showNotification('모든 데이터가 완전히 초기화되었습니다. 🔄');
             } else {
                 showNotification('비밀번호가 틀렸습니다! ❌');
             }
