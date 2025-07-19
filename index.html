@@ -1564,7 +1564,7 @@
         function initFirebase() {
             try {
                 // 실제 Firebase 설정이 있는지 확인 (더 견고한 확인)
-                if (firebaseConfig && firebaseConfig.apiKey && firebaseConfig.projectId) {
+                if (firebaseConfig && firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.apiKey !== "AIzaSyCuMttZg-PO-U7rk1kcDswRDfyUoo7pSF0") {
                     firebase.initializeApp(firebaseConfig);
                     database = firebase.database();
                     isFirebaseEnabled = true;
@@ -1950,7 +1950,7 @@
             }
 
             const stageData = stageContents[stageNumber];
-            let expGain = 300;
+            let expGain = 3000; // EXP 보상 변경
             let itemName = stageData.item || '특별한 아이템';
 
             completedStages.push(stageNumber);
@@ -1960,39 +1960,47 @@
             saveProgress();
             updateUI();
             
-            enterStageContent(stageNumber); 
+            setTimeout(() => {
+                backToStages();
+            }, 1000);
         }
 
         function togglePrayerTime(timeSlot, element) {
             if (prayerTimes[timeSlot]) {
-                prayerTimes[timeSlot] = false;
-                element.classList.remove('completed');
-                showNotification(`${timeSlot} 기도 취소! 🙏`);
-            } else {
-                prayerTimes[timeSlot] = true;
-                element.classList.add('completed');
-                
-                let message = '';
-                let expGain = 30;
-                
-                switch(timeSlot) {
-                    case 'morning': message = '🌅 아침 기도 완료! 하루를 주님과 함께 시작하세요!'; break;
-                    case 'noon': message = '☀️ 점심 기도 완료! 하루 중반, 주님께 감사드려요!'; break;
-                    case 'evening': message = '🌙 저녁 기도 완료! 하루를 주님께 맡겨드려요!'; break;
-                }
-                
-                addExperience(expGain, message);
-                grantBadge('첫 기도');
-                
-                if (prayerTimes.morning && prayerTimes.noon && prayerTimes.evening) {
+                // 이미 완료된 경우, 아무것도 하지 않음 (실수로 취소하는 것 방지)
+                showNotification('이미 완료된 기도입니다.');
+                return;
+            }
+            
+            prayerTimes[timeSlot] = true;
+            element.classList.add('completed');
+            
+            let message = '';
+            let expGain = 30;
+            
+            switch(timeSlot) {
+                case 'morning': message = '🌅 아침 기도 완료! 하루를 주님과 함께 시작하세요!'; break;
+                case 'noon': message = '☀️ 점심 기도 완료! 하루 중반, 주님께 감사드려요!'; break;
+                case 'evening': message = '🌙 저녁 기도 완료! 하루를 주님께 맡겨드려요!'; break;
+            }
+            
+            addExperience(expGain, message);
+            grantBadge('첫 기도');
+            
+            if (prayerTimes.morning && prayerTimes.noon && prayerTimes.evening) {
+                const lastBonusDate = safeGetItem('lastPrayerBonusDate');
+                const today = new Date().toDateString();
+                if (lastBonusDate !== today) {
                     setTimeout(() => {
                         addExperience(50, '🎉 10-10-10 기도법 완주! 보너스 경험치 +50!');
                         grantBadge('10-10-10 마스터');
-                    }, 1000);
+                        safeSetItem('lastPrayerBonusDate', today);
+                        saveProgress();
+                    }, 500);
                 }
-                
-                completedMissions++;
             }
+            
+            completedMissions++;
             updateUI();
             saveProgress();
         }
@@ -2100,9 +2108,9 @@
                 const isCurrentUser = user.name === userName;
                 membersHtml += `
                     <div style="display: flex; align-items: center; padding: 10px; margin-bottom: 8px; background: var(--chat-messages-bg); border-radius: 10px;">
-                        <div style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid ${isCurrentUser ? 'var(--modal-button-primary-bg)' : '#28a745'}; background: ${isCurrentUser ? 'var(--modal-button-primary-bg)' : '#28a745'}; color: white;">${user.avatar}</div>
+                        <div style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid ${isCurrentUser ? 'var(--modal-button-primary-bg)' : '#28a745'}; background: ${isCurrentUser ? 'var(--modal-button-primary-bg)' : '#28a745'}; color: white;">${user.avatar || '👤'}</div>
                         <div style="flex: 1;">
-                            <div style="font-weight: bold; margin-bottom: 2px; color: var(--text-color);">${user.name} ${isCurrentUser ? '(나)' : ''}</div>
+                            <div style="font-weight: bold; margin-bottom: 2px; color: var(--text-color);">${user.name || '익명'} ${isCurrentUser ? '(나)' : ''}</div>
                             <div style="font-size: 12px; color: var(--text-color);">레벨 ${user.level} ${user.job} • ${user.streak}일 연속 접속</div>
                         </div>
                         ${!isCurrentUser ? `<div style="background: #28a745; color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px;">온라인</div>` : ''}
@@ -2149,10 +2157,10 @@
                     completedMissions, userBadges, completedStages, guildLevel, guildExp, 
                     prayerTimes, currentTheme,
                     lastLogin: new Date().toDateString(),
-                    lastQuizMissionDate: safeGetItem('lastQuizMissionDate')
+                    lastQuizMissionDate: safeGetItem('lastQuizMissionDate'),
+                    lastPrayerBonusDate: safeGetItem('lastPrayerBonusDate')
                 };
                 
-                // Firebase-managed data is not saved to localStorage
                 if (!isFirebaseEnabled) {
                     data.chatMessages = chatMessages;
                     data.notices = notices;
@@ -2207,8 +2215,12 @@
                             userStreak = 1;
                         }
                         prayerTimes = { morning: false, noon: false, evening: false };
+                        safeRemoveItem('lastPrayerBonusDate');
                     } else {
                         prayerTimes = data.prayerTimes || { morning: false, noon: false, evening: false };
+                        if (data.lastPrayerBonusDate) {
+                           safeSetItem('lastPrayerBonusDate', data.lastPrayerBonusDate);
+                        }
                     }
                     
                     if (data.lastQuizMissionDate) {
@@ -2651,7 +2663,7 @@
                     <div class="message ${msg.sender === userName ? 'user' : 'other'}">
                         <div class="message-header">
                             <div class="message-avatar">${msg.avatar || '👤'}</div>
-                            <div class="message-sender">${msg.sender}</div>
+                            <div class="message-sender">${msg.sender || '익명'}</div>
                             <div class="message-time">${msg.time}</div>
                         </div>
                         <div class="message-bubble">${msg.message}</div>
@@ -2858,13 +2870,17 @@
         function confirmReset() {
             if (document.getElementById('adminPassword').value === '0000') {
                 if (isFirebaseEnabled) {
+                    // Firebase의 모든 데이터를 삭제합니다.
                     database.ref().remove()
-                        .then(() => showNotification('🔥 Firebase 데이터가 초기화되었습니다!'));
+                        .then(() => showNotification('🔥 Firebase의 모든 사용자 데이터가 초기화되었습니다!'));
                 }
+                // 로컬 데이터도 모두 삭제합니다.
                 safeRemoveItem('blueWindProgress');
                 safeRemoveItem('lastQuizMissionDate');
+                safeRemoveItem('lastPrayerBonusDate');
                 memoryStorage = {};
                 
+                // 앱 상태를 초기화하고 UI를 다시 그립니다.
                 setInitialState();
                 updateUI();
                 resetMissionUI();
