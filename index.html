@@ -9,6 +9,99 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
     <meta name="apple-mobile-web-app-title" content="푸른나라학교">
     
+    <!-- Firebase CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-database-compat.min.js"></script>
+// --- Firebase Configuration ---
+const firebaseConfig = {
+    // 실제 사용을 위해서는 여기에 실제 Firebase 프로젝트 설정을 입력하세요
+    // 데모용 설정 (실제로는 작동하지 않음)
+    apiKey: "demo-api-key",
+    authDomain: "bluewind-school-demo.firebaseapp.com",
+    databaseURL: "https://bluewind-school-demo-default-rtdb.firebaseio.com",
+    projectId: "bluewind-school-demo",
+    storageBucket: "bluewind-school-demo.appspot.com",
+    messagingSenderId: "123456789",
+    appId: "demo-app-id"
+};
+
+// Firebase 초기화
+let database = null;
+let isFirebaseEnabled = false;
+
+function initFirebase() {
+    try {
+        // 실제 Firebase 설정이 있는지 확인
+        if (firebaseConfig.apiKey !== "demo-api-key") {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+            isFirebaseEnabled = true;
+            console.log("Firebase 연결 성공!");
+            
+            // 실시간 리스너 설정
+            setupFirebaseListeners();
+            showNotification("🔥 실시간 공유 기능이 활성화되었습니다!");
+            updateFirebaseStatus();
+        } else {
+            console.log("Firebase 설정이 필요합니다. 로컬 모드로 실행됩니다.");
+            showNotification("📱 로컬 모드로 실행됩니다. Firebase 설정 시 실시간 공유가 가능합니다.");
+            updateFirebaseStatus();
+        }
+    } catch (error) {
+        console.error("Firebase 초기화 실패:", error);
+        isFirebaseEnabled = false;
+        showNotification("⚠️ 실시간 공유 기능을 사용할 수 없습니다. 로컬 모드로 실행됩니다.");
+        updateFirebaseStatus();
+    }
+}
+
+function setupFirebaseListeners() {
+    if (!isFirebaseEnabled) return;
+
+    // 공지사항 실시간 리스너
+    database.ref('notices').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            notices = Object.values(data);
+            updateNotices();
+        }
+    });
+
+    // 채팅 메시지 실시간 리스너
+    database.ref('chatMessages').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            chatMessages = Object.values(data);
+            if (document.getElementById('guildMessages')) {
+                updateChatMessages('guild');
+            }
+        }
+    });
+
+    // QT 노트 실시간 리스너
+    database.ref('qtNotes').on('value', (snapshot) => {
+        const data = snapshot.val();
+        if (data) {
+            qtNotes = Object.values(data);
+            updateQTNotes();
+        }
+    });
+}
+
+function updateFirebaseStatus() {
+    const statusElement = document.getElementById('firebaseStatus');
+    const statusTextElement = document.getElementById('firebaseStatusText');
+    
+    if (isFirebaseEnabled) {
+        if (statusElement) statusElement.textContent = '🔥 연결됨:';
+        if (statusTextElement) statusTextElement.textContent = '실시간 공유 기능이 활성화되어 있습니다. 공지사항, 채팅, QT노트가 모든 사용자와 실시간으로 동기화됩니다!';
+    } else {
+        if (statusElement) statusElement.textContent = '🔧 설정 필요:';
+        if (statusTextElement) statusTextElement.textContent = 'Firebase 설정을 완료하면 공지사항, 채팅, QT노트를 다른 사용자와 실시간으로 공유할 수 있습니다.';
+    }
+}
+
+    
     <style>
         /* Pretendard 폰트 임포트 */
         @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css');
@@ -1510,7 +1603,25 @@
                         </div>
                     </div>
                 </div>
-
+<div style="background: var(--mission-card-bg); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+    <h4 style="margin-bottom: 15px; color: var(--text-color);">🔥 실시간 공유 설정</h4>
+    <div style="background: var(--chat-messages-bg); padding: 15px; border-radius: 10px;">
+        <p style="color: var(--text-color); margin-bottom: 15px; font-size: 14px;">
+            <strong id="firebaseStatus">🔧 설정 필요:</strong> 
+            <span id="firebaseStatusText">Firebase 설정을 완료하면 공지사항, 채팅, QT노트를 다른 사용자와 실시간으로 공유할 수 있습니다.</span>
+        </p>
+        <details style="color: var(--text-color); font-size: 12px;">
+            <summary style="cursor: pointer; margin-bottom: 10px;">Firebase 설정 방법 보기</summary>
+            <ol style="padding-left: 20px; line-height: 1.6;">
+                <li>Firebase 콘솔(console.firebase.google.com)에서 새 프로젝트 생성</li>
+                <li>Realtime Database 활성화</li>
+                <li>프로젝트 설정에서 웹 앱 추가</li>
+                <li>생성된 config 객체를 JavaScript 코드의 firebaseConfig에 복사</li>
+                <li>페이지 새로고침하면 실시간 공유 기능 활성화!</li>
+            </ol>
+        </details>
+    </div>
+</div>
                 <div style="background: var(--mission-card-bg); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
                     <h4 style="margin-bottom: 15px; color: var(--text-color);">🎨 테마 설정</h4>
                     <div class="theme-toggle-container">
@@ -2308,42 +2419,51 @@
             document.getElementById('noticePassword').focus();
         }
 
-        function closeNoticeModal() {
-            document.getElementById('noticeModal').style.display = 'none';
-            document.getElementById('noticePassword').value = '';
-            document.getElementById('noticeTitle').value = '';
-            document.getElementById('noticeContent').value = '';
-        }
-
         function createNotice() {
-            const password = document.getElementById('noticePassword').value;
-            const title = document.getElementById('noticeTitle').value.trim();
-            const content = document.getElementById('noticeContent').value.trim();
+    const password = document.getElementById('noticePassword').value;
+    const title = document.getElementById('noticeTitle').value.trim();
+    const content = document.getElementById('noticeContent').value.trim();
 
-            if (password !== '0000') { // 관리자 비밀번호 (하드코딩, 실제 서비스에서는 보안 강화 필요)
-                showNotification('관리자 비밀번호가 틀렸습니다! ❌');
-                return;
-            }
+    if (password !== '0000') {
+        showNotification('관리자 비밀번호가 틀렸습니다! ❌');
+        return;
+    }
 
-            if (!title || !content) {
-                showNotification('제목과 내용을 모두 입력해주세요!');
-                return;
-            }
+    if (!title || !content) {
+        showNotification('제목과 내용을 모두 입력해주세요!');
+        return;
+    }
 
-            const notice = {
-                id: Date.now(),
-                title: title,
-                content: content,
-                date: new Date().toLocaleDateString('ko-KR')
-            };
+    const notice = {
+        id: Date.now(),
+        title: title,
+        content: content,
+        date: new Date().toLocaleDateString('ko-KR'),
+        author: userName
+    };
 
-            // 기존 공지사항을 새 공지사항으로 교체 (1개만 유지)
-            notices = [notice];
-            updateNotices();
-            closeNoticeModal();
-            showNotification('공지사항이 등록되었습니다! 📢');
-            saveProgress();
-        }
+    if (isFirebaseEnabled) {
+        // Firebase에 공지사항 저장 (실시간 공유)
+        database.ref('notices').push(notice)
+            .then(() => {
+                showNotification('공지사항이 모든 사용자에게 실시간으로 공유되었습니다! 📢🔥');
+            })
+            .catch((error) => {
+                console.error('Firebase 저장 실패:', error);
+                showNotification('공지사항 저장에 실패했습니다. 로컬에만 저장됩니다.');
+                notices = [notice];
+                updateNotices();
+                saveProgress();
+            });
+    } else {
+        notices = [notice];
+        updateNotices();
+        showNotification('공지사항이 등록되었습니다! 📢 (로컬 모드)');
+        saveProgress();
+    }
+
+    closeNoticeModal();
+}
 
         function updateNotices() {
             const container = document.getElementById('notices-container');
@@ -2751,21 +2871,41 @@
         }
 
         function sendMessage(prefix) {
-            const input = document.getElementById(`${prefix}Input`);
-            const message = input.value.trim();
-            if (message) {
-                const now = new Date();
-                const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-                
-                chatMessages.push({ sender: userName, avatar: userAvatar, message: message, time: timeString });
-                input.value = '';
-                
-                if (document.getElementById('chatMessages')) updateChatMessages('chat');
-                if (document.getElementById('guildMessages')) updateChatMessages('guild'); // Changed to guildMessages for guild chat
-                
-                saveProgress();
-            }
+    const input = document.getElementById(`${prefix}Input`);
+    const message = input.value.trim();
+    if (message) {
+        const now = new Date();
+        const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+        
+        const messageData = { 
+            id: Date.now(),
+            sender: userName, 
+            avatar: userAvatar, 
+            message: message, 
+            time: timeString,
+            timestamp: now.getTime()
+        };
+
+        if (isFirebaseEnabled) {
+            database.ref('chatMessages').push(messageData)
+                .then(() => {
+                    console.log('메시지가 실시간으로 공유되었습니다!');
+                })
+                .catch((error) => {
+                    console.error('Firebase 메시지 저장 실패:', error);
+                    chatMessages.push(messageData);
+                    if (document.getElementById('guildMessages')) updateChatMessages('guild');
+                    saveProgress();
+                });
+        } else {
+            chatMessages.push(messageData);
+            if (document.getElementById('guildMessages')) updateChatMessages('guild');
+            saveProgress();
         }
+
+        input.value = '';
+    }
+}
 
         function handleChatKeyPress(event, prefix) {
             if (event.key === 'Enter') sendMessage(prefix);
@@ -3215,8 +3355,12 @@
 
         // --- App Initialization ---
         function initApp() {
-            try {
-                loadProgress();
+    try {
+        // Firebase 초기화 (먼저 실행)
+        initFirebase();
+        
+        loadProgress();
+        // ... 나머지 코드는 그대로
                 
                 setTimeout(() => {
                     showNotification(`${userName}님, 푸른나라학교에 오신 것을 환영합니다! 🌟`);
