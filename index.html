@@ -1001,7 +1001,7 @@
             cursor: pointer;
         }
 
-        #minigame-content .quiz-option {
+        #quiz-modal-content .quiz-option, .quiz-section .quiz-option {
             display: block;
             width: 100%;
             padding: 15px;
@@ -1014,7 +1014,7 @@
             cursor: pointer;
             transition: all 0.2s ease;
         }
-        #minigame-content .quiz-option:hover {
+        #quiz-modal-content .quiz-option:hover, .quiz-section .quiz-option:hover {
             background: var(--quiz-option-hover-bg);
         }
         
@@ -1212,94 +1212,6 @@
             margin-bottom: 20px;
             font-weight: bold;
         }
-        .quiz-section .quiz-option {
-            display: block;
-            width: 100%;
-            padding: 15px;
-            margin: 10px 0;
-            font-size: 16px;
-            border-radius: 10px;
-            border: 2px solid var(--quiz-option-border);
-            background: var(--quiz-option-bg);
-            color: var(--quiz-option-color);
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .quiz-section .quiz-option:hover {
-            background: var(--quiz-option-hover-bg);
-        }
-
-        .minigame-selection-card {
-            background: var(--mission-card-bg);
-            border: 1px solid var(--mission-card-border);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-            text-align: center;
-        }
-        .minigame-selection-card h4 {
-            color: var(--text-color);
-            margin-bottom: 15px;
-        }
-        .minigame-selection-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-            gap: 10px;
-        }
-        .minigame-button {
-            background: var(--mission-button-bg);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background 0.3s ease;
-        }
-        .minigame-button:hover {
-            background: var(--mission-button-hover-bg);
-        }
-        .minigame-button:disabled {
-            background: var(--mission-button-disabled-bg);
-            cursor: not-allowed;
-        }
-        .minigame-content-area {
-            background: var(--chat-messages-bg);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-            min-height: 150px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: var(--text-color);
-        }
-        .minigame-content-area input {
-            width: 80%;
-            padding: 10px;
-            margin-top: 10px;
-            border: 1px solid var(--chat-input-border);
-            border-radius: 8px;
-            font-size: 16px;
-            text-align: center;
-            background: var(--app-bg);
-            color: var(--text-color);
-        }
-        .minigame-content-area button {
-            margin-top: 10px;
-            padding: 8px 15px;
-            background: var(--chat-send-btn-bg);
-            color: white;
-            border: none;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: background 0.3s ease;
-        }
-        .minigame-content-area button:hover {
-            background: var(--chat-send-btn-hover-bg);
-        }
     </style>
 </head>
 <body class="light-mode">
@@ -1388,17 +1300,6 @@
                     </div>
                     <div class="mission-description">신앙 지식을 테스트하고 경험치를 얻으세요!</div>
                     <button class="mission-button" id="mission-btn-quiz" onclick="startQuiz()">퀴즈 시작</button>
-                </div>
-
-                <!-- Mini-game Mission Card -->
-                <div class="mission-card">
-                    <div class="mission-header">
-                        <div class="mission-title">🎮 미니게임 하기</div>
-                        <div class="mission-reward">+30 EXP</div>
-                    </div>
-                    <div class="mission-description">다양한 미니게임을 즐기고 경험치를 얻으세요!</div>
-                    <button class="mission-button" id="mission-btn-minigame" onclick="showMinigameSelection()">미니게임 시작</button>
-                    <div id="minigame-selection-container"></div>
                 </div>
             </div>
 
@@ -1616,7 +1517,7 @@
             <div class="modal-title" id="qtModalTitle">QT 노트 작성</div>
             <input type="text" id="qtNoteTitle" class="modal-input" placeholder="QT 노트 제목">
             <textarea id="qtNoteContent" class="modal-textarea" placeholder="오늘의 QT 내용을 기록해보세요..."></textarea>
-            <input type="password" id="qtNotePassword" class="modal-input" placeholder="비밀번호 (수정/삭제용)" maxlength="10">
+            <input type="password" id="qtNotePassword" class="modal-input" placeholder="비밀번호 (필수)" maxlength="10">
             <div class="modal-buttons">
                 <button class="modal-button secondary" onclick="closeQTNoteModal()">취소</button>
                 <button class="modal-button primary" id="qtSubmitBtn" onclick="createQTNote()">작성 완료</button>
@@ -1637,10 +1538,10 @@
         </div>
     </div>
 
-    <!-- Minigame Modal (now used for image view and general quiz/minigame logic) -->
-    <div id="minigameModal" class="modal">
-        <div class="modal-content" id="minigame-content">
-            <!-- Minigame content will be injected here -->
+    <!-- Quiz Modal -->
+    <div id="quizModal" class="modal">
+        <div class="modal-content" id="quiz-modal-content">
+            <!-- Quiz content will be injected here -->
         </div>
     </div>
     
@@ -1663,7 +1564,7 @@
         function initFirebase() {
             try {
                 // 실제 Firebase 설정이 있는지 확인
-                if (firebaseConfig.apiKey !== "demo-api-key") {
+                if (firebaseConfig.apiKey && firebaseConfig.apiKey !== "AIzaSy...placeholder") {
                     firebase.initializeApp(firebaseConfig);
                     database = firebase.database();
                     isFirebaseEnabled = true;
@@ -1795,9 +1696,9 @@
         let currentTheme = 'light-mode';
         let quizCompletedPerStage = {};
         let completedIcebreakers = [];
-        let miniGameCompletedToday = false;
-        let miniGameProgress = {};
         let onlineUsers = {}; // 온라인 사용자 추적
+        let dailyQuiz = []; // 오늘의 퀴즈
+        let currentQuizIndex = 0;
 
         // 메모리 기반 저장소 (localStorage 대체)
         let memoryStorage = {};
@@ -1863,32 +1764,17 @@
         ];
 
         // Quiz Questions
-        const quizQuestions = [
-            {
-                question: "교회의 머리는 누구신가요?",
-                options: ["베드로", "바울", "예수 그리스도", "교황"],
-                answer: "예수 그리스도"
-            },
-            {
-                question: "교회의 세 가지 주요 사명 중 하나가 아닌 것은 무엇인가요?",
-                options: ["예배", "교육", "사업", "봉사 및 선교"],
-                answer: "사업"
-            },
-            {
-                question: "사도행전에 나오는 초대교회의 특징이 아닌 것은?",
-                options: ["서로 물건을 통용함", "매일 마음을 같이하여 성전에 모이기를 힘씀", "개인주의적인 신앙생활", "떡을 떼며 기쁨과 순전한 마음으로 음식을 먹음"],
-                answer: "개인주의적인 신앙생활"
-            },
-            {
-                question: "교회가 세상의 빛과 소금의 역할을 해야 한다고 말씀하신 성경은 무엇인가요?",
-                options: ["요한복음", "마태복음", "로마서", "히브리서"],
-                answer: "마태복음"
-            },
-            {
-                question: "교회의 가장 중요한 공동체적 모임은 무엇인가요?",
-                options: ["친목회", "운동회", "예배", "바자회"],
-                answer: "예배"
-            }
+        const allQuizQuestions = [
+            { question: "교회의 머리는 누구신가요?", options: ["베드로", "바울", "예수 그리스도", "교황"], answer: "예수 그리스도" },
+            { question: "교회의 세 가지 주요 사명 중 하나가 아닌 것은 무엇인가요?", options: ["예배", "교육", "사업", "봉사 및 선교"], answer: "사업" },
+            { question: "사도행전에 나오는 초대교회의 특징이 아닌 것은?", options: ["서로 물건을 통용함", "매일 마음을 같이하여 성전에 모이기를 힘씀", "개인주의적인 신앙생활", "떡을 떼며 기쁨과 순전한 마음으로 음식을 먹음"], answer: "개인주의적인 신앙생활" },
+            { question: "교회가 세상의 빛과 소금의 역할을 해야 한다고 말씀하신 성경은 무엇인가요?", options: ["요한복음", "마태복음", "로마서", "히브리서"], answer: "마태복음" },
+            { question: "교회의 가장 중요한 공동체적 모임은 무엇인가요?", options: ["친목회", "운동회", "예배", "바자회"], answer: "예배" },
+            { question: "예수님의 제자는 총 몇 명이었나요?", options: ["10명", "11명", "12명", "13명"], answer: "12명" },
+            { question: "천지창조는 며칠 동안 이루어졌나요?", options: ["3일", "6일", "7일", "40일"], answer: "6일" },
+            { question: "모세가 시내산에서 받은 십계명은 몇 개인가요?", options: ["8개", "10개", "12개", "20개"], answer: "10개" },
+            { question: "다윗이 물매돌로 싸워 이긴 거인 장수의 이름은 무엇인가요?", options: ["가인", "골리앗", "삼손", "사울"], answer: "골리앗" },
+            { question: "예수님께서 태어나신 곳은 어디인가요?", options: ["예루살렘", "나사렛", "갈릴리", "베들레헴"], answer: "베들레헴" }
         ];
 
         const stageContents = {
@@ -2015,19 +1901,14 @@
                 updateIcebreakerRecordsDisplay();
             }
             if (tabName === 'guild') {
-                // 길드 탭 활성화 시 즉시 모든 컴포넌트 업데이트
-                updateQTNotes();
-                updateOnlineUsers();
-                
-                // 채팅 인터페이스 생성 및 업데이트
                 const guildChatContainer = document.getElementById('guild-chat-container');
                 if (guildChatContainer) {
+                    // 길드 탭을 누를 때마다 채팅 UI를 새로 생성하고 메시지를 업데이트합니다.
                     guildChatContainer.innerHTML = createChatInterface('guild');
-                    // 약간의 딜레이 후 메시지 업데이트
-                    setTimeout(() => {
-                        updateChatMessages('guild');
-                    }, 50);
+                    updateChatMessages('guild');
                 }
+                updateQTNotes();
+                updateOnlineUsers();
             }
             if (tabName === 'home') updateNotices();
         }
@@ -2056,10 +1937,8 @@
                         <button class="modal-button primary" onclick="completeIcebreaker(${stageNumber})">제출하고 강의 보기</button>
                     </div>
                 `;
-            }
-
-            // 2. Lessons and Discussion Questions
-            if (!stageData.icebreaker || completedIcebreakers.some(item => item.stage === stageNumber)) {
+            } else {
+                 // 2. Lessons and Discussion Questions (아이스브레이커를 완료했거나 없는 경우에만 표시)
                 contentHtml += stageData.lessons.map(lesson => `
                     <div class="lesson-container">
                         <div class="lesson-header">
@@ -2080,55 +1959,17 @@
                         </div>
                     `;
                 }
-            }
-
-            if (completedStages.includes(stageNumber)) {
-                contentHtml += `<div class="stage-completed-notice">✔️ 이 스테이지를 완료했습니다!</div>`;
-            } else if (!stageData.icebreaker || completedIcebreakers.some(item => item.stage === stageNumber)) {
-                contentHtml += `<button id="complete-stage-btn" class="modal-button primary" style="width:100%; margin-top:20px; background-color: #28a745;" onclick="completeStage(${stageNumber})">스테이지 완료 및 보상 받기 🏆</button>`;
-            }
-            
-            const stageContentElement = document.getElementById('stage-content');
-            stageContentElement.innerHTML = contentHtml;
-            
-            document.querySelector('.content').scrollTop = 0;
-        }
-
-        function _renderStageMainContent(stageNumber) {
-            const stageData = stageContents[stageNumber];
-            let contentHtml = `<h3 style="margin-bottom: 20px; color: var(--lesson-title-color);">${stageData.title}</h3>`;
-
-            if (!stageData.icebreaker || completedIcebreakers.some(item => item.stage === stageNumber)) {
-                contentHtml += stageData.lessons.map(lesson => `
-                    <div class="lesson-container">
-                        <div class="lesson-header">
-                            <div class="lesson-icon">${lesson.icon}</div>
-                            <div class="lesson-title">${lesson.title}</div>
-                        </div>
-                        <div class="lesson-content">${lesson.content}</div>
-                    </div>
-                `).join('');
-
-                if (stageData.discussionQuestions) {
-                    contentHtml += `
-                        <div class="discussion-container">
-                            <h4>🤔 함께 나눌 질문</h4>
-                            <ol>
-                                ${stageData.discussionQuestions.map(q => `<li>${q}</li>`).join('')}
-                            </ol>
-                        </div>
-                    `;
+                 // 3. Completion Button or Notice
+                if (completedStages.includes(stageNumber)) {
+                    contentHtml += `<div class="stage-completed-notice">✔️ 이 스테이지를 완료했습니다!</div>`;
+                } else {
+                    contentHtml += `<button id="complete-stage-btn" class="modal-button primary" style="width:100%; margin-top:20px; background-color: #28a745;" onclick="completeStage(${stageNumber})">스테이지 완료 및 보상 받기 🏆</button>`;
                 }
             }
 
-            if (completedStages.includes(stageNumber)) {
-                contentHtml += `<div class="stage-completed-notice">✔️ 이 스테이지를 완료했습니다!</div>`;
-            } else if (!stageData.icebreaker || completedIcebreakers.some(item => item.stage === stageNumber)) {
-                contentHtml += `<button id="complete-stage-btn" class="modal-button primary" style="width:100%; margin-top:20px; background-color: #28a745;" onclick="completeStage(${stageNumber})">스테이지 완료 및 보상 받기 🏆</button>`;
-            }
-
             const stageContentElement = document.getElementById('stage-content');
             stageContentElement.innerHTML = contentHtml;
+            
             document.querySelector('.content').scrollTop = 0;
         }
 
@@ -2140,13 +1981,11 @@
         }
 
         function completeStage(stageNumber) {
-            // 이미 완료된 스테이지인지 확인
             if (completedStages.includes(stageNumber)) {
                 showNotification('이미 완료된 스테이지입니다!');
                 return;
             }
 
-            // 버튼 즉시 비활성화로 중복 클릭 방지
             const button = document.getElementById('complete-stage-btn');
             if (button) {
                 button.disabled = true;
@@ -2154,22 +1993,18 @@
             }
 
             const stageData = stageContents[stageNumber];
-            let levelGain = 3000;
+            let expGain = 300;
             let itemName = stageData.item || '특별한 아이템';
 
-            // 스테이지 완료 처리
-            grantBadge(`${itemName} 획득`);
-            addExperience(levelGain, `🎉 스테이지 ${stageNumber} 완료! ${itemName} 획득! 레벨 +${levelGain}!`);
             completedStages.push(stageNumber);
+            grantBadge(`${itemName} 획득`);
+            addExperience(expGain, `🎉 스테이지 ${stageNumber} 완료! ${itemName} 획득! +${expGain} EXP!`);
             
-            updateUI();
             saveProgress();
-
-            // 1초 후 스테이지 목록으로 자동 이동
-            setTimeout(() => {
-                backToStages();
-                showNotification(`스테이지 ${stageNumber} 완료! 🏆`);
-            }, 1000);
+            updateUI();
+            
+            // UI를 즉시 업데이트하여 완료 상태를 반영
+            enterStageContent(stageNumber); 
         }
 
         function togglePrayerTime(timeSlot, element) {
@@ -2294,29 +2129,27 @@
         }
 
         function updateOnlineUsers() {
-            // 길드 탭의 길드원 목록을 업데이트
             const guildMembersContainer = document.querySelector('#guild-tab .guild-members-list');
             if (!guildMembersContainer) return;
 
             const now = Date.now();
-            const activeUsers = Object.values(onlineUsers).filter(user => 
-                (now - user.lastSeen) < 30000 // 30초 이내에 활동한 사용자만
-            );
+            const activeUsers = Object.values(onlineUsers).filter(user => (now - user.lastSeen) < 30000); // 30초 이내
 
             let membersHtml = '';
             
-            // 현재 사용자 먼저 표시
-            membersHtml += `
-                <div style="display: flex; align-items: center; padding: 10px; margin-bottom: 8px; background: var(--chat-messages-bg); border-radius: 10px;">
-                    <div style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid var(--modal-button-primary-bg); background: var(--modal-button-primary-bg); color: white;">${userAvatar}</div>
-                    <div style="flex: 1;">
-                        <div style="font-weight: bold; margin-bottom: 2px; color: var(--text-color);">${userName} (나)</div>
-                        <div style="font-size: 12px; color: var(--text-color);">레벨 ${userLevel} ${userJob} • ${userStreak}일 연속 접속</div>
+            const currentUser = activeUsers.find(user => user.name === userName);
+            if (currentUser) {
+                 membersHtml += `
+                    <div style="display: flex; align-items: center; padding: 10px; margin-bottom: 8px; background: var(--chat-messages-bg); border-radius: 10px;">
+                        <div style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid var(--modal-button-primary-bg); background: var(--modal-button-primary-bg); color: white;">${userAvatar}</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; margin-bottom: 2px; color: var(--text-color);">${userName} (나)</div>
+                            <div style="font-size: 12px; color: var(--text-color);">레벨 ${userLevel} ${userJob} • ${userStreak}일 연속 접속</div>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            }
 
-            // 다른 사용자들 표시
             const otherUsers = activeUsers.filter(user => user.name !== userName);
             otherUsers.forEach(user => {
                 membersHtml += `
@@ -2331,14 +2164,21 @@
                 `;
             });
 
-            if (otherUsers.length === 0) {
-                membersHtml += `
+            if (activeUsers.length === 0) {
+                 membersHtml = `
+                    <div style="text-align: center; color: var(--text-color); padding: 20px;">
+                        <p>현재 접속 중인 사용자가 없습니다.</p>
+                    </div>
+                `;
+            } else if (otherUsers.length === 0 && currentUser) {
+                 membersHtml += `
                     <div style="text-align: center; color: var(--text-color); padding: 20px;">
                         <p>다른 길드원들이 접속하면 여기에 표시됩니다</p>
                         <p>친구들을 초대해보세요! 🎉</p>
                     </div>
                 `;
             }
+
 
             guildMembersContainer.innerHTML = membersHtml;
         }
@@ -2349,11 +2189,9 @@
                 btn.disabled = false;
                 if(btn.id === 'mission-btn-worship') btn.textContent = '참여 완료';
                 if(btn.id === 'mission-btn-quiz') btn.textContent = '퀴즈 시작';
-                if(btn.id === 'mission-btn-minigame') btn.textContent = '미니게임 시작';
             });
             document.getElementById('mission-btn-scripture').style.display = 'inline-block';
             document.getElementById('scripture-container').innerHTML = '';
-            document.getElementById('minigame-selection-container').innerHTML = '';
             document.getElementById('guild-chat-container').innerHTML = '';
         }
 
@@ -2374,8 +2212,9 @@
                     userName, userAvatar, userJob, userLevel, userExp, userStreak,
                     completedMissions, userBadges, completedStages, guildLevel, guildExp, 
                     chatMessages, prayerTimes, notices, qtNotes, currentTheme,
-                    quizCompletedPerStage, completedIcebreakers, miniGameCompletedToday, miniGameProgress,
-                    lastLogin: new Date().toDateString()
+                    quizCompletedPerStage, completedIcebreakers,
+                    lastLogin: new Date().toDateString(),
+                    lastQuizMissionDate: safeGetItem('lastQuizMissionDate') // 퀴즈 완료 날짜도 저장
                 };
                 
                 const success = safeSetItem('blueWindProgress', JSON.stringify(data));
@@ -2425,8 +2264,6 @@
                         }
                         return item;
                     });
-                    miniGameCompletedToday = data.miniGameCompletedToday || false;
-                    miniGameProgress = data.miniGameProgress || {};
 
                     const today = new Date().toDateString();
                     const lastLogin = data.lastLogin || today;
@@ -2444,16 +2281,16 @@
                             userStreak = 1;
                         }
                         prayerTimes = { morning: false, noon: false, evening: false };
-                        miniGameCompletedToday = false;
-                        miniGameProgress = { bibleVerseFill: false, characterGuess: false, trueFalse: false, wordOrder: false, bibleNumber: false };
+                        // 퀴즈 완료 날짜는 초기화하지 않음
                     } else {
                         prayerTimes = data.prayerTimes || { morning: false, noon: false, evening: false };
-                        if (Object.keys(miniGameProgress).length === 0 && miniGameCompletedToday) {
-                             miniGameProgress = { bibleVerseFill: true, characterGuess: true, trueFalse: true, wordOrder: true, bibleNumber: true };
-                        } else if (Object.keys(miniGameProgress).length === 0) {
-                            miniGameProgress = { bibleVerseFill: false, characterGuess: false, trueFalse: false, wordOrder: false, bibleNumber: false };
-                        }
                     }
+                    
+                    // 퀴즈 완료 날짜 로드
+                    if (data.lastQuizMissionDate) {
+                        safeSetItem('lastQuizMissionDate', data.lastQuizMissionDate);
+                    }
+
 
                     setTimeout(() => {
                         Object.keys(prayerTimes).forEach(timeSlot => {
@@ -2497,8 +2334,6 @@
             currentTheme = 'light-mode';
             quizCompletedPerStage = {};
             completedIcebreakers = [];
-            miniGameCompletedToday = false;
-            miniGameProgress = { bibleVerseFill: false, characterGuess: false, trueFalse: false, wordOrder: false, bibleNumber: false };
             
             try {
                 saveProgress();
@@ -2515,7 +2350,6 @@
 
         function closeNoticeModal() {
             document.getElementById('noticeModal').style.display = 'none';
-            // 입력 필드 초기화
             document.getElementById('noticePassword').value = '';
             document.getElementById('noticeTitle').value = '';
             document.getElementById('noticeContent').value = '';
@@ -2552,12 +2386,12 @@
                     .catch((error) => {
                         console.error('Firebase 저장 실패:', error);
                         showNotification('공지사항 저장에 실패했습니다. 로컬에만 저장됩니다.');
-                        notices = [notice];
+                        notices.unshift(notice);
                         updateNotices();
                         saveProgress();
                     });
             } else {
-                notices.unshift(notice); // 기존 배열에 추가
+                notices.unshift(notice);
                 updateNotices();
                 showNotification('공지사항이 등록되었습니다! 📢 (로컬 모드)');
                 saveProgress();
@@ -2590,7 +2424,7 @@
 
         // --- QT Note Functions ---
         function showQTNoteModal() {
-            editingQTNote = null; // 편집 상태 초기화
+            editingQTNote = null;
             document.getElementById('qtModalTitle').textContent = 'QT 노트 작성';
             document.getElementById('qtSubmitBtn').textContent = '작성 완료';
             document.getElementById('qtSubmitBtn').onclick = createQTNote;
@@ -2599,7 +2433,6 @@
             document.getElementById('qtNotePassword').value = '';
             document.getElementById('qtNoteModal').style.display = 'flex';
             
-            // 첫 번째 입력 필드에 포커스
             setTimeout(() => {
                 document.getElementById('qtNoteTitle').focus();
             }, 100);
@@ -2607,8 +2440,7 @@
 
         function closeQTNoteModal() {
             document.getElementById('qtNoteModal').style.display = 'none';
-            editingQTNote = null; // 편집 상태 초기화
-            // 입력 필드 초기화
+            editingQTNote = null;
             document.getElementById('qtNoteTitle').value = '';
             document.getElementById('qtNoteContent').value = '';
             document.getElementById('qtNotePassword').value = '';
@@ -2620,7 +2452,7 @@
             const password = document.getElementById('qtNotePassword').value.trim();
 
             if (!title || !content || !password) {
-                showNotification('모든 필드를 입력해주세요!');
+                showNotification('제목, 내용, 비밀번호를 모두 입력해주세요!');
                 return;
             }
 
@@ -2632,7 +2464,6 @@
                 editingQTNote.date = new Date().toLocaleDateString('ko-KR');
                 
                 if (isFirebaseEnabled) {
-                    // Firebase에서 해당 QT 노트 업데이트
                     database.ref('qtNotes').once('value', (snapshot) => {
                         const data = snapshot.val();
                         if (data) {
@@ -2645,14 +2476,8 @@
                                     })
                                     .catch((error) => {
                                         console.error('Firebase 수정 실패:', error);
-                                        showNotification('QT 노트 수정에 실패했습니다. 로컬에만 저장됩니다.');
-                                        updateQTNotes();
-                                        saveProgress();
-                                        closeQTNoteModal();
+                                        showNotification('QT 노트 수정에 실패했습니다.');
                                     });
-                            } else {
-                                showNotification('수정할 QT 노트를 찾을 수 없습니다.');
-                                closeQTNoteModal();
                             }
                         }
                     });
@@ -2677,12 +2502,10 @@
                 };
 
                 if (isFirebaseEnabled) {
-                    // Firebase에 QT 노트 저장 (실시간 공유)
                     database.ref('qtNotes').push(qtNote)
                         .then(() => {
                             showNotification('QT 노트가 모든 사용자에게 실시간으로 공유되었습니다! 📝🔥');
                             closeQTNoteModal();
-                            // Firebase 저장 성공 시에는 리스너가 자동으로 UI 업데이트
                         })
                         .catch((error) => {
                             console.error('Firebase 저장 실패:', error);
@@ -2704,6 +2527,8 @@
 
         function updateQTNotes() {
             const container = document.getElementById('qt-notes-container');
+            if (!container) return;
+            
             if (qtNotes.length === 0) {
                 container.innerHTML = `
                     <div style="text-align: center; color: var(--text-color); padding: 20px; background: var(--mission-card-bg); border-radius: 10px;">
@@ -2712,7 +2537,24 @@
                     </div>
                 `;
             } else {
-                container.innerHTML = qtNotes.map(note => `
+                container.innerHTML = qtNotes.map(note => {
+                    const commentsHtml = (note.comments || []).map(comment => `
+                        <div class="comment-item">
+                            <div class="comment-header">
+                                <span class="comment-author">${comment.author}</span>
+                                <span class="comment-time">${comment.time}</span>
+                            </div>
+                            <div class="comment-content">${comment.content}</div>
+                            ${comment.author === userName ? `
+                                <div class="comment-actions">
+                                    <button class="comment-action-btn edit" onclick="editComment(${note.id}, ${comment.id})">수정</button>
+                                    <button class="comment-action-btn delete" onclick="deleteComment(${note.id}, ${comment.id})">삭제</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `).join('');
+
+                    return `
                     <div class="qt-note-card">
                         <div class="qt-note-header">
                             <div class="qt-note-title">${note.title}</div>
@@ -2721,7 +2563,7 @@
                         <div class="qt-note-content">${note.content}</div>
                         <div class="qt-note-actions">
                             <button class="like-button" onclick="toggleLike(${note.id})">
-                                ${note.likedBy.includes(userName) ? '❤️' : '🤍'} ${note.likes}
+                                ${note.likedBy && note.likedBy.includes(userName) ? '❤️' : '🤍'} ${note.likes || 0}
                             </button>
                             ${note.author === userName ? `
                                 <div class="note-buttons">
@@ -2731,38 +2573,27 @@
                             ` : ''}
                         </div>
                         <div class="comments-section">
-                            <h5>💬 댓글 (${note.comments.length})</h5>
+                            <h5>💬 댓글 (${(note.comments || []).length})</h5>
                             <div class="comment-input-container">
                                 <textarea id="commentInput-${note.id}" class="comment-input" placeholder="댓글을 입력하세요..." rows="2"></textarea>
                                 <input type="password" id="commentPassword-${note.id}" class="comment-password-input" placeholder="비밀번호 (수정/삭제용)" maxlength="10">
                                 <button class="comment-send-btn" onclick="addComment(${note.id})">댓글 작성</button>
                             </div>
                             <div class="comment-list">
-                                ${note.comments.length === 0 ? `<p style="color: var(--text-color); text-align: center;">아직 댓글이 없습니다.</p>` : note.comments.map(comment => `
-                                    <div class="comment-item">
-                                        <div class="comment-header">
-                                            <span class="comment-author">${comment.author}</span>
-                                            <span class="comment-time">${comment.time}</span>
-                                        </div>
-                                        <div class="comment-content">${comment.content}</div>
-                                        ${comment.author === userName ? `
-                                            <div class="comment-actions">
-                                                <button class="comment-action-btn edit" onclick="editComment(${note.id}, ${comment.id})">수정</button>
-                                                <button class="comment-action-btn delete" onclick="deleteComment(${note.id}, ${comment.id})">삭제</button>
-                                            </div>
-                                        ` : ''}
-                                    </div>
-                                `).join('')}
+                                ${(note.comments && note.comments.length > 0) ? commentsHtml : `<p style="color: var(--text-color); text-align: center;">아직 댓글이 없습니다.</p>`}
                             </div>
                         </div>
                     </div>
-                `).join('');
+                `}).join('');
             }
         }
 
         function toggleLike(noteId) {
             const note = qtNotes.find(n => n.id === noteId);
             if (!note) return;
+
+            if (!note.likedBy) note.likedBy = [];
+            if (typeof note.likes !== 'number') note.likes = 0;
 
             if (note.likedBy.includes(userName)) {
                 note.likedBy = note.likedBy.filter(name => name !== userName);
@@ -2775,7 +2606,6 @@
             }
 
             if (isFirebaseEnabled) {
-                // Firebase에서 해당 QT 노트의 좋아요 정보 업데이트
                 database.ref('qtNotes').once('value', (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
@@ -2784,9 +2614,7 @@
                             database.ref(`qtNotes/${qtNoteKey}`).update({
                                 likes: note.likes,
                                 likedBy: note.likedBy
-                            }).catch((error) => {
-                                console.error('Firebase 좋아요 업데이트 실패:', error);
-                            });
+                            }).catch((error) => console.error('Firebase 좋아요 업데이트 실패:', error));
                         }
                     }
                 });
@@ -2830,6 +2658,8 @@
                 return;
             }
 
+            if (!note.comments) note.comments = [];
+
             const newComment = {
                 id: Date.now(),
                 author: userName,
@@ -2845,7 +2675,6 @@
             showNotification('댓글이 작성되었습니다! 💬');
 
             if (isFirebaseEnabled) {
-                // Firebase에서 해당 QT 노트의 댓글 정보 업데이트
                 database.ref('qtNotes').once('value', (snapshot) => {
                     const data = snapshot.val();
                     if (data) {
@@ -2853,11 +2682,8 @@
                         if (qtNoteKey) {
                             database.ref(`qtNotes/${qtNoteKey}`).update({
                                 comments: note.comments
-                            }).then(() => {
-                                console.log('댓글이 실시간으로 공유되었습니다!');
-                            }).catch((error) => {
-                                console.error('Firebase 댓글 업데이트 실패:', error);
-                            });
+                            }).then(() => console.log('댓글이 실시간으로 공유되었습니다!'))
+                            .catch((error) => console.error('Firebase 댓글 업데이트 실패:', error));
                         }
                     }
                 });
@@ -2869,7 +2695,7 @@
 
         function editComment(noteId, commentId) {
             const note = qtNotes.find(n => n.id === noteId);
-            if (!note) return;
+            if (!note || !note.comments) return;
             const comment = note.comments.find(c => c.id === commentId);
             if (!comment) return;
 
@@ -2881,7 +2707,7 @@
 
         function deleteComment(noteId, commentId) {
             const note = qtNotes.find(n => n.id === noteId);
-            if (!note) return;
+            if (!note || !note.comments) return;
             const comment = note.comments.find(c => c.id === commentId);
             if (!comment) return;
 
@@ -2896,13 +2722,14 @@
 
             const password = document.getElementById('qtActionPassword').value;
             let targetItem = null;
+            let noteToUpdate = null;
 
             if (pendingQTAction.type === 'qtNote') {
                 targetItem = qtNotes.find(n => n.id === pendingQTAction.noteId);
             } else if (pendingQTAction.type === 'comment') {
-                const note = qtNotes.find(n => n.id === pendingQTAction.noteId);
-                if (note) {
-                    targetItem = note.comments.find(c => c.id === pendingQTAction.commentId);
+                noteToUpdate = qtNotes.find(n => n.id === pendingQTAction.noteId);
+                if (noteToUpdate && noteToUpdate.comments) {
+                    targetItem = noteToUpdate.comments.find(c => c.id === pendingQTAction.commentId);
                 }
             }
 
@@ -2912,6 +2739,7 @@
                 return;
             }
 
+            // Action confirmed, proceed
             if (pendingQTAction.type === 'qtNote') {
                 if (pendingQTAction.action === 'edit') {
                     editingQTNote = targetItem;
@@ -2924,20 +2752,14 @@
                     document.getElementById('qtNoteModal').style.display = 'flex';
                 } else if (pendingQTAction.action === 'delete') {
                     if (isFirebaseEnabled) {
-                        // Firebase에서 QT 노트 삭제
                         database.ref('qtNotes').once('value', (snapshot) => {
                             const data = snapshot.val();
                             if (data) {
                                 const qtNoteKey = Object.keys(data).find(key => data[key].id === pendingQTAction.noteId);
                                 if (qtNoteKey) {
                                     database.ref(`qtNotes/${qtNoteKey}`).remove()
-                                        .then(() => {
-                                            showNotification('QT 노트가 실시간으로 삭제되었습니다! 🗑️🔥');
-                                        })
-                                        .catch((error) => {
-                                            console.error('Firebase 삭제 실패:', error);
-                                            showNotification('QT 노트 삭제에 실패했습니다.');
-                                        });
+                                        .then(() => showNotification('QT 노트가 실시간으로 삭제되었습니다! 🗑️🔥'))
+                                        .catch((error) => showNotification('QT 노트 삭제에 실패했습니다.'));
                                 }
                             }
                         });
@@ -2949,63 +2771,35 @@
                     }
                 }
             } else if (pendingQTAction.type === 'comment') {
-                const note = qtNotes.find(n => n.id === pendingQTAction.noteId);
-                if (!note) return;
-
                 if (pendingQTAction.action === 'edit') {
                     const newContent = prompt('새로운 댓글 내용을 입력하세요:', targetItem.content);
                     if (newContent !== null) {
                         targetItem.content = newContent.trim();
                         targetItem.time = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) + ' (수정됨)';
                         showNotification('댓글이 수정되었습니다! ✏️');
-                        
-                        if (isFirebaseEnabled) {
-                            // Firebase에서 해당 QT 노트의 댓글 정보 업데이트
-                            database.ref('qtNotes').once('value', (snapshot) => {
-                                const data = snapshot.val();
-                                if (data) {
-                                    const qtNoteKey = Object.keys(data).find(key => data[key].id === pendingQTAction.noteId);
-                                    if (qtNoteKey) {
-                                        database.ref(`qtNotes/${qtNoteKey}`).update({
-                                            comments: note.comments
-                                        }).catch((error) => {
-                                            console.error('Firebase 댓글 수정 실패:', error);
-                                        });
-                                    }
-                                }
-                            });
-                        }
                     }
                 } else if (pendingQTAction.action === 'delete') {
-                    note.comments = note.comments.filter(c => c.id !== pendingQTAction.commentId);
+                    noteToUpdate.comments = noteToUpdate.comments.filter(c => c.id !== pendingQTAction.commentId);
                     showNotification('댓글이 삭제되었습니다! 🗑️');
-                    
-                    if (isFirebaseEnabled) {
-                        // Firebase에서 해당 QT 노트의 댓글 정보 업데이트
-                        database.ref('qtNotes').once('value', (snapshot) => {
-                            const data = snapshot.val();
-                            if (data) {
-                                const qtNoteKey = Object.keys(data).find(key => data[key].id === pendingQTAction.noteId);
-                                if (qtNoteKey) {
-                                    database.ref(`qtNotes/${qtNoteKey}`).update({
-                                        comments: note.comments
-                                    }).catch((error) => {
-                                        console.error('Firebase 댓글 삭제 실패:', error);
-                                    });
-                                }
-                            }
-                        });
-                    }
                 }
-                
-                if (!isFirebaseEnabled) {
+
+                if (isFirebaseEnabled) {
+                    database.ref('qtNotes').once('value', (snapshot) => {
+                        const data = snapshot.val();
+                        if (data) {
+                            const qtNoteKey = Object.keys(data).find(key => data[key].id === pendingQTAction.noteId);
+                            if (qtNoteKey) {
+                                database.ref(`qtNotes/${qtNoteKey}`).update({ comments: noteToUpdate.comments });
+                            }
+                        }
+                    });
+                } else {
                     updateQTNotes();
                     saveProgress();
                 }
             }
 
             closeQTPasswordModal();
-            document.getElementById('qtActionPassword').value = '';
         }
 
         function closeQTPasswordModal() {
@@ -3041,10 +2835,7 @@
 
         function updateChatMessages(prefix) {
             const messagesContainer = document.getElementById(`${prefix}Messages`);
-            if (!messagesContainer) {
-                console.log(`채팅 컨테이너를 찾을 수 없습니다: ${prefix}Messages`);
-                return;
-            }
+            if (!messagesContainer) return;
             
             if (chatMessages.length === 0) {
                 messagesContainer.innerHTML = `<div style="text-align: center; color: var(--text-color); padding: 20px;"><p>첫 번째 메시지를 보내보세요! 💬</p></div>`;
@@ -3068,7 +2859,6 @@
                 }).join('');
             }
             
-            // 스크롤을 아래로 이동
             setTimeout(() => {
                 messagesContainer.scrollTop = messagesContainer.scrollHeight;
             }, 50);
@@ -3088,19 +2878,25 @@
                 const now = new Date();
                 const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
                 
-                chatMessages.push({ 
+                const messageData = { 
+                    id: Date.now(),
                     sender: userName, 
                     avatar: userAvatar, 
                     message: '사진을 업로드했습니다 📷', 
                     image: e.target.result,
-                    time: timeString 
-                });
-                
-                if (document.getElementById('chatMessages')) updateChatMessages('chat');
-                if (document.getElementById('guildMessages')) updateChatMessages('guild');
+                    time: timeString,
+                    timestamp: now.getTime()
+                };
+
+                if (isFirebaseEnabled) {
+                     database.ref('chatMessages').push(messageData);
+                } else {
+                    chatMessages.push(messageData);
+                    updateChatMessages('guild');
+                    saveProgress();
+                }
                 
                 showNotification('사진이 업로드되었습니다! 📷');
-                saveProgress();
             };
             reader.readAsDataURL(file);
             
@@ -3108,33 +2904,16 @@
         }
 
         function showImageModal(imageSrc) {
-            const existingModal = document.getElementById('imageViewModal');
-            if (existingModal) existingModal.remove();
-
-            const modal = document.createElement('div');
-            modal.id = 'imageViewModal';
-            modal.className = 'modal';
-            modal.style.display = 'flex';
-            modal.innerHTML = `
-                <div class="modal-content" style="max-width: 90%; max-height: 90%; padding: 20px;">
-                    <div class="modal-title">이미지 보기</div>
-                    <img src="${imageSrc}" style="max-width: 100%; max-height: 70vh; border-radius: 10px;">
-                    <div class="modal-buttons" style="margin-top: 15px;">
-                        <button class="modal-button secondary" onclick="closeImageModal()">닫기</button>
-                    </div>
+            const modal = document.getElementById('quizModal'); // Re-use quiz modal for simplicity
+            const modalContent = document.getElementById('quiz-modal-content');
+            modalContent.innerHTML = `
+                <div class="modal-title">이미지 보기</div>
+                <img src="${imageSrc}" style="max-width: 100%; max-height: 70vh; border-radius: 10px;">
+                <div class="modal-buttons" style="margin-top: 15px;">
+                    <button class="modal-button secondary" onclick="closeQuizModal()">닫기</button>
                 </div>
             `;
-            
-            document.body.appendChild(modal);
-            
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) closeImageModal();
-            });
-        }
-
-        function closeImageModal() {
-            const modal = document.getElementById('imageViewModal');
-            if (modal) modal.remove();
+            modal.style.display = 'flex';
         }
 
         function sendMessage(prefix) {
@@ -3155,9 +2934,7 @@
 
                 if (isFirebaseEnabled) {
                     database.ref('chatMessages').push(messageData)
-                        .then(() => {
-                            console.log('메시지가 실시간으로 공유되었습니다!');
-                        })
+                        .then(() => console.log('메시지가 실시간으로 공유되었습니다!'))
                         .catch((error) => {
                             console.error('Firebase 메시지 저장 실패:', error);
                             chatMessages.push(messageData);
@@ -3179,7 +2956,24 @@
         }
 
         // --- Quiz Functions ---
-        let currentQuizIndex = 0;
+        function seededRandom(seed) {
+            var x = Math.sin(seed) * 10000;
+            return x - Math.floor(x);
+        }
+
+        function getDailyQuizQuestions() {
+            const today = new Date();
+            const seed = today.getFullYear() * 10000 + (today.getMonth() + 1) * 100 + today.getDate();
+            
+            let questions = [...allQuizQuestions];
+            
+            for (let i = questions.length - 1; i > 0; i--) {
+                const j = Math.floor(seededRandom(seed + i) * (i + 1));
+                [questions[i], questions[j]] = [questions[j], questions[i]];
+            }
+            
+            return questions.slice(0, 3); // 매일 3개의 다른 질문을 선택
+        }
 
         function startQuiz() {
             const lastQuizMissionDate = safeGetItem('lastQuizMissionDate');
@@ -3190,40 +2984,40 @@
                 return;
             }
 
+            dailyQuiz = getDailyQuizQuestions();
             currentQuizIndex = 0;
             displayQuizQuestion();
-            document.getElementById('minigameModal').style.display = 'flex';
+            document.getElementById('quizModal').style.display = 'flex';
         }
 
         function displayQuizQuestion() {
-            const minigameContent = document.getElementById('minigame-content');
-            const questionData = quizQuestions[currentQuizIndex];
-
-            if (!questionData) {
-                minigameContent.innerHTML = `
+            const modalContent = document.getElementById('quiz-modal-content');
+            
+            if (currentQuizIndex >= dailyQuiz.length) {
+                modalContent.innerHTML = `
                     <div class="modal-title">퀴즈 완료!</div>
                     <p style="color: var(--text-color); margin-bottom: 20px;">모든 퀴즈를 완료했습니다. 대단해요! 🎉</p>
                     <div class="modal-buttons">
                         <button class="modal-button primary" onclick="completeQuizMission()">보상 받기</button>
-                        <button class="modal-button secondary" onclick="closeMinigameModal()">닫기</button>
                     </div>
                 `;
                 return;
             }
-
+            
+            const questionData = dailyQuiz[currentQuizIndex];
             let optionsHtml = questionData.options.map(option => `
                 <button class="quiz-option" onclick="checkQuizAnswer('${option}')">${option}</button>
             `).join('');
 
-            minigameContent.innerHTML = `
-                <div class="modal-title">신앙 퀴즈 (${currentQuizIndex + 1}/${quizQuestions.length})</div>
+            modalContent.innerHTML = `
+                <div class="modal-title">신앙 퀴즈 (${currentQuizIndex + 1}/${dailyQuiz.length})</div>
                 <p style="color: var(--text-color); margin-bottom: 20px; font-weight: bold;">${questionData.question}</p>
                 <div>${optionsHtml}</div>
             `;
         }
 
         function checkQuizAnswer(selectedOption) {
-            const questionData = quizQuestions[currentQuizIndex];
+            const questionData = dailyQuiz[currentQuizIndex];
             if (selectedOption === questionData.answer) {
                 showNotification('정답입니다! 🥳');
                 currentQuizIndex++;
@@ -3243,12 +3037,12 @@
                 quizButton.textContent = '완료!';
                 quizButton.disabled = true;
             }
-            closeMinigameModal();
+            closeQuizModal();
             saveProgress();
         }
 
-        function closeMinigameModal() {
-            document.getElementById('minigameModal').style.display = 'none';
+        function closeQuizModal() {
+            document.getElementById('quizModal').style.display = 'none';
         }
 
         // --- Icebreaker Functions ---
@@ -3262,7 +3056,6 @@
             const stageData = stageContents[stageNumber];
             const question = stageData.icebreaker ? stageData.icebreaker.prompt : '질문이 없습니다.';
 
-            // Update completedIcebreakers array with question and author info
             const today = new Date().toLocaleDateString('ko-KR');
             let existingEntry = completedIcebreakers.find(item => item.stage === stageNumber);
             if (existingEntry) {
@@ -3279,15 +3072,13 @@
                     date: today 
                 });
             }
-            // Sort to ensure order in display
             completedIcebreakers.sort((a, b) => a.stage - b.stage);
 
             showNotification(`아이스브레이크 완료! 스테이지 ${stageNumber}의 문이 열렸습니다!`);
             saveProgress();
             
-            // After icebreaker, proceed to render main content
-            _renderStageMainContent(stageNumber); 
-            updateIcebreakerRecordsDisplay(); // Update records display immediately
+            enterStageContent(stageNumber);
+            updateIcebreakerRecordsDisplay();
         }
 
         function updateIcebreakerRecordsDisplay() {
@@ -3296,9 +3087,9 @@
 
             if (completedIcebreakers.length === 0) {
                 container.innerHTML = `<div style="text-align: center; color: var(--text-color); padding: 20px; background: var(--mission-card-bg); border-radius: 10px;">
-                                            <p>아직 작성된 아이스브레이크 기록이 없습니다.</p>
-                                            <p>학습 스테이지를 시작하여 첫 기록을 남겨보세요! ✨</p>
-                                        </div>`;
+                                                <p>아직 작성된 아이스브레이크 기록이 없습니다.</p>
+                                                <p>학습 스테이지를 시작하여 첫 기록을 남겨보세요! ✨</p>
+                                            </div>`;
             } else {
                 container.innerHTML = completedIcebreakers.map(record => `
                     <div class="qt-note-card" style="margin-bottom: 15px;">
@@ -3319,246 +3110,6 @@
             }
         }
 
-        // --- Mini-game Functions ---
-        const miniGames = {
-            'bibleVerseFill': {
-                name: '성경 구절 빈칸 채우기',
-                prompt: '다음 성경 구절의 빈칸을 채우세요.',
-                data: [
-                    { verse: "하나님이 세상을 이처럼 사랑하사 독생자를 주셨으니 이는 그를 믿는 자마다 멸망하지 않고 [ ]을 얻게 하려 하심이라.", blankWord: "영생", hint: "영원한 삶" },
-                    { verse: "여호와는 나의 [ ]시니 내게 부족함이 없으리로다.", blankWord: "목자", hint: "양을 돌보는 사람" },
-                    { verse: "내게 능력 주시는 자 안에서 내가 모든 것을 [ ] 수 있느니라.", blankWord: "할", hint: "능력" }
-                ],
-                exp: 10
-            },
-            'characterGuess': {
-                name: '성경 인물 맞추기',
-                prompt: '설명을 듣고 성경 인물을 맞춰보세요.',
-                data: [
-                    { description: "이스라엘의 첫 번째 왕", answer: "사울" },
-                    { description: "골리앗을 물리친 소년 목동", answer: "다윗" },
-                    { description: "홍해를 가른 선지자", answer: "모세" }
-                ],
-                exp: 10
-            },
-            'trueFalse': {
-                name: '참/거짓 퀴즈',
-                prompt: '다음 문장이 참인지 거짓인지 맞춰보세요.',
-                data: [
-                    { question: "노아는 방주를 100년 동안 지었다.", answer: "참" },
-                    { question: "예수님은 십자가에서 3일 만에 부활하셨다.", answer: "참" },
-                    { question: "요나 선지자는 물고기 뱃속에서 3일 밤낮을 보냈다.", answer: "참" }
-                ],
-                exp: 10
-            },
-            'wordOrder': {
-                name: '단어 순서 맞추기',
-                prompt: '단어를 올바른 순서로 배열하여 문장을 만드세요.',
-                data: [
-                    { scrambled: ["오래", "사랑은", "참고"], answer: "사랑은 오래 참고" },
-                    { scrambled: ["나의", "목자시니", "여호와는"], answer: "여호와는 나의 목자시니" },
-                    { scrambled: ["세상을", "하나님이", "이처럼", "사랑하사"], answer: "하나님이 세상을 이처럼 사랑하사" }
-                ],
-                exp: 10
-            },
-            'bibleNumber': {
-                name: '성경 숫자 퀴즈',
-                prompt: '다음 질문에 해당하는 숫자를 맞춰보세요.',
-                data: [
-                    { question: "예수님이 오병이어 기적을 일으키실 때 물고기는 몇 마리였을까요?", answer: "두 마리" },
-                    { question: "노아의 방주에 들어간 정결한 짐승은 암수 몇 쌍이었을까요?", answer: "일곱 쌍" },
-                    { question: "예수님의 12제자 중 한 명은 예수님을 은 30에 팔았습니다. 그 제자의 이름은?", answer: "유다" }
-                ],
-                exp: 10
-            }
-        };
-
-        let currentMiniGameType = null;
-        let currentMiniGameData = null;
-        let miniGameRound = 0;
-
-        function showMinigameSelection() {
-            const container = document.getElementById('minigame-selection-container');
-            const minigameButton = document.getElementById('mission-btn-minigame');
-
-            if (miniGameCompletedToday) {
-                showNotification('오늘은 이미 미니게임을 완료했습니다! 내일 다시 도전해주세요. 😊');
-                return;
-            }
-
-            minigameButton.style.display = 'none';
-
-            let selectionHtml = `
-                <div class="minigame-selection-card">
-                    <h4>어떤 미니게임을 하시겠어요?</h4>
-                    <div class="minigame-selection-grid">
-                        <button class="minigame-button" ${miniGameProgress.bibleVerseFill ? 'disabled' : ''} onclick="startMiniGame('bibleVerseFill')">성경 구절 빈칸 채우기</button>
-                        <button class="minigame-button" ${miniGameProgress.characterGuess ? 'disabled' : ''} onclick="startMiniGame('characterGuess')">성경 인물 맞추기</button>
-                        <button class="minigame-button" ${miniGameProgress.trueFalse ? 'disabled' : ''} onclick="startMiniGame('trueFalse')">참/거짓 퀴즈</button>
-                        <button class="minigame-button" ${miniGameProgress.wordOrder ? 'disabled' : ''} onclick="startMiniGame('wordOrder')">단어 순서 맞추기</button>
-                        <button class="minigame-button" ${miniGameProgress.bibleNumber ? 'disabled' : ''} onclick="startMiniGame('bibleNumber')">성경 숫자 퀴즈</button>
-                    </div>
-                    <button class="modal-button secondary" style="width:100%; margin-top:15px;" onclick="cancelMinigameSelection()">취소</button>
-                </div>
-            `;
-            container.innerHTML = selectionHtml;
-        }
-
-        function cancelMinigameSelection() {
-            document.getElementById('minigame-selection-container').innerHTML = '';
-            document.getElementById('mission-btn-minigame').style.display = 'inline-block';
-        }
-
-        function startMiniGame(gameType) {
-            currentMiniGameType = gameType;
-            miniGameRound = 0;
-            displayMiniGame();
-        }
-
-        function displayMiniGame() {
-            const container = document.getElementById('minigame-selection-container');
-            const gameInfo = miniGames[currentMiniGameType];
-
-            if (!gameInfo || miniGameRound >= gameInfo.data.length) {
-                miniGameProgress[currentMiniGameType] = true;
-                checkOverallMiniGameCompletion();
-                showNotification(`${gameInfo.name} 게임 완료!`);
-                
-                if (Object.values(miniGameProgress).every(status => status === true)) {
-                    document.getElementById('minigame-selection-container').innerHTML = '';
-                    document.getElementById('mission-btn-minigame').textContent = '완료!';
-                    document.getElementById('mission-btn-minigame').disabled = true;
-                    document.getElementById('mission-btn-minigame').style.display = 'inline-block';
-                } else {
-                    showMinigameSelection();
-                }
-                saveProgress();
-                return;
-            }
-
-            currentMiniGameData = gameInfo.data[miniGameRound];
-            let gameHtml = `<div class="minigame-content-area" id="active-minigame-area">`;
-
-            switch (currentMiniGameType) {
-                case 'bibleVerseFill':
-                    const verseParts = currentMiniGameData.verse.split('[ ]');
-                    gameHtml += `
-                        <p>${gameInfo.prompt}</p>
-                        <p style="font-style: italic; margin: 10px 0;">${verseParts[0]}<input type="text" id="gameInput" placeholder="${currentMiniGameData.hint}" onkeypress="handleGameInputKeyPress(event)">${verseParts[1]}</p>
-                        <button onclick="checkGameAnswer('bibleVerseFill')">확인</button>
-                    `;
-                    break;
-                case 'characterGuess':
-                    gameHtml += `
-                        <p>${gameInfo.prompt}</p>
-                        <p style="font-style: italic; margin: 10px 0;">"${currentMiniGameData.description}"</p>
-                        <input type="text" id="gameInput" placeholder="인물 이름" onkeypress="handleGameInputKeyPress(event)">
-                        <button onclick="checkGameAnswer('characterGuess')">확인</button>
-                    `;
-                    break;
-                case 'trueFalse':
-                    gameHtml += `
-                        <p>${gameInfo.prompt}</p>
-                        <p style="font-weight: bold; margin: 10px 0;">"${currentMiniGameData.question}"</p>
-                        <button class="quiz-option" onclick="checkGameAnswer('trueFalse', '참')">참</button>
-                        <button class="quiz-option" onclick="checkGameAnswer('trueFalse', '거짓')">거짓</button>
-                    `;
-                    break;
-                case 'wordOrder':
-                    function shuffleArray(array) {
-                        for (let i = array.length - 1; i > 0; i--) {
-                            const j = Math.floor(Math.random() * (i + 1));
-                            [array[i], array[j]] = [array[j], array[i]];
-                        }
-                        return array;
-                    }
-                    const shuffledWords = shuffleArray([...currentMiniGameData.scrambled]);
-                    gameHtml += `
-                        <p>${gameInfo.prompt}</p>
-                        <p style="font-size: 20px; font-weight: bold; margin: 10px 0;">${shuffledWords.join(' ')}</p>
-                        <input type="text" id="gameInput" placeholder="정답 문장 입력" onkeypress="handleGameInputKeyPress(event)">
-                        <button onclick="checkGameAnswer('wordOrder')">확인</button>
-                    `;
-                    break;
-                case 'bibleNumber':
-                    gameHtml += `
-                        <p>${gameInfo.prompt}</p>
-                        <p style="font-weight: bold; margin: 10px 0;">"${currentMiniGameData.question}"</p>
-                        <input type="text" id="gameInput" placeholder="숫자 또는 이름" onkeypress="handleGameInputKeyPress(event)">
-                        <button onclick="checkGameAnswer('bibleNumber')">확인</button>
-                    `;
-                    break;
-            }
-            gameHtml += `
-                <button class="modal-button secondary" style="margin-top: 20px;" onclick="resetMiniGameSelection()">다른 게임 선택</button>
-                </div>
-            `;
-            container.innerHTML = gameHtml;
-            if (document.getElementById('gameInput')) {
-                document.getElementById('gameInput').focus();
-            }
-        }
-
-        function handleGameInputKeyPress(event) {
-            if (event.key === 'Enter') {
-                checkGameAnswer(currentMiniGameType);
-            }
-        }
-
-        function checkGameAnswer(gameType, selectedOption = null) {
-            let isCorrect = false;
-            const inputElement = document.getElementById('gameInput');
-            const inputValue = inputElement ? inputElement.value.trim() : '';
-
-            switch (gameType) {
-                case 'bibleVerseFill':
-                    isCorrect = (inputValue.toLowerCase() === currentMiniGameData.blankWord.toLowerCase());
-                    break;
-                case 'characterGuess':
-                    isCorrect = (inputValue.toLowerCase() === currentMiniGameData.answer.toLowerCase());
-                    break;
-                case 'trueFalse':
-                    isCorrect = (selectedOption.toLowerCase() === currentMiniGameData.answer.toLowerCase());
-                    break;
-                case 'wordOrder':
-                    isCorrect = (inputValue.toLowerCase() === currentMiniGameData.answer.toLowerCase());
-                    break;
-                case 'bibleNumber':
-                    isCorrect = (inputValue.toLowerCase() === currentMiniGameData.answer.toLowerCase());
-                    break;
-            }
-
-            if (isCorrect) {
-                showNotification('정답입니다! 🎉');
-                addExperience(miniGames[gameType].exp, `${miniGames[gameType].name} 완료! 경험치 +${miniGames[gameType].exp}!`);
-                miniGameRound++;
-                setTimeout(displayMiniGame, 500);
-            } else {
-                showNotification('틀렸습니다. 다시 시도해보세요. 😔');
-                if (inputElement) inputElement.value = '';
-            }
-            saveProgress();
-        }
-
-        function resetMiniGameSelection() {
-            currentMiniGameType = null;
-            currentMiniGameData = null;
-            miniGameRound = 0;
-            showMinigameSelection();
-        }
-
-        function checkOverallMiniGameCompletion() {
-            const allGamesCompleted = Object.values(miniGameProgress).every(status => status === true);
-            if (allGamesCompleted && !miniGameCompletedToday) {
-                miniGameCompletedToday = true;
-                addExperience(30, '🎉 오늘의 미니게임 미션 완료! 보너스 경험치 +30!');
-                grantBadge('미니게임 마스터');
-                document.getElementById('mission-btn-minigame').textContent = '완료!';
-                document.getElementById('mission-btn-minigame').disabled = true;
-                saveProgress();
-            }
-        }
-
         // --- Modal Functions ---
         function showNameModal() {
             const modal = document.getElementById('nameModal');
@@ -3573,7 +3124,6 @@
                 const oldName = userName;
                 userName = newName;
                 
-                // Firebase에서 기존 사용자 정보 제거하고 새 이름으로 등록
                 if (isFirebaseEnabled) {
                     database.ref(`onlineUsers/${oldName}`).remove();
                     database.ref(`onlineUsers/${userName}`).set({
@@ -3600,7 +3150,6 @@
         function selectAvatar(emoji) {
             userAvatar = emoji;
             
-            // Firebase에서 사용자 아바타 정보 업데이트
             if (isFirebaseEnabled) {
                 database.ref(`onlineUsers/${userName}`).update({
                     avatar: userAvatar,
@@ -3618,7 +3167,6 @@
         function closeResetModal() { document.getElementById('resetModal').style.display = 'none'; }
         function confirmReset() {
             if (document.getElementById('adminPassword').value === '0000') {
-                // Firebase 데이터 모두 삭제 (관리자만 가능)
                 if (isFirebaseEnabled) {
                     database.ref('notices').remove().catch(error => console.error('Firebase 공지사항 삭제 실패:', error));
                     database.ref('chatMessages').remove().catch(error => console.error('Firebase 채팅 삭제 실패:', error));
@@ -3629,10 +3177,10 @@
                 
                 try {
                     safeRemoveItem('blueWindProgress');
+                    safeRemoveItem('lastQuizMissionDate');
                 } catch (error) {
                     console.error('데이터 삭제 실패:', error);
                 }
-                // 메모리 저장소도 초기화
                 memoryStorage = {};
                 onlineUsers = {};
                 
@@ -3640,11 +3188,8 @@
                 updateUI();
                 resetMissionUI();
                 
-                // 길드 탭 관련 UI 초기화
                 const guildChatContainer = document.getElementById('guild-chat-container');
-                if (guildChatContainer) {
-                    guildChatContainer.innerHTML = '';
-                }
+                if (guildChatContainer) guildChatContainer.innerHTML = '';
                 updateQTNotes();
                 updateNotices();
                 updateOnlineUsers();
@@ -3675,20 +3220,13 @@
         // --- App Initialization ---
         function initApp() {
             try {
-                console.log('앱 초기화 시작...');
-                
-                // Firebase 초기화 (먼저 실행)
                 initFirebase();
-                
-                console.log('데이터 로드 시작...');
                 loadProgress();
                 
-                console.log('환영 메시지 준비...');
                 setTimeout(() => {
                     showNotification(`${userName}님, 푸른나라학교에 오신 것을 환영합니다! 🌟`);
                 }, 1000);
 
-                // Update home tab quiz button state
                 const lastQuizMissionDate = safeGetItem('lastQuizMissionDate');
                 const today = new Date().toDateString();
                 const quizButton = document.getElementById('mission-btn-quiz');
@@ -3705,22 +3243,6 @@
                     }
                 }
 
-                // Update home tab mini-game button state
-                const minigameButton = document.getElementById('mission-btn-minigame');
-                if (miniGameCompletedToday) {
-                    if (minigameButton) {
-                        minigameButton.textContent = '완료!';
-                        minigameButton.disabled = true;
-                    }
-                } else {
-                    if (minigameButton) {
-                        minigameButton.textContent = '미니게임 시작';
-                        minigameButton.disabled = false;
-                    }
-                }
-
-                console.log('이벤트 리스너 설정...');
-                // Modal close events
                 document.querySelectorAll('.modal').forEach(modal => {
                     modal.addEventListener('click', (e) => {
                         if (e.target === modal) {
@@ -3729,54 +3251,25 @@
                     });
                 });
 
-                // Keyboard events
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') {
                         document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
-                        closeImageModal();
                     }
                     if (e.key === 'Enter') {
-                        const nameModal = document.getElementById('nameModal');
-                        const resetModal = document.getElementById('resetModal');
-                        const noticeModal = document.getElementById('noticeModal');
-                        const qtNoteModal = document.getElementById('qtNoteModal');
-                        const qtPasswordModal = document.getElementById('qtPasswordModal');
-                        
-                        if (nameModal.style.display === 'flex') {
-                            e.preventDefault();
-                            changeName();
-                        } else if (resetModal.style.display === 'flex') {
-                            e.preventDefault();
-                            confirmReset();
-                        } else if (noticeModal.style.display === 'flex') {
-                            e.preventDefault();
-                            createNotice();
-                        } else if (qtNoteModal.style.display === 'flex') {
-                            e.preventDefault();
-                            createQTNote();
-                        } else if (qtPasswordModal.style.display === 'flex') {
-                            e.preventDefault();
-                            confirmQTAction();
-                        }
+                        const activeModal = Array.from(document.querySelectorAll('.modal')).find(m => m.style.display === 'flex');
+                        if (!activeModal) return;
+
+                        e.preventDefault();
+                        if (activeModal.id === 'nameModal') changeName();
+                        else if (activeModal.id === 'resetModal') confirmReset();
+                        else if (activeModal.id === 'noticeModal') createNotice();
+                        else if (activeModal.id === 'qtNoteModal') createQTNote();
+                        else if (activeModal.id === 'qtPasswordModal') confirmQTAction();
                     }
                 });
                 
-                console.log('앱 초기화 완료!');
-                
-                // 초기화 완료 후 길드 탭이 활성화되어 있다면 채팅 인터페이스 생성
-                setTimeout(() => {
-                    const activeTab = document.querySelector('.nav-item.active');
-                    if (activeTab && activeTab.textContent.includes('길드')) {
-                        const guildChatContainer = document.getElementById('guild-chat-container');
-                        if (guildChatContainer && !guildChatContainer.innerHTML.trim()) {
-                            guildChatContainer.innerHTML = createChatInterface('guild');
-                            updateChatMessages('guild');
-                        }
-                    }
-                }, 500);
             } catch (error) {
                 console.error('앱 초기화 중 오류 발생:', error);
-                // 오류가 발생해도 기본 기능은 작동하도록 함
                 try {
                     setInitialState();
                     updateUI();
