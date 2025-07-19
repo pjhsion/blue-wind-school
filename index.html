@@ -12,93 +12,6 @@
     <!-- Firebase CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-app-compat.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/firebase/9.23.0/firebase-database-compat.min.js"></script>
-// --- Firebase Configuration ---
-const firebaseConfig = {
-  apiKey: "AIzaSyCuMttZg-PO-U7rk1kcDswRDfyUoo7pSF0",
-  authDomain: "blue-wind-school.firebaseapp.com",
-  databaseURL: "https://blue-wind-school-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "blue-wind-school",
-  storageBucket: "blue-wind-school.firebasestorage.app",
-  messagingSenderId: "321228765213",
-  appId: "1:321228765213:web:748d27515e2f14c3076ef4"
-};
-
-// Firebase 초기화
-let database = null;
-let isFirebaseEnabled = false;
-
-function initFirebase() {
-    try {
-        // 실제 Firebase 설정이 있는지 확인
-        if (firebaseConfig.apiKey !== "demo-api-key") {
-            firebase.initializeApp(firebaseConfig);
-            database = firebase.database();
-            isFirebaseEnabled = true;
-            console.log("Firebase 연결 성공!");
-            
-            // 실시간 리스너 설정
-            setupFirebaseListeners();
-            showNotification("🔥 실시간 공유 기능이 활성화되었습니다!");
-            updateFirebaseStatus();
-        } else {
-            console.log("Firebase 설정이 필요합니다. 로컬 모드로 실행됩니다.");
-            showNotification("📱 로컬 모드로 실행됩니다. Firebase 설정 시 실시간 공유가 가능합니다.");
-            updateFirebaseStatus();
-        }
-    } catch (error) {
-        console.error("Firebase 초기화 실패:", error);
-        isFirebaseEnabled = false;
-        showNotification("⚠️ 실시간 공유 기능을 사용할 수 없습니다. 로컬 모드로 실행됩니다.");
-        updateFirebaseStatus();
-    }
-}
-
-function setupFirebaseListeners() {
-    if (!isFirebaseEnabled) return;
-
-    // 공지사항 실시간 리스너
-    database.ref('notices').on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            notices = Object.values(data);
-            updateNotices();
-        }
-    });
-
-    // 채팅 메시지 실시간 리스너
-    database.ref('chatMessages').on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            chatMessages = Object.values(data);
-            if (document.getElementById('guildMessages')) {
-                updateChatMessages('guild');
-            }
-        }
-    });
-
-    // QT 노트 실시간 리스너
-    database.ref('qtNotes').on('value', (snapshot) => {
-        const data = snapshot.val();
-        if (data) {
-            qtNotes = Object.values(data);
-            updateQTNotes();
-        }
-    });
-}
-
-function updateFirebaseStatus() {
-    const statusElement = document.getElementById('firebaseStatus');
-    const statusTextElement = document.getElementById('firebaseStatusText');
-    
-    if (isFirebaseEnabled) {
-        if (statusElement) statusElement.textContent = '🔥 연결됨:';
-        if (statusTextElement) statusTextElement.textContent = '실시간 공유 기능이 활성화되어 있습니다. 공지사항, 채팅, QT노트가 모든 사용자와 실시간으로 동기화됩니다!';
-    } else {
-        if (statusElement) statusElement.textContent = '🔧 설정 필요:';
-        if (statusTextElement) statusTextElement.textContent = 'Firebase 설정을 완료하면 공지사항, 채팅, QT노트를 다른 사용자와 실시간으로 공유할 수 있습니다.';
-    }
-}
-
     
     <style>
         /* Pretendard 폰트 임포트 */
@@ -717,7 +630,7 @@ function updateFirebaseStatus() {
         .chat-input-container {
             display: flex;
             gap: 10px;
-            align-items: center; /* Align items vertically in the center */
+            align-items: center;
         }
 
         .chat-input {
@@ -727,7 +640,7 @@ function updateFirebaseStatus() {
             border-radius: 20px;
             font-size: 14px;
             transition: border-color 0.3s ease, background 0.5s ease, color 0.5s ease;
-            background: var(--chat-messages-bg); /* Use chat messages bg for input */
+            background: var(--chat-messages-bg);
             color: var(--text-color);
         }
 
@@ -744,7 +657,7 @@ function updateFirebaseStatus() {
             border-radius: 20px;
             cursor: pointer;
             transition: background 0.3s ease;
-            white-space: nowrap; /* Prevent text wrapping */
+            white-space: nowrap;
         }
 
         .chat-send-btn:hover {
@@ -1117,7 +1030,6 @@ function updateFirebaseStatus() {
             transition: background 0.5s ease, color 0.5s ease, border-color 0.5s ease;
         }
 
-        /* Theme Toggle Button */
         .theme-toggle-container {
             margin-top: 20px;
             padding-top: 20px;
@@ -1138,7 +1050,6 @@ function updateFirebaseStatus() {
             background: var(--modal-button-secondary-hover-bg);
         }
 
-        /* QT Comments */
         .comments-section {
             margin-top: 20px;
             padding-top: 15px;
@@ -1243,8 +1154,6 @@ function updateFirebaseStatus() {
         .comment-action-btn.edit { background: var(--note-btn-edit-bg); }
         .comment-action-btn.delete { background: var(--note-btn-delete-bg); }
 
-        /* Icebreaker Modal Specific Styles */
-        /* These styles will now apply to the inline icebreaker content */
         .icebreaker-section {
             background: var(--prayer-card-bg-start);
             border-radius: 15px;
@@ -1253,7 +1162,7 @@ function updateFirebaseStatus() {
             text-align: center;
             border: 1px solid var(--prayer-card-title);
         }
-        .icebreaker-section .modal-title { /* Reusing modal-title style */
+        .icebreaker-section .modal-title {
             font-size: 20px;
             margin-bottom: 15px;
             color: var(--prayer-card-title);
@@ -1284,7 +1193,6 @@ function updateFirebaseStatus() {
             padding: 10px 20px;
         }
 
-        /* Quiz Section Styles (inline) */
         .quiz-section {
             background: var(--scripture-card-bg-start);
             border-radius: 15px;
@@ -1293,7 +1201,7 @@ function updateFirebaseStatus() {
             text-align: center;
             border: 1px solid var(--scripture-card-border);
         }
-        .quiz-section .modal-title { /* Reusing modal-title style */
+        .quiz-section .modal-title {
             font-size: 18px;
             font-weight: bold;
             margin-bottom: 20px;
@@ -1321,7 +1229,6 @@ function updateFirebaseStatus() {
             background: var(--quiz-option-hover-bg);
         }
 
-        /* Minigame Selection Styles */
         .minigame-selection-card {
             background: var(--mission-card-bg);
             border: 1px solid var(--mission-card-border);
@@ -1601,25 +1508,27 @@ function updateFirebaseStatus() {
                         </div>
                     </div>
                 </div>
-<div style="background: var(--mission-card-bg); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
-    <h4 style="margin-bottom: 15px; color: var(--text-color);">🔥 실시간 공유 설정</h4>
-    <div style="background: var(--chat-messages-bg); padding: 15px; border-radius: 10px;">
-        <p style="color: var(--text-color); margin-bottom: 15px; font-size: 14px;">
-            <strong id="firebaseStatus">🔧 설정 필요:</strong> 
-            <span id="firebaseStatusText">Firebase 설정을 완료하면 공지사항, 채팅, QT노트를 다른 사용자와 실시간으로 공유할 수 있습니다.</span>
-        </p>
-        <details style="color: var(--text-color); font-size: 12px;">
-            <summary style="cursor: pointer; margin-bottom: 10px;">Firebase 설정 방법 보기</summary>
-            <ol style="padding-left: 20px; line-height: 1.6;">
-                <li>Firebase 콘솔(console.firebase.google.com)에서 새 프로젝트 생성</li>
-                <li>Realtime Database 활성화</li>
-                <li>프로젝트 설정에서 웹 앱 추가</li>
-                <li>생성된 config 객체를 JavaScript 코드의 firebaseConfig에 복사</li>
-                <li>페이지 새로고침하면 실시간 공유 기능 활성화!</li>
-            </ol>
-        </details>
-    </div>
-</div>
+                
+                <div style="background: var(--mission-card-bg); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
+                    <h4 style="margin-bottom: 15px; color: var(--text-color);">🔥 실시간 공유 설정</h4>
+                    <div style="background: var(--chat-messages-bg); padding: 15px; border-radius: 10px;">
+                        <p style="color: var(--text-color); margin-bottom: 15px; font-size: 14px;">
+                            <strong id="firebaseStatus">🔧 설정 필요:</strong> 
+                            <span id="firebaseStatusText">Firebase 설정을 완료하면 공지사항, 채팅, QT노트를 다른 사용자와 실시간으로 공유할 수 있습니다.</span>
+                        </p>
+                        <details style="color: var(--text-color); font-size: 12px;">
+                            <summary style="cursor: pointer; margin-bottom: 10px;">Firebase 설정 방법 보기</summary>
+                            <ol style="padding-left: 20px; line-height: 1.6;">
+                                <li>Firebase 콘솔(console.firebase.google.com)에서 새 프로젝트 생성</li>
+                                <li>Realtime Database 활성화</li>
+                                <li>프로젝트 설정에서 웹 앱 추가</li>
+                                <li>생성된 config 객체를 JavaScript 코드의 firebaseConfig에 복사</li>
+                                <li>페이지 새로고침하면 실시간 공유 기능 활성화!</li>
+                            </ol>
+                        </details>
+                    </div>
+                </div>
+                
                 <div style="background: var(--mission-card-bg); border-radius: 15px; padding: 20px; margin-bottom: 20px;">
                     <h4 style="margin-bottom: 15px; color: var(--text-color);">🎨 테마 설정</h4>
                     <div class="theme-toggle-container">
@@ -1753,6 +1662,93 @@ function updateFirebaseStatus() {
     </div>
     
     <script>
+        // --- Firebase Configuration ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyCuMttZg-PO-U7rk1kcDswRDfyUoo7pSF0",
+            authDomain: "blue-wind-school.firebaseapp.com",
+            databaseURL: "https://blue-wind-school-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "blue-wind-school",
+            storageBucket: "blue-wind-school.firebasestorage.app",
+            messagingSenderId: "321228765213",
+            appId: "1:321228765213:web:748d27515e2f14c3076ef4"
+        };
+
+        // Firebase 초기화
+        let database = null;
+        let isFirebaseEnabled = false;
+
+        function initFirebase() {
+            try {
+                // 실제 Firebase 설정이 있는지 확인
+                if (firebaseConfig.apiKey !== "demo-api-key") {
+                    firebase.initializeApp(firebaseConfig);
+                    database = firebase.database();
+                    isFirebaseEnabled = true;
+                    console.log("Firebase 연결 성공!");
+                    
+                    // 실시간 리스너 설정
+                    setupFirebaseListeners();
+                    showNotification("🔥 실시간 공유 기능이 활성화되었습니다!");
+                    updateFirebaseStatus();
+                } else {
+                    console.log("Firebase 설정이 필요합니다. 로컬 모드로 실행됩니다.");
+                    showNotification("📱 로컬 모드로 실행됩니다. Firebase 설정 시 실시간 공유가 가능합니다.");
+                    updateFirebaseStatus();
+                }
+            } catch (error) {
+                console.error("Firebase 초기화 실패:", error);
+                isFirebaseEnabled = false;
+                showNotification("⚠️ 실시간 공유 기능을 사용할 수 없습니다. 로컬 모드로 실행됩니다.");
+                updateFirebaseStatus();
+            }
+        }
+
+        function setupFirebaseListeners() {
+            if (!isFirebaseEnabled) return;
+
+            // 공지사항 실시간 리스너
+            database.ref('notices').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    notices = Object.values(data);
+                    updateNotices();
+                }
+            });
+
+            // 채팅 메시지 실시간 리스너
+            database.ref('chatMessages').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    chatMessages = Object.values(data);
+                    if (document.getElementById('guildMessages')) {
+                        updateChatMessages('guild');
+                    }
+                }
+            });
+
+            // QT 노트 실시간 리스너
+            database.ref('qtNotes').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    qtNotes = Object.values(data);
+                    updateQTNotes();
+                }
+            });
+        }
+
+        function updateFirebaseStatus() {
+            const statusElement = document.getElementById('firebaseStatus');
+            const statusTextElement = document.getElementById('firebaseStatusText');
+            
+            if (isFirebaseEnabled) {
+                if (statusElement) statusElement.textContent = '🔥 연결됨:';
+                if (statusTextElement) statusTextElement.textContent = '실시간 공유 기능이 활성화되어 있습니다. 공지사항, 채팅, QT노트가 모든 사용자와 실시간으로 동기화됩니다!';
+            } else {
+                if (statusElement) statusElement.textContent = '🔧 설정 필요:';
+                if (statusTextElement) statusTextElement.textContent = 'Firebase 설정을 완료하면 공지사항, 채팅, QT노트를 다른 사용자와 실시간으로 공유할 수 있습니다.';
+            }
+        }
+
         // --- Global State Variables ---
         let userLevel, userExp, userStreak, completedMissions, userName, userAvatar, userJob, userBadges, completedStages;
         let guildLevel, guildExp;
@@ -1762,12 +1758,12 @@ function updateFirebaseStatus() {
         let notices = [];
         let qtNotes = [];
         let editingQTNote = null;
-        let pendingQTAction = null; // { type: 'qtNote' | 'comment', action: 'edit' | 'delete', noteId: ..., commentId: ... (if comment) }
-        let currentTheme = 'light-mode'; // Default theme
-        let quizCompletedPerStage = {}; // Track quiz completion for each stage
-        let completedIcebreakers = []; // Array of stage numbers for which icebreaker is completed, now stores answers
-        let miniGameCompletedToday = false; // Track if the overall mini-game mission is completed today
-        let miniGameProgress = {}; // Tracks completion of individual mini-games for the day
+        let pendingQTAction = null;
+        let currentTheme = 'light-mode';
+        let quizCompletedPerStage = {};
+        let completedIcebreakers = [];
+        let miniGameCompletedToday = false;
+        let miniGameProgress = {};
 
         // 메모리 기반 저장소 (localStorage 대체)
         let memoryStorage = {};
@@ -1824,7 +1820,6 @@ function updateFirebaseStatus() {
         }
 
         // --- Data Definitions ---
-
         const scriptures = [
             { text: "내 안에 머물러 있어라. 그리하면 나도 너희 안에 머물러 있겠다. 가지가 포도나무에 붙어 있지 아니하면 스스로 열매를 맺을 수 없는 것과 같이, 너희도 내 안에 머물러 있지 아니하면 열매를 맺을 수 없다.", reference: "요한복음 15:4" },
             { text: "나는 참 포도나무요, 내 아버지는 농부이시다.", reference: "요한복음 15:1" },
@@ -1833,7 +1828,7 @@ function updateFirebaseStatus() {
             { text: "사람은 마음으로 믿어서 의에 이르고, 입으로 고백해서 구원에 이르게 됩니다.", reference: "로마서 10:10" }
         ];
 
-        // New Quiz Questions (Church-themed)
+        // Quiz Questions
         const quizQuestions = [
             {
                 question: "교회의 머리는 누구신가요?",
@@ -1869,7 +1864,7 @@ function updateFirebaseStatus() {
                 icebreaker: {
                     prompt: "1강을 시작하기 전에, '패치'라는 단어를 들으면 어떤 생각이 드나요? 신앙생활에서 '패치'가 필요하다고 느낀 적이 있나요?"
                 },
-                hasQuiz: false, // Quiz removed from Stage 1
+                hasQuiz: false,
                 lessons: [
                     {
                         icon: "🛡️",
@@ -1909,7 +1904,7 @@ function updateFirebaseStatus() {
                 icebreaker: {
                     prompt: "2강을 시작하기 전에, '길드'라는 단어를 들으면 어떤 생각이 드나요? 신앙 공동체가 '길드'처럼 느껴진 적이 있나요?"
                 },
-                hasQuiz: false, // This stage does not have a quiz
+                hasQuiz: false,
                 lessons: [
                     {
                         icon: "🎯",
@@ -1939,7 +1934,7 @@ function updateFirebaseStatus() {
                 icebreaker: {
                     prompt: "3강을 시작하기 전에, '실전'이라는 단어를 들으면 어떤 생각이 드나요? 나의 신앙이 '실전'에 강하다고 생각하나요?"
                 },
-                hasQuiz: false, // This stage does not have a quiz
+                hasQuiz: false,
                 lessons: [
                     {
                         icon: "📖→🌍",
@@ -1974,7 +1969,6 @@ function updateFirebaseStatus() {
         }
 
         // --- Core App Functions ---
-
         function showTab(tabName, navElement) {
             document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
             document.querySelectorAll('.nav-item').forEach(nav => nav.classList.remove('active'));
@@ -1984,11 +1978,10 @@ function updateFirebaseStatus() {
 
             if (tabName === 'stages') {
                 backToStages();
-                updateIcebreakerRecordsDisplay(); // Update records when stages tab is shown
+                updateIcebreakerRecordsDisplay();
             }
             if (tabName === 'guild') {
                 updateQTNotes();
-                // Directly show guild chat when guild tab is active
                 const guildChatContainer = document.getElementById('guild-chat-container');
                 if (guildChatContainer) {
                     guildChatContainer.innerHTML = createChatInterface('guild');
@@ -2013,7 +2006,7 @@ function updateFirebaseStatus() {
             let contentHtml = `<h3 style="margin-bottom: 20px; color: var(--lesson-title-color);">${stageData.title}</h3>`;
 
             // 1. Icebreaker Section
-            if (stageData.icebreaker && !completedIcebreakers.some(item => item.stage === stageNumber)) { // Check if icebreaker for this stage is completed
+            if (stageData.icebreaker && !completedIcebreakers.some(item => item.stage === stageNumber)) {
                 contentHtml += `
                     <div class="icebreaker-section" id="icebreaker-section-${stageNumber}">
                         <div class="modal-title">아이스브레이크</div>
@@ -2025,7 +2018,6 @@ function updateFirebaseStatus() {
             }
 
             // 2. Lessons and Discussion Questions
-            // Only show lessons and discussion if icebreaker is completed
             if (!stageData.icebreaker || completedIcebreakers.some(item => item.stage === stageNumber)) {
                 contentHtml += stageData.lessons.map(lesson => `
                     <div class="lesson-container">
@@ -2051,7 +2043,7 @@ function updateFirebaseStatus() {
 
             if (completedStages.includes(stageNumber)) {
                 contentHtml += `<div class="stage-completed-notice">✔️ 이 스테이지를 완료했습니다!</div>`;
-            } else if (!stageData.icebreaker || completedIcebreakers.some(item => item.stage === stageNumber)) { // Only show complete button if icebreaker is done
+            } else if (!stageData.icebreaker || completedIcebreakers.some(item => item.stage === stageNumber)) {
                 contentHtml += `<button id="complete-stage-btn" class="modal-button primary" style="width:100%; margin-top:20px; background-color: #28a745;" onclick="completeStage(${stageNumber})">스테이지 완료 및 보상 받기 🏆</button>`;
             }
             
@@ -2061,13 +2053,10 @@ function updateFirebaseStatus() {
             document.querySelector('.content').scrollTop = 0;
         }
 
-        // Internal function to render just the main content (lessons, discussion, complete button)
-        // This is called after icebreaker is handled
         function _renderStageMainContent(stageNumber) {
             const stageData = stageContents[stageNumber];
             let contentHtml = `<h3 style="margin-bottom: 20px; color: var(--lesson-title-color);">${stageData.title}</h3>`;
 
-            // Render lessons and discussion only if icebreaker is completed
             if (!stageData.icebreaker || completedIcebreakers.some(item => item.stage === stageNumber)) {
                 contentHtml += stageData.lessons.map(lesson => `
                     <div class="lesson-container">
@@ -2093,7 +2082,7 @@ function updateFirebaseStatus() {
 
             if (completedStages.includes(stageNumber)) {
                 contentHtml += `<div class="stage-completed-notice">✔️ 이 스테이지를 완료했습니다!</div>`;
-            } else if (!stageData.icebreaker || completedIcebreakers.some(item => item.stage === stageNumber)) { // Only show complete button if icebreaker is done
+            } else if (!stageData.icebreaker || completedIcebreakers.some(item => item.stage === stageNumber)) {
                 contentHtml += `<button id="complete-stage-btn" class="modal-button primary" style="width:100%; margin-top:20px; background-color: #28a745;" onclick="completeStage(${stageNumber})">스테이지 완료 및 보상 받기 🏆</button>`;
             }
 
@@ -2101,30 +2090,28 @@ function updateFirebaseStatus() {
             stageContentElement.innerHTML = contentHtml;
             document.querySelector('.content').scrollTop = 0;
         }
-
 
         function backToStages() {
             document.getElementById('stage-detail').classList.add('hidden');
             document.getElementById('stage-list').classList.remove('hidden');
             currentStage = null;
-            updateIcebreakerRecordsDisplay(); // Update records when going back to stage list
+            updateIcebreakerRecordsDisplay();
         }
 
         function completeStage(stageNumber) {
             if (completedStages.includes(stageNumber)) return;
 
             const stageData = stageContents[stageNumber];
-            let levelGain = 3000; // 모든 스테이지 완료 시 3000레벨 증가
-            let itemName = stageData.item || '특별한 아이템'; // 스테이지별 아이템 이름
+            let levelGain = 3000;
+            let itemName = stageData.item || '특별한 아이템';
 
-            grantBadge(`${itemName} 획득`); // 아이템 획득 뱃지 부여
+            grantBadge(`${itemName} 획득`);
             addExperience(levelGain, `🎉 스테이지 ${stageNumber} 완료! ${itemName} 획득! 레벨 +${levelGain}!`);
             completedStages.push(stageNumber);
             
             const button = document.getElementById('complete-stage-btn');
             if (button) {
                 button.remove();
-                // 스테이지 완료 후 다시 콘텐츠를 로드하여 완료 메시지 표시
                 _renderStageMainContent(stageNumber); 
             }
 
@@ -2132,16 +2119,12 @@ function updateFirebaseStatus() {
             saveProgress();
         }
 
-        // Modified togglePrayerTime function
         function togglePrayerTime(timeSlot, element) {
             if (prayerTimes[timeSlot]) {
-                // Already completed, un-complete it
                 prayerTimes[timeSlot] = false;
                 element.classList.remove('completed');
                 showNotification(`${timeSlot} 기도 취소! 🙏`);
-                // Optionally, deduct EXP or revert badge if desired. For now, just UI.
             } else {
-                // Not completed, complete it
                 prayerTimes[timeSlot] = true;
                 element.classList.add('completed');
                 
@@ -2157,7 +2140,7 @@ function updateFirebaseStatus() {
                 addExperience(expGain, message);
                 grantBadge('첫 기도');
                 
-                if (prayerTimes.morning && prayerTimes.noon && prayerTimes.evening) { // Fixed typo: prayerTimes.timeslot -> prayerTimes.evening
+                if (prayerTimes.morning && prayerTimes.noon && prayerTimes.evening) {
                     setTimeout(() => {
                         addExperience(50, '🎉 10-10-10 기도법 완주! 보너스 경험치 +50!');
                         grantBadge('10-10-10 마스터');
@@ -2213,17 +2196,14 @@ function updateFirebaseStatus() {
 
         // --- UI and Utility Functions ---
         function updateUI() {
-            // Update job title based on level
             userJob = getUserJobTitle(userLevel);
             
-            // Header
             document.getElementById('userName').textContent = userName;
             document.getElementById('headerAvatar').textContent = userAvatar;
             document.getElementById('userLevel').textContent = userLevel;
             document.getElementById('userExp').textContent = userExp;
             document.getElementById('userStreak').textContent = userStreak;
             
-            // Profile Tab
             document.getElementById('profileUserName').textContent = userName;
             document.getElementById('profileAvatar').textContent = userAvatar;
             document.getElementById('profileLevel').textContent = userLevel;
@@ -2231,7 +2211,6 @@ function updateFirebaseStatus() {
             document.getElementById('profileStreak').textContent = userStreak;
             document.getElementById('completedMissionsCount').textContent = completedMissions;
             
-            // Guild Tab
             document.getElementById('guildUserName').textContent = userName;
             document.getElementById('guildUserAvatar').textContent = userAvatar;
             document.getElementById('guildUserLevel').textContent = userLevel;
@@ -2240,7 +2219,6 @@ function updateFirebaseStatus() {
             document.getElementById('guildLevel').textContent = guildLevel;
             document.getElementById('guildExp').textContent = guildExp;
             
-            // Badges
             const badgeContainer = document.getElementById('badge-container');
             if(userBadges.length > 0) {
                 badgeContainer.innerHTML = userBadges.map(b => `<span>${b}</span>`).join('');
@@ -2250,9 +2228,7 @@ function updateFirebaseStatus() {
         }
         
         function resetMissionUI() {
-            // Reset prayer slots
             document.querySelectorAll('.prayer-time-slot').forEach(slot => slot.classList.remove('completed'));
-            // Reset mission buttons
             document.querySelectorAll('.mission-button').forEach(btn => {
                 btn.disabled = false;
                 if(btn.id === 'mission-btn-worship') btn.textContent = '참여 완료';
@@ -2261,8 +2237,8 @@ function updateFirebaseStatus() {
             });
             document.getElementById('mission-btn-scripture').style.display = 'inline-block';
             document.getElementById('scripture-container').innerHTML = '';
-            document.getElementById('minigame-selection-container').innerHTML = ''; // Clear mini-game selection
-            document.getElementById('guild-chat-container').innerHTML = ''; // Clear guild tab chat
+            document.getElementById('minigame-selection-container').innerHTML = '';
+            document.getElementById('guild-chat-container').innerHTML = '';
         }
 
         function showNotification(message) {
@@ -2282,13 +2258,12 @@ function updateFirebaseStatus() {
                     userName, userAvatar, userJob, userLevel, userExp, userStreak,
                     completedMissions, userBadges, completedStages, guildLevel, guildExp, 
                     chatMessages, prayerTimes, notices, qtNotes, currentTheme,
-                    quizCompletedPerStage, completedIcebreakers, miniGameCompletedToday, miniGameProgress, // Save new states
+                    quizCompletedPerStage, completedIcebreakers, miniGameCompletedToday, miniGameProgress,
                     lastLogin: new Date().toDateString()
                 };
                 
                 const success = safeSetItem('blueWindProgress', JSON.stringify(data));
                 if (!success && !isLocalStorageAvailable()) {
-                    // localStorage 사용 불가 시 한 번만 알림
                     if (!memoryStorage._warningShown) {
                         showNotification('브라우저 설정으로 인해 데이터가 세션 동안만 유지됩니다. 📝');
                         memoryStorage._warningShown = true;
@@ -2319,11 +2294,11 @@ function updateFirebaseStatus() {
                     chatMessages = data.chatMessages || [];
                     notices = data.notices || [];
                     qtNotes = data.qtNotes || [];
-                    currentTheme = data.currentTheme || 'light-mode'; // Load theme
-                    quizCompletedPerStage = data.quizCompletedPerStage || {}; // Load quiz completion per stage
-                    completedIcebreakers = data.completedIcebreakers || []; // Load icebreaker completion
-                    miniGameCompletedToday = data.miniGameCompletedToday || false; // Load mini-game completion
-                    miniGameProgress = data.miniGameProgress || {}; // Load individual mini-game progress
+                    currentTheme = data.currentTheme || 'light-mode';
+                    quizCompletedPerStage = data.quizCompletedPerStage || {};
+                    completedIcebreakers = data.completedIcebreakers || [];
+                    miniGameCompletedToday = data.miniGameCompletedToday || false;
+                    miniGameProgress = data.miniGameProgress || {};
 
                     const today = new Date().toDateString();
                     const lastLogin = data.lastLogin || today;
@@ -2341,22 +2316,17 @@ function updateFirebaseStatus() {
                             userStreak = 1;
                         }
                         prayerTimes = { morning: false, noon: false, evening: false };
-                        miniGameCompletedToday = false; // Reset daily mini-game mission
-                        miniGameProgress = { bibleVerseFill: false, characterGuess: false, trueFalse: false, wordOrder: false, bibleNumber: false }; // Reset individual mini-game progress
+                        miniGameCompletedToday = false;
+                        miniGameProgress = { bibleVerseFill: false, characterGuess: false, trueFalse: false, wordOrder: false, bibleNumber: false };
                     } else {
                         prayerTimes = data.prayerTimes || { morning: false, noon: false, evening: false };
-                        // Ensure miniGameProgress is initialized if it was missing in old saves
                         if (Object.keys(miniGameProgress).length === 0 && miniGameCompletedToday) {
-                             // If miniGameCompletedToday is true but progress is empty, it means it was completed
-                             // before individual game tracking was added. Assume all are complete.
                              miniGameProgress = { bibleVerseFill: true, characterGuess: true, trueFalse: true, wordOrder: true, bibleNumber: true };
                         } else if (Object.keys(miniGameProgress).length === 0) {
-                            // If it's a new day or new user, initialize to all false
                             miniGameProgress = { bibleVerseFill: false, characterGuess: false, trueFalse: false, wordOrder: false, bibleNumber: false };
                         }
                     }
 
-                    // DOM이 로드된 후에 기도 시간 상태 업데이트
                     setTimeout(() => {
                         Object.keys(prayerTimes).forEach(timeSlot => {
                             if (prayerTimes[timeSlot]) {
@@ -2374,7 +2344,6 @@ function updateFirebaseStatus() {
                 setInitialState();
             }
             
-            // Apply theme after loading
             document.body.className = currentTheme;
             updateUI();
             updateNotices();
@@ -2398,12 +2367,11 @@ function updateFirebaseStatus() {
             notices = [];
             qtNotes = [];
             currentTheme = 'light-mode';
-            quizCompletedPerStage = {}; // Initialize as empty object
+            quizCompletedPerStage = {};
             completedIcebreakers = [];
             miniGameCompletedToday = false;
-            miniGameProgress = { bibleVerseFill: false, characterGuess: false, trueFalse: false, wordOrder: false, bibleNumber: false }; // Initialize all to false
+            miniGameProgress = { bibleVerseFill: false, characterGuess: false, trueFalse: false, wordOrder: false, bibleNumber: false };
             
-            // 초기 상태 저장 시도
             try {
                 saveProgress();
             } catch (error) {
@@ -2417,51 +2385,54 @@ function updateFirebaseStatus() {
             document.getElementById('noticePassword').focus();
         }
 
+        function closeNoticeModal() {
+            document.getElementById('noticeModal').style.display = 'none';
+        }
+
         function createNotice() {
-    const password = document.getElementById('noticePassword').value;
-    const title = document.getElementById('noticeTitle').value.trim();
-    const content = document.getElementById('noticeContent').value.trim();
+            const password = document.getElementById('noticePassword').value;
+            const title = document.getElementById('noticeTitle').value.trim();
+            const content = document.getElementById('noticeContent').value.trim();
 
-    if (password !== '0000') {
-        showNotification('관리자 비밀번호가 틀렸습니다! ❌');
-        return;
-    }
+            if (password !== '0000') {
+                showNotification('관리자 비밀번호가 틀렸습니다! ❌');
+                return;
+            }
 
-    if (!title || !content) {
-        showNotification('제목과 내용을 모두 입력해주세요!');
-        return;
-    }
+            if (!title || !content) {
+                showNotification('제목과 내용을 모두 입력해주세요!');
+                return;
+            }
 
-    const notice = {
-        id: Date.now(),
-        title: title,
-        content: content,
-        date: new Date().toLocaleDateString('ko-KR'),
-        author: userName
-    };
+            const notice = {
+                id: Date.now(),
+                title: title,
+                content: content,
+                date: new Date().toLocaleDateString('ko-KR'),
+                author: userName
+            };
 
-    if (isFirebaseEnabled) {
-        // Firebase에 공지사항 저장 (실시간 공유)
-        database.ref('notices').push(notice)
-            .then(() => {
-                showNotification('공지사항이 모든 사용자에게 실시간으로 공유되었습니다! 📢🔥');
-            })
-            .catch((error) => {
-                console.error('Firebase 저장 실패:', error);
-                showNotification('공지사항 저장에 실패했습니다. 로컬에만 저장됩니다.');
+            if (isFirebaseEnabled) {
+                database.ref('notices').push(notice)
+                    .then(() => {
+                        showNotification('공지사항이 모든 사용자에게 실시간으로 공유되었습니다! 📢🔥');
+                    })
+                    .catch((error) => {
+                        console.error('Firebase 저장 실패:', error);
+                        showNotification('공지사항 저장에 실패했습니다. 로컬에만 저장됩니다.');
+                        notices = [notice];
+                        updateNotices();
+                        saveProgress();
+                    });
+            } else {
                 notices = [notice];
                 updateNotices();
+                showNotification('공지사항이 등록되었습니다! 📢 (로컬 모드)');
                 saveProgress();
-            });
-    } else {
-        notices = [notice];
-        updateNotices();
-        showNotification('공지사항이 등록되었습니다! 📢 (로컬 모드)');
-        saveProgress();
-    }
+            }
 
-    closeNoticeModal();
-}
+            closeNoticeModal();
+        }
 
         function updateNotices() {
             const container = document.getElementById('notices-container');
@@ -2472,7 +2443,6 @@ function updateFirebaseStatus() {
                     </div>
                 `;
             } else {
-                // 최신 공지사항 1개만 표시
                 const notice = notices[0];
                 container.innerHTML = `
                     <div class="notice-card">
@@ -2513,14 +2483,12 @@ function updateFirebaseStatus() {
             }
 
             if (editingQTNote) {
-                // 수정 모드
                 editingQTNote.title = title;
                 editingQTNote.content = content;
-                editingQTNote.password = password; // 비밀번호도 업데이트 가능
+                editingQTNote.password = password;
                 editingQTNote.date = new Date().toLocaleDateString('ko-KR');
                 showNotification('QT 노트가 수정되었습니다! ✏️');
             } else {
-                // 새 작성 모드
                 const qtNote = {
                     id: Date.now(),
                     title: title,
@@ -2529,8 +2497,8 @@ function updateFirebaseStatus() {
                     author: userName,
                     date: new Date().toLocaleDateString('ko-KR'),
                     likes: 0,
-                    likedBy: [], // 좋아요 누른 사용자 닉네임 목록
-                    comments: [] // Initialize comments array
+                    likedBy: [],
+                    comments: []
                 };
                 qtNotes.unshift(qtNote);
                 showNotification('QT 노트가 작성되었습니다! 📝');
@@ -2604,12 +2572,10 @@ function updateFirebaseStatus() {
             if (!note) return;
 
             if (note.likedBy.includes(userName)) {
-                // 좋아요 취소
                 note.likedBy = note.likedBy.filter(name => name !== userName);
                 note.likes--;
                 showNotification('좋아요를 취소했습니다 💔');
             } else {
-                // 좋아요 추가
                 note.likedBy.push(userName);
                 note.likes++;
                 showNotification('좋아요를 눌렀습니다! ❤️');
@@ -2619,7 +2585,26 @@ function updateFirebaseStatus() {
             saveProgress();
         }
 
-        // --- Comment Functions ---
+        function editQTNote(noteId) {
+            const note = qtNotes.find(n => n.id === noteId);
+            if (!note) return;
+
+            pendingQTAction = { type: 'qtNote', action: 'edit', noteId: noteId };
+            document.getElementById('passwordModalText').textContent = 'QT 노트를 수정하려면 비밀번호를 입력하세요:';
+            document.getElementById('qtPasswordModal').style.display = 'flex';
+            document.getElementById('qtActionPassword').focus();
+        }
+
+        function deleteQTNote(noteId) {
+            const note = qtNotes.find(n => n.id === noteId);
+            if (!note) return;
+
+            pendingQTAction = { type: 'qtNote', action: 'delete', noteId: noteId };
+            document.getElementById('passwordModalText').textContent = 'QT 노트를 삭제하려면 비밀번호를 입력하세요:';
+            document.getElementById('qtPasswordModal').style.display = 'flex';
+            document.getElementById('qtActionPassword').focus();
+        }
+
         function addComment(noteId) {
             const note = qtNotes.find(n => n.id === noteId);
             if (!note) return;
@@ -2675,12 +2660,11 @@ function updateFirebaseStatus() {
             document.getElementById('qtActionPassword').focus();
         }
 
-        // Modified confirmQTAction to handle both QT notes and comments
         function confirmQTAction() {
             if (!pendingQTAction) return;
 
             const password = document.getElementById('qtActionPassword').value;
-            let targetItem = null; // Either a QT note or a comment
+            let targetItem = null;
 
             if (pendingQTAction.type === 'qtNote') {
                 targetItem = qtNotes.find(n => n.id === pendingQTAction.noteId);
@@ -2693,7 +2677,7 @@ function updateFirebaseStatus() {
 
             if (!targetItem || targetItem.password !== password) {
                 showNotification('비밀번호가 틀렸습니다! ❌');
-                document.getElementById('qtActionPassword').value = ''; // Clear password on wrong attempt
+                document.getElementById('qtActionPassword').value = '';
                 return;
             }
 
@@ -2719,7 +2703,7 @@ function updateFirebaseStatus() {
 
                 if (pendingQTAction.action === 'edit') {
                     const newContent = prompt('새로운 댓글 내용을 입력하세요:', targetItem.content);
-                    if (newContent !== null) { // User didn't cancel
+                    if (newContent !== null) {
                         targetItem.content = newContent.trim();
                         targetItem.time = new Date().toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' }) + ' (수정됨)';
                         showNotification('댓글이 수정되었습니다! ✏️');
@@ -2733,7 +2717,7 @@ function updateFirebaseStatus() {
             }
 
             closeQTPasswordModal();
-            document.getElementById('qtActionPassword').value = ''; // Clear password after successful action
+            document.getElementById('qtActionPassword').value = '';
         }
 
         function closeQTPasswordModal() {
@@ -2753,13 +2737,6 @@ function updateFirebaseStatus() {
         }
 
         // --- Chat Functions ---
-        // showGuildChat is now implicitly handled by showTab('guild', ...)
-        // and its content is directly injected.
-        function showGuildChat() {
-            // This function is no longer needed as chat is direct on guild tab
-            showTab('guild', document.querySelector('.nav-item:nth-child(3)')); // Activate guild tab
-        }
-        
         function createChatInterface(prefix) {
             return `
                 <div class="chat-container">
@@ -2806,7 +2783,7 @@ function updateFirebaseStatus() {
             const file = event.target.files[0];
             if (!file) return;
 
-            if (file.size > 5 * 1024 * 1024) { // 5MB 제한
+            if (file.size > 5 * 1024 * 1024) {
                 showNotification('이미지 크기는 5MB 이하만 업로드 가능합니다! 📷');
                 return;
             }
@@ -2825,19 +2802,17 @@ function updateFirebaseStatus() {
                 });
                 
                 if (document.getElementById('chatMessages')) updateChatMessages('chat');
-                if (document.getElementById('guildMessages')) updateChatMessages('guild'); // Changed to guildMessages for guild chat
+                if (document.getElementById('guildMessages')) updateChatMessages('guild');
                 
                 showNotification('사진이 업로드되었습니다! 📷');
                 saveProgress();
             };
             reader.readAsDataURL(file);
             
-            // 파일 입력 초기화
             event.target.value = '';
         }
 
         function showImageModal(imageSrc) {
-            // 이미지 확대 보기 모달 생성
             const existingModal = document.getElementById('imageViewModal');
             if (existingModal) existingModal.remove();
 
@@ -2857,7 +2832,6 @@ function updateFirebaseStatus() {
             
             document.body.appendChild(modal);
             
-            // 모달 배경 클릭으로 닫기
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) closeImageModal();
             });
@@ -2869,47 +2843,47 @@ function updateFirebaseStatus() {
         }
 
         function sendMessage(prefix) {
-    const input = document.getElementById(`${prefix}Input`);
-    const message = input.value.trim();
-    if (message) {
-        const now = new Date();
-        const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
-        
-        const messageData = { 
-            id: Date.now(),
-            sender: userName, 
-            avatar: userAvatar, 
-            message: message, 
-            time: timeString,
-            timestamp: now.getTime()
-        };
+            const input = document.getElementById(`${prefix}Input`);
+            const message = input.value.trim();
+            if (message) {
+                const now = new Date();
+                const timeString = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+                
+                const messageData = { 
+                    id: Date.now(),
+                    sender: userName, 
+                    avatar: userAvatar, 
+                    message: message, 
+                    time: timeString,
+                    timestamp: now.getTime()
+                };
 
-        if (isFirebaseEnabled) {
-            database.ref('chatMessages').push(messageData)
-                .then(() => {
-                    console.log('메시지가 실시간으로 공유되었습니다!');
-                })
-                .catch((error) => {
-                    console.error('Firebase 메시지 저장 실패:', error);
+                if (isFirebaseEnabled) {
+                    database.ref('chatMessages').push(messageData)
+                        .then(() => {
+                            console.log('메시지가 실시간으로 공유되었습니다!');
+                        })
+                        .catch((error) => {
+                            console.error('Firebase 메시지 저장 실패:', error);
+                            chatMessages.push(messageData);
+                            if (document.getElementById('guildMessages')) updateChatMessages('guild');
+                            saveProgress();
+                        });
+                } else {
                     chatMessages.push(messageData);
                     if (document.getElementById('guildMessages')) updateChatMessages('guild');
                     saveProgress();
-                });
-        } else {
-            chatMessages.push(messageData);
-            if (document.getElementById('guildMessages')) updateChatMessages('guild');
-            saveProgress();
-        }
+                }
 
-        input.value = '';
-    }
-}
+                input.value = '';
+            }
+        }
 
         function handleChatKeyPress(event, prefix) {
             if (event.key === 'Enter') sendMessage(prefix);
         }
 
-        // --- Quiz Functions (for home tab quiz mission) ---
+        // --- Quiz Functions ---
         let currentQuizIndex = 0;
 
         function startQuiz() {
@@ -2923,7 +2897,7 @@ function updateFirebaseStatus() {
 
             currentQuizIndex = 0;
             displayQuizQuestion();
-            document.getElementById('minigameModal').style.display = 'flex'; // Use minigameModal for quiz
+            document.getElementById('minigameModal').style.display = 'flex';
         }
 
         function displayQuizQuestion() {
@@ -2931,7 +2905,6 @@ function updateFirebaseStatus() {
             const questionData = quizQuestions[currentQuizIndex];
 
             if (!questionData) {
-                // All questions answered
                 minigameContent.innerHTML = `
                     <div class="modal-title">퀴즈 완료!</div>
                     <p style="color: var(--text-color); margin-bottom: 20px;">모든 퀴즈를 완료했습니다. 대단해요! 🎉</p>
@@ -2959,7 +2932,7 @@ function updateFirebaseStatus() {
             if (selectedOption === questionData.answer) {
                 showNotification('정답입니다! 🥳');
                 currentQuizIndex++;
-                setTimeout(displayQuizQuestion, 500); // Show next question after a short delay
+                setTimeout(displayQuizQuestion, 500);
             } else {
                 showNotification('오답입니다. 다시 시도해보세요. 😔');
             }
@@ -2968,7 +2941,7 @@ function updateFirebaseStatus() {
         function completeQuizMission() {
             addExperience(50, '퀴즈 미션 완료! 지혜가 +50 증가했습니다! 🧠');
             grantBadge('퀴즈 마스터');
-            safeSetItem('lastQuizMissionDate', new Date().toDateString()); // Mark daily quiz mission complete
+            safeSetItem('lastQuizMissionDate', new Date().toDateString());
             
             const quizButton = document.getElementById('mission-btn-quiz');
             if (quizButton) {
@@ -2984,8 +2957,6 @@ function updateFirebaseStatus() {
         }
 
         // --- Icebreaker Functions ---
-        let currentIcebreakerStage = null;
-
         function completeIcebreaker(stageNumber) {
             const answer = document.getElementById(`icebreakerInput-${stageNumber}`).value.trim();
             if (!answer) {
@@ -2993,7 +2964,6 @@ function updateFirebaseStatus() {
                 return;
             }
 
-            // Update completedIcebreakers array
             const today = new Date().toLocaleDateString('ko-KR');
             let existingEntry = completedIcebreakers.find(item => item.stage === stageNumber);
             if (existingEntry) {
@@ -3002,18 +2972,15 @@ function updateFirebaseStatus() {
             } else {
                 completedIcebreakers.push({ stage: stageNumber, answer: answer, date: today });
             }
-            // Sort to ensure order in display
             completedIcebreakers.sort((a, b) => a.stage - b.stage);
 
             showNotification(`아이스브레이크 완료! 스테이지 ${stageNumber}의 문이 열렸습니다!`);
             saveProgress();
             
-            // After icebreaker, proceed to render main content
             _renderStageMainContent(stageNumber); 
-            updateIcebreakerRecordsDisplay(); // Update records display immediately
+            updateIcebreakerRecordsDisplay();
         }
 
-        // Function to display icebreaker records
         function updateIcebreakerRecordsDisplay() {
             const container = document.getElementById('icebreaker-records-container');
             if (!container) return;
@@ -3036,8 +3003,7 @@ function updateFirebaseStatus() {
             }
         }
 
-
-        // --- Mini-game Functions (for home tab) ---
+        // --- Mini-game Functions ---
         const miniGames = {
             'bibleVerseFill': {
                 name: '성경 구절 빈칸 채우기',
@@ -3091,9 +3057,9 @@ function updateFirebaseStatus() {
             }
         };
 
-        let currentMiniGameType = null; // Stores the type of the currently active mini-game
-        let currentMiniGameData = null; // Stores the specific data for the current mini-game instance
-        let miniGameRound = 0; // Tracks which data item is being used for games with multiple data points
+        let currentMiniGameType = null;
+        let currentMiniGameData = null;
+        let miniGameRound = 0;
 
         function showMinigameSelection() {
             const container = document.getElementById('minigame-selection-container');
@@ -3104,7 +3070,7 @@ function updateFirebaseStatus() {
                 return;
             }
 
-            minigameButton.style.display = 'none'; // Hide the main button
+            minigameButton.style.display = 'none';
 
             let selectionHtml = `
                 <div class="minigame-selection-card">
@@ -3129,7 +3095,7 @@ function updateFirebaseStatus() {
 
         function startMiniGame(gameType) {
             currentMiniGameType = gameType;
-            miniGameRound = 0; // Reset round for new game
+            miniGameRound = 0;
             displayMiniGame();
         }
 
@@ -3138,20 +3104,16 @@ function updateFirebaseStatus() {
             const gameInfo = miniGames[currentMiniGameType];
 
             if (!gameInfo || miniGameRound >= gameInfo.data.length) {
-                // All rounds for this game completed or no data
-                miniGameProgress[currentMiniGameType] = true; // Mark this game as completed
-                checkOverallMiniGameCompletion(); // Check if all 5 games are done
+                miniGameProgress[currentMiniGameType] = true;
+                checkOverallMiniGameCompletion();
                 showNotification(`${gameInfo.name} 게임 완료!`);
                 
-                // If all games are done, the mission button will be updated.
-                // Otherwise, go back to selection or show a message.
                 if (Object.values(miniGameProgress).every(status => status === true)) {
-                    document.getElementById('minigame-selection-container').innerHTML = ''; // Clear game area
+                    document.getElementById('minigame-selection-container').innerHTML = '';
                     document.getElementById('mission-btn-minigame').textContent = '완료!';
                     document.getElementById('mission-btn-minigame').disabled = true;
-                    document.getElementById('mission-btn-minigame').style.display = 'inline-block'; // Show main button again
+                    document.getElementById('mission-btn-minigame').style.display = 'inline-block';
                 } else {
-                    // If not all games are done, go back to selection screen
                     showMinigameSelection();
                 }
                 saveProgress();
@@ -3254,10 +3216,10 @@ function updateFirebaseStatus() {
                 showNotification('정답입니다! 🎉');
                 addExperience(miniGames[gameType].exp, `${miniGames[gameType].name} 완료! 경험치 +${miniGames[gameType].exp}!`);
                 miniGameRound++;
-                setTimeout(displayMiniGame, 500); // Go to next round or complete game
+                setTimeout(displayMiniGame, 500);
             } else {
                 showNotification('틀렸습니다. 다시 시도해보세요. 😔');
-                if (inputElement) inputElement.value = ''; // Clear input for another try
+                if (inputElement) inputElement.value = '';
             }
             saveProgress();
         }
@@ -3266,7 +3228,7 @@ function updateFirebaseStatus() {
             currentMiniGameType = null;
             currentMiniGameData = null;
             miniGameRound = 0;
-            showMinigameSelection(); // Go back to the game selection screen
+            showMinigameSelection();
         }
 
         function checkOverallMiniGameCompletion() {
@@ -3280,7 +3242,6 @@ function updateFirebaseStatus() {
                 saveProgress();
             }
         }
-
 
         // --- Modal Functions ---
         function showNameModal() {
@@ -3322,7 +3283,6 @@ function updateFirebaseStatus() {
                 } catch (error) {
                     console.error('데이터 삭제 실패:', error);
                 }
-                // 메모리 저장소도 초기화
                 memoryStorage = {};
                 
                 setInitialState();
@@ -3353,18 +3313,14 @@ function updateFirebaseStatus() {
 
         // --- App Initialization ---
         function initApp() {
-    try {
-        // Firebase 초기화 (먼저 실행)
-        initFirebase();
-        
-        loadProgress();
-        // ... 나머지 코드는 그대로
-                
+            try {
+                initFirebase();
+                loadProgress();
+                        
                 setTimeout(() => {
                     showNotification(`${userName}님, 푸른나라학교에 오신 것을 환영합니다! 🌟`);
                 }, 1000);
 
-                // Update home tab quiz button state
                 const lastQuizMissionDate = safeGetItem('lastQuizMissionDate');
                 const today = new Date().toDateString();
                 const quizButton = document.getElementById('mission-btn-quiz');
@@ -3381,7 +3337,6 @@ function updateFirebaseStatus() {
                     }
                 }
 
-                // Update home tab mini-game button state
                 const minigameButton = document.getElementById('mission-btn-minigame');
                 if (miniGameCompletedToday) {
                     if (minigameButton) {
@@ -3395,8 +3350,6 @@ function updateFirebaseStatus() {
                     }
                 }
 
-
-                // Modal close events
                 document.querySelectorAll('.modal').forEach(modal => {
                     modal.addEventListener('click', (e) => {
                         if (e.target === modal) {
@@ -3405,7 +3358,6 @@ function updateFirebaseStatus() {
                     });
                 });
 
-                // Keyboard events
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') {
                         document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
@@ -3434,7 +3386,6 @@ function updateFirebaseStatus() {
                             e.preventDefault();
                             confirmQTAction();
                         }
-                        // Inline minigame/icebreaker enter handling is within their specific functions
                     }
                 });
             } catch (error) {
@@ -3443,14 +3394,12 @@ function updateFirebaseStatus() {
             }
         }
 
-        // 페이지 로드 후 안전하게 초기화
         if (document.readyState === 'loading') {
             document.addEventListener('DOMContentLoaded', initApp);
         } else {
             initApp();
         }
 
-        // 데이터 저장을 안전하게 처리
         window.addEventListener('beforeunload', () => {
             try {
                 saveProgress();
