@@ -1464,22 +1464,25 @@
 
                 <h4 style="margin-bottom: 15px; color: var(--text-color);">🟢 현재 접속 중인 길드원</h4>
                 <div style="background: var(--mission-card-bg); border-radius: 15px; padding: 15px; margin-bottom: 15px;">
-                    <div style="display: flex; align-items: center; padding: 10px; margin-bottom: 8px; background: var(--chat-messages-bg); border-radius: 10px;">
-                        <div id="guildUserAvatar" style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid var(--modal-button-primary-bg); background: var(--modal-button-primary-bg); color: white;">🌟</div>
-                        <div style="flex: 1;">
-                            <div style="font-weight: bold; margin-bottom: 2px; color: var(--text-color);"><span id="guildUserName">푸른이</span> (나)</div>
-                            <div style="font-size: 12px; color: var(--text-color);">레벨 <span id="guildUserLevel">1</span> <span id="guildUserJob">푸른이</span> • <span id="guildUserStreak">1</span>일 연속 접속</div>
+                    <div class="guild-members-list">
+                        <!-- 온라인 사용자 목록이 여기에 표시됩니다 -->
+                        <div style="display: flex; align-items: center; padding: 10px; margin-bottom: 8px; background: var(--chat-messages-bg); border-radius: 10px;">
+                            <div id="guildUserAvatar" style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid var(--modal-button-primary-bg); background: var(--modal-button-primary-bg); color: white;">🌟</div>
+                            <div style="flex: 1;">
+                                <div style="font-weight: bold; margin-bottom: 2px; color: var(--text-color);"><span id="guildUserName">푸른이</span> (나)</div>
+                                <div style="font-size: 12px; color: var(--text-color);">레벨 <span id="guildUserLevel">1</span> <span id="guildUserJob">푸른이</span> • <span id="guildUserStreak">1</span>일 연속 접속</div>
+                            </div>
                         </div>
-                    </div>
-                    <div style="text-align: center; color: var(--text-color); padding: 20px;">
-                        <p>다른 길드원들이 접속하면 여기에 표시됩니다</p>
-                        <p>친구들을 초대해보세요! 🎉</p>
+                        <div style="text-align: center; color: var(--text-color); padding: 20px;">
+                            <p>다른 길드원들이 접속하면 여기에 표시됩니다</p>
+                            <p>친구들을 초대해보세요! 🎉</p>
+                        </div>
                     </div>
                 </div>
 
-                <div style="margin-top: 20px;">
-                    <!-- Guild chat is now always visible on this tab -->
-                    <div id="guild-chat-container" style="margin-top: 15px;"></div>
+                <h4 style="margin-bottom: 15px; color: var(--text-color);">💬 길드 채팅</h4>
+                <div id="guild-chat-container" style="margin-top: 15px;">
+                    <!-- 길드 채팅이 여기에 표시됩니다 -->
                 </div>
             </div>
 
@@ -1714,18 +1717,52 @@
                 const data = snapshot.val();
                 if (data) {
                     qtNotes = Object.values(data).sort((a, b) => b.id - a.id); // 최신순 정렬
-                    // QT노트가 업데이트되면 현재 길드 탭이 활성화되어 있을 때만 업데이트
-                    const activeTab = document.querySelector('.nav-item.active');
-                    if (activeTab && activeTab.textContent.includes('길드')) {
-                        updateQTNotes();
-                    }
                 } else {
                     qtNotes = [];
-                    if (document.querySelector('.nav-item.active')?.textContent.includes('길드')) {
-                        updateQTNotes();
-                    }
+                }
+                // 항상 QT노트 UI 업데이트 (탭과 상관없이)
+                updateQTNotes();
+            });
+
+            // 온라인 사용자 실시간 리스너
+            database.ref('onlineUsers').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    onlineUsers = data;
+                    updateOnlineUsers();
+                } else {
+                    onlineUsers = {};
+                    updateOnlineUsers();
                 }
             });
+
+            // 현재 사용자를 온라인 상태로 등록
+            const userOnlineRef = database.ref(`onlineUsers/${userName}`);
+            userOnlineRef.set({
+                name: userName,
+                avatar: userAvatar,
+                level: userLevel,
+                job: userJob,
+                streak: userStreak,
+                lastSeen: Date.now()
+            });
+
+            // 연결이 끊어질 때 사용자를 오프라인으로 설정
+            userOnlineRef.onDisconnect().remove();
+
+            // 5초마다 온라인 상태 업데이트
+            setInterval(() => {
+                if (isFirebaseEnabled) {
+                    userOnlineRef.update({
+                        name: userName,
+                        avatar: userAvatar,
+                        level: userLevel,
+                        job: userJob,
+                        streak: userStreak,
+                        lastSeen: Date.now()
+                    });
+                }
+            }, 5000);
         }
 
         function updateFirebaseStatus() {
@@ -1752,6 +1789,7 @@
         let completedIcebreakers = [];
         let miniGameCompletedToday = false;
         let miniGameProgress = {};
+        let onlineUsers = {}; // 온라인 사용자 추적
 
         // 메모리 기반 저장소 (localStorage 대체)
         let memoryStorage = {};
@@ -1969,13 +2007,17 @@
                 updateIcebreakerRecordsDisplay();
             }
             if (tabName === 'guild') {
-                // 길드 탭 활성화 시 QT노트와 채팅 업데이트
+                // 길드 탭 활성화 시 QT노트, 채팅, 온라인 사용자 업데이트
                 setTimeout(() => {
                     updateQTNotes();
+                    updateOnlineUsers();
+                    
                     const guildChatContainer = document.getElementById('guild-chat-container');
                     if (guildChatContainer) {
                         guildChatContainer.innerHTML = createChatInterface('guild');
-                        updateChatMessages('guild');
+                        setTimeout(() => {
+                            updateChatMessages('guild');
+                        }, 100);
                     }
                 }, 100);
             }
@@ -2216,6 +2258,69 @@
             } else {
                 badgeContainer.innerHTML = `<p style="color: var(--text-color); font-size: 14px;">아직 획득한 뱃지가 없습니다.</p>`;
             }
+
+            // Firebase에서 사용자 정보 업데이트
+            if (isFirebaseEnabled) {
+                const userOnlineRef = database.ref(`onlineUsers/${userName}`);
+                userOnlineRef.update({
+                    name: userName,
+                    avatar: userAvatar,
+                    level: userLevel,
+                    job: userJob,
+                    streak: userStreak,
+                    lastSeen: Date.now()
+                }).catch(error => console.log('사용자 정보 업데이트 실패:', error));
+            }
+        }
+
+        function updateOnlineUsers() {
+            // 길드 탭의 길드원 목록을 업데이트
+            const guildMembersContainer = document.querySelector('#guild-tab .guild-members-list');
+            if (!guildMembersContainer) return;
+
+            const now = Date.now();
+            const activeUsers = Object.values(onlineUsers).filter(user => 
+                (now - user.lastSeen) < 30000 // 30초 이내에 활동한 사용자만
+            );
+
+            let membersHtml = '';
+            
+            // 현재 사용자 먼저 표시
+            membersHtml += `
+                <div style="display: flex; align-items: center; padding: 10px; margin-bottom: 8px; background: var(--chat-messages-bg); border-radius: 10px;">
+                    <div style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid var(--modal-button-primary-bg); background: var(--modal-button-primary-bg); color: white;">${userAvatar}</div>
+                    <div style="flex: 1;">
+                        <div style="font-weight: bold; margin-bottom: 2px; color: var(--text-color);">${userName} (나)</div>
+                        <div style="font-size: 12px; color: var(--text-color);">레벨 ${userLevel} ${userJob} • ${userStreak}일 연속 접속</div>
+                    </div>
+                </div>
+            `;
+
+            // 다른 사용자들 표시
+            const otherUsers = activeUsers.filter(user => user.name !== userName);
+            otherUsers.forEach(user => {
+                membersHtml += `
+                    <div style="display: flex; align-items: center; padding: 10px; margin-bottom: 8px; background: var(--chat-messages-bg); border-radius: 10px;">
+                        <div style="width: 45px; height: 45px; border-radius: 50%; margin-right: 12px; display: flex; align-items: center; justify-content: center; font-size: 20px; border: 2px solid #28a745; background: #28a745; color: white;">${user.avatar}</div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: bold; margin-bottom: 2px; color: var(--text-color);">${user.name}</div>
+                            <div style="font-size: 12px; color: var(--text-color);">레벨 ${user.level} ${user.job} • ${user.streak}일 연속 접속</div>
+                        </div>
+                        <div style="background: #28a745; color: white; padding: 2px 6px; border-radius: 10px; font-size: 10px;">온라인</div>
+                    </div>
+                `;
+            });
+
+            if (otherUsers.length === 0) {
+                membersHtml += `
+                    <div style="text-align: center; color: var(--text-color); padding: 20px;">
+                        <p>다른 길드원들이 접속하면 여기에 표시됩니다</p>
+                        <p>친구들을 초대해보세요! 🎉</p>
+                    </div>
+                `;
+            }
+
+            guildMembersContainer.innerHTML = membersHtml;
         }
         
         function resetMissionUI() {
@@ -3388,7 +3493,22 @@
         function changeName() {
             const newName = document.getElementById('nameInput').value.trim();
             if (newName && newName.length > 0 && newName.length <= 10) {
+                const oldName = userName;
                 userName = newName;
+                
+                // Firebase에서 기존 사용자 정보 제거하고 새 이름으로 등록
+                if (isFirebaseEnabled) {
+                    database.ref(`onlineUsers/${oldName}`).remove();
+                    database.ref(`onlineUsers/${userName}`).set({
+                        name: userName,
+                        avatar: userAvatar,
+                        level: userLevel,
+                        job: userJob,
+                        streak: userStreak,
+                        lastSeen: Date.now()
+                    }).catch(error => console.log('사용자 정보 업데이트 실패:', error));
+                }
+                
                 updateUI();
                 closeNameModal();
                 showNotification('닉네임이 변경되었습니다! 🎉');
@@ -3402,6 +3522,15 @@
         function closeAvatarModal() { document.getElementById('avatarModal').style.display = 'none'; }
         function selectAvatar(emoji) {
             userAvatar = emoji;
+            
+            // Firebase에서 사용자 아바타 정보 업데이트
+            if (isFirebaseEnabled) {
+                database.ref(`onlineUsers/${userName}`).update({
+                    avatar: userAvatar,
+                    lastSeen: Date.now()
+                }).catch(error => console.log('아바타 정보 업데이트 실패:', error));
+            }
+            
             updateUI();
             closeAvatarModal();
             showNotification('프로필 사진이 변경되었습니다! ✨');
@@ -3417,6 +3546,7 @@
                     database.ref('notices').remove().catch(error => console.error('Firebase 공지사항 삭제 실패:', error));
                     database.ref('chatMessages').remove().catch(error => console.error('Firebase 채팅 삭제 실패:', error));
                     database.ref('qtNotes').remove().catch(error => console.error('Firebase QT노트 삭제 실패:', error));
+                    database.ref('onlineUsers').remove().catch(error => console.error('Firebase 온라인 사용자 삭제 실패:', error));
                     showNotification('🔥 Firebase 데이터도 함께 초기화되었습니다!');
                 }
                 
@@ -3427,18 +3557,20 @@
                 }
                 // 메모리 저장소도 초기화
                 memoryStorage = {};
+                onlineUsers = {};
                 
                 setInitialState();
                 updateUI();
                 resetMissionUI();
                 
-                // 길드 탭 채팅과 QT노트도 초기화
+                // 길드 탭 관련 UI 초기화
                 const guildChatContainer = document.getElementById('guild-chat-container');
                 if (guildChatContainer) {
                     guildChatContainer.innerHTML = '';
                 }
                 updateQTNotes();
                 updateNotices();
+                updateOnlineUsers();
                 
                 closeResetModal();
                 showNotification('모든 데이터가 완전히 초기화되었습니다. 🔄');
@@ -3466,13 +3598,20 @@
         // --- App Initialization ---
         function initApp() {
             try {
+                console.log('앱 초기화 시작...');
+                
+                // Firebase 초기화 (먼저 실행)
                 initFirebase();
+                
+                console.log('데이터 로드 시작...');
                 loadProgress();
-                        
+                
+                console.log('환영 메시지 준비...');
                 setTimeout(() => {
                     showNotification(`${userName}님, 푸른나라학교에 오신 것을 환영합니다! 🌟`);
                 }, 1000);
 
+                // Update home tab quiz button state
                 const lastQuizMissionDate = safeGetItem('lastQuizMissionDate');
                 const today = new Date().toDateString();
                 const quizButton = document.getElementById('mission-btn-quiz');
@@ -3489,6 +3628,7 @@
                     }
                 }
 
+                // Update home tab mini-game button state
                 const minigameButton = document.getElementById('mission-btn-minigame');
                 if (miniGameCompletedToday) {
                     if (minigameButton) {
@@ -3502,6 +3642,8 @@
                     }
                 }
 
+                console.log('이벤트 리스너 설정...');
+                // Modal close events
                 document.querySelectorAll('.modal').forEach(modal => {
                     modal.addEventListener('click', (e) => {
                         if (e.target === modal) {
@@ -3510,6 +3652,7 @@
                     });
                 });
 
+                // Keyboard events
                 document.addEventListener('keydown', (e) => {
                     if (e.key === 'Escape') {
                         document.querySelectorAll('.modal').forEach(modal => modal.style.display = 'none');
@@ -3540,9 +3683,19 @@
                         }
                     }
                 });
+                
+                console.log('앱 초기화 완료!');
             } catch (error) {
-                console.error('앱 초기화 실패:', error);
-                showNotification('앱 초기화에 실패했습니다. 페이지를 새로고침해주세요.');
+                console.error('앱 초기화 중 오류 발생:', error);
+                // 오류가 발생해도 기본 기능은 작동하도록 함
+                try {
+                    setInitialState();
+                    updateUI();
+                    showNotification('일부 기능에 제한이 있을 수 있지만 앱이 시작되었습니다. 📱');
+                } catch (fallbackError) {
+                    console.error('대체 초기화도 실패:', fallbackError);
+                    showNotification('앱 초기화에 실패했습니다. 페이지를 새로고침해주세요.');
+                }
             }
         }
 
